@@ -32,6 +32,113 @@ class VedabaseApp {
     };
   }
 
+  // Get all user custom edited slokas from localStorage
+  getUserCustomEdits() {
+    try {
+      const raw = localStorage.getItem('vedabase_user_custom_edits');
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      console.warn('Error reading custom edits:', e);
+      return {};
+    }
+  }
+
+  // Save a user custom edited sloka to permanent storage (localStorage + IndexedDB)
+  async saveUserCustomEdit(sloka) {
+    sloka.isUserEdited = true;
+    sloka.lastEditedAt = new Date().toISOString();
+
+    // 1. Save to permanent localStorage backup (Survives any schema / static file reloads)
+    try {
+      const edits = this.getUserCustomEdits();
+      edits[sloka.verseKey] = sloka;
+      localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
+    } catch (e) {
+      console.warn('LocalStorage save warning:', e);
+    }
+
+    // 2. Save to IndexedDB
+    if (window.vdb && window.vdb.db) {
+      await window.vdb.saveSloka(sloka);
+    }
+
+    // 3. Update in-memory structures
+    this.verseMap.set(sloka.verseKey, sloka);
+    this.verseMap.set(sloka.id, sloka);
+
+    const idx = this.allSlokas.findIndex(s => s.verseKey === sloka.verseKey);
+    if (idx >= 0) {
+      this.allSlokas[idx] = sloka;
+    } else {
+      this.allSlokas.push(sloka);
+    }
+
+    const chKey = `${sloka.canto}-${sloka.chapter}`;
+    if (this.chapterMap.has(chKey)) {
+      const chList = this.chapterMap.get(chKey);
+      const chIdx = chList.findIndex(s => s.verseKey === sloka.verseKey);
+      if (chIdx >= 0) {
+        chList[chIdx] = sloka;
+      } else {
+        chList.push(sloka);
+      }
+    }
+
+    if (window.searchEngine && window.searchEngine.isIndexed) {
+      window.searchEngine.appendIndex([sloka]);
+    }
+
+    this.updateCustomEditsCountBadge();
+  }
+
+  // Merge user custom edits onto any incoming slokas array so user edits ALWAYS win
+  applyUserCustomEdits(slokas) {
+    if (!slokas || slokas.length === 0) return slokas;
+    const userEdits = this.getUserCustomEdits();
+    return slokas.map(s => {
+      const vKey = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
+      if (userEdits[vKey]) {
+        return { ...userEdits[vKey] };
+      }
+      return s;
+    });
+  }
+
+  // Update count badge in manager modal
+  updateCustomEditsCountBadge() {
+    const badge = document.getElementById('customEditsCountBadge');
+    if (badge) {
+      const count = Object.keys(this.getUserCustomEdits()).length;
+      badge.textContent = `${count} सम्पादित`;
+    }
+  }
+
+  // Export only user custom edits as a JSON file
+  exportCustomEdits() {
+    const edits = this.getUserCustomEdits();
+    const slokas = Object.values(edits);
+    if (slokas.length === 0) {
+      this.showToast('आपने अभी तक कोई श्लोक सम्पादित नहीं किया है।');
+      return;
+    }
+    const exportData = {
+      title: "Hindi Vedabase - My Custom Edited Slokas",
+      total_edits: slokas.length,
+      export_date: new Date().toISOString(),
+      edits: edits
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Vedabase_My_Custom_Edits_${slokas.length}_Verses.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    this.showToast(`📥 ${slokas.length} सम्पादित श्लोक बैकअप डाउनलोड हुआ!`);
+  }
+
   // Build high-speed in-memory lookup maps
   buildMemoryMap(slokas) {
     if (!slokas || slokas.length === 0) return;
@@ -42,13 +149,14 @@ class VedabaseApp {
     this.addSlokasToMemory(slokas);
   }
 
-  // Add a batch/canto of slokas into in-memory maps and list
+  // Add a batch/canto of slokas into in-memory maps and list (preserves user edits)
   addSlokasToMemory(slokas) {
     if (!slokas || slokas.length === 0) return;
+    const processedSlokas = this.applyUserCustomEdits(slokas);
 
     const newSlokas = [];
-    for (let i = 0; i < slokas.length; i++) {
-      const s = slokas[i];
+    for (let i = 0; i < processedSlokas.length; i++) {
+      const s = processedSlokas[i];
       const key = `${s.canto}.${s.chapter}.${s.verse}`;
       if (!this.verseMap.has(key)) {
         this.allSlokas.push(s);
@@ -78,8 +186,9 @@ class VedabaseApp {
     try {
       // 1. Check if DB has verses for this canto (preserves all edits and custom entries)
       if (window.vdb && window.vdb.db) {
-        const dbVerses = await window.vdb.getSlokasByCanto(cNum);
+        let dbVerses = await window.vdb.getSlokasByCanto(cNum);
         if (dbVerses && dbVerses.length > 0) {
+          dbVerses = this.applyUserCustomEdits(dbVerses);
           this.addSlokasToMemory(dbVerses);
           this.loadedCantos.add(cNum);
           return true;
@@ -89,7 +198,8 @@ class VedabaseApp {
       // 2. Fetch from static JSON if NOT already in DB
       const resp = await fetch(`data/canto-${cNum}.json`);
       if (resp.ok) {
-        const slokas = await resp.json();
+        let slokas = await resp.json();
+        slokas = this.applyUserCustomEdits(slokas);
         this.addSlokasToMemory(slokas);
         this.loadedCantos.add(cNum);
 
@@ -462,6 +572,11 @@ class VedabaseApp {
     // 1. Badges & Titles
     const keyBadge = document.getElementById('currentVerseKeyBadge');
     if (keyBadge) keyBadge.textContent = `SB ${sloka.verseKey}`;
+
+    const userEditBadge = document.getElementById('userEditedBadge');
+    if (userEditBadge) {
+      userEditBadge.style.display = sloka.isUserEdited ? 'inline-flex' : 'none';
+    }
 
     const chTitle = document.getElementById('currentChapterName');
     if (chTitle) {
@@ -1016,10 +1131,10 @@ class VedabaseApp {
       tags: this.currentSloka?.tags || [`स्कन्ध ${canto}`, `अध्याय ${chapter}`]
     };
 
-    await window.vdb.saveSloka(sloka);
+    await this.saveUserCustomEdit(sloka);
     await this.reloadAllSlokasAndIndex();
 
-    this.showToast(`✅ श्लोक SB ${verseKey} अद्यतन (Update) हुआ!`);
+    this.showToast(`✅ श्लोक SB ${verseKey} स्थायी रूप से सुरक्षित (Saved Permanently)!`);
     this.closeAllModals();
     await this.loadVerseByKey(verseKey);
   }
@@ -1435,7 +1550,16 @@ class VedabaseApp {
     });
 
     // Backup & Restore
+    const btnOpenManager = document.getElementById('btnOpenManager');
+    if (btnOpenManager) {
+      btnOpenManager.addEventListener('click', () => {
+        this.updateCustomEditsCountBadge();
+        this.openModal('managerModal');
+      });
+    }
+
     document.getElementById('btnExportJSON')?.addEventListener('click', () => this.exportJSONBackup());
+    document.getElementById('btnExportCustomEdits')?.addEventListener('click', () => this.exportCustomEdits());
     document.getElementById('importJSONFile')?.addEventListener('change', (e) => this.importJSONBackup(e.target.files[0]));
 
     // Global Keyboard Shortcuts

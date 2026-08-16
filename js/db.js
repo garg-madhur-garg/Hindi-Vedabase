@@ -148,11 +148,18 @@ class VedabaseDB {
     });
   }
 
-  // Bulk save slokas in high-speed batches
-  async bulkSaveSlokas(slokas, onProgress) {
+  // Bulk save slokas in high-speed batches (Never overwrites user-edited verses with static data)
+  async bulkSaveSlokas(slokas, onProgress, preserveUserEdits = true) {
     if (!slokas || slokas.length === 0) return 0;
     await this.init();
     
+    // Check localStorage user edits backup as well
+    let userEditsMap = {};
+    try {
+      const raw = localStorage.getItem('vedabase_user_custom_edits');
+      if (raw) userEditsMap = JSON.parse(raw);
+    } catch (e) {}
+
     const batchSize = 200;
     let savedCount = 0;
 
@@ -171,12 +178,18 @@ class VedabaseDB {
         tx.onabort = () => reject(tx.error);
 
         batch.forEach(sloka => {
+          const vKey = sloka.verseKey || `${sloka.canto}.${sloka.chapter}.${sloka.verse}`;
+          // If user has manually edited this verse and this incoming verse is not marked as user edit, apply user edit!
+          if (preserveUserEdits && userEditsMap[vKey] && !sloka.isUserEdited) {
+            sloka = userEditsMap[vKey];
+          }
+
           sloka.id = sloka.id || `sb-${sloka.canto}-${sloka.chapter}-${sloka.verse}`;
           sloka.canto = Number(sloka.canto);
           sloka.chapter = Number(sloka.chapter);
           sloka.verse = isNaN(Number(sloka.verse)) ? sloka.verse : Number(sloka.verse);
-          sloka.verseKey = `${sloka.canto}.${sloka.chapter}.${sloka.verse}`;
-          sloka.updatedAt = new Date().toISOString();
+          sloka.verseKey = vKey;
+          sloka.updatedAt = sloka.updatedAt || new Date().toISOString();
           store.put(sloka);
         });
       });
