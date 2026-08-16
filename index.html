@@ -262,7 +262,36 @@
             </div>
           </div>
 
-          <!-- Card 2: Download Complete Database Backup -->
+          <!-- Card 2: Download Specific Canto JSON (canto-1.json to canto-12.json) -->
+          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+              <span>📖</span> <span>स्कन्ध अनुसार JSON डाउनलोड करें (Canto-wise Export)</span>
+            </h3>
+            <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
+              जिस स्कन्ध में आपने सम्पादन किया है, केवल उसका <code>canto-X.json</code> डाउनलोड करके <code>data/</code> फोल्डर में सीधे रिप्लेस (Replace) कर सकते हैं।
+            </p>
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              <select id="exportCantoSelect" style="background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.55rem 0.85rem; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer;">
+                <option value="1">स्कन्ध 1 (Canto 1 - 808 श्लोक)</option>
+                <option value="2">स्कन्ध 2 (Canto 2 - 393 श्लोक)</option>
+                <option value="3">स्कन्ध 3 (Canto 3 - 1416 श्लोक)</option>
+                <option value="4">स्कन्ध 4 (Canto 4 - 1449 श्लोक)</option>
+                <option value="5">स्कन्ध 5 (Canto 5 - 668 श्लोक)</option>
+                <option value="6">स्कन्ध 6 (Canto 6 - 851 श्लोक)</option>
+                <option value="7">स्कन्ध 7 (Canto 7 - 750 श्लोक)</option>
+                <option value="8">स्कन्ध 8 (Canto 8 - 940 श्लोक)</option>
+                <option value="9">स्कन्ध 9 (Canto 9 - 960 श्लोक)</option>
+                <option value="10">स्कन्ध 10 (Canto 10 - 3936 श्लोक)</option>
+                <option value="11">स्कन्ध 11 (Canto 11 - 1369 श्लोक)</option>
+                <option value="12">स्कन्ध 12 (Canto 12 - 550 श्लोक)</option>
+              </select>
+              <button type="button" class="btn-action btn-presentation" id="btnExportCantoJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+                📥 Canto JSON डाउनलोड करें
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3: Download Complete Database Backup -->
           <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
             <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>💾</span> <span>पूरा 14,090 श्लोक डेटाबेस बैकअप</span>

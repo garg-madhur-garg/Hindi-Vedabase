@@ -113,7 +113,7 @@ class VedabaseApp {
     }
   }
 
-  // Export only user custom edits as a JSON file
+  // Export only user custom edits as a JSON array (100% Identical schema with data/canto-*.json)
   exportCustomEdits() {
     const edits = this.getUserCustomEdits();
     const slokas = Object.values(edits);
@@ -121,22 +121,47 @@ class VedabaseApp {
       this.showToast('आपने अभी तक कोई श्लोक सम्पादित नहीं किया है।');
       return;
     }
-    const exportData = {
-      title: "Hindi Vedabase - My Custom Edited Slokas",
-      total_edits: slokas.length,
-      export_date: new Date().toISOString(),
-      edits: edits
-    };
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+
+    // Sort by canto, chapter, verse
+    slokas.sort((a, b) => {
+      if (a.canto !== b.canto) return (a.canto || 0) - (b.canto || 0);
+      if (a.chapter !== b.chapter) return (a.chapter || 0) - (b.chapter || 0);
+      const vA = parseInt(a.verse, 10) || 0;
+      const vB = parseInt(b.verse, 10) || 0;
+      return vA - vB;
+    });
+
+    const cleanEdits = slokas.map(s => ({
+      id: s.id || `sb-${s.canto}-${s.chapter}-${s.verse}`,
+      canto: Number(s.canto),
+      chapter: Number(s.chapter),
+      verse: isNaN(Number(s.verse)) ? s.verse : Number(s.verse),
+      verseKey: s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`,
+      sanskritDevanagari: s.sanskritDevanagari || '',
+      sanskritIAST: s.sanskritIAST || '',
+      wordToWord: Array.isArray(s.wordToWord) ? s.wordToWord : [],
+      hindiTranslation: s.hindiTranslation || '',
+      hindiPurport: s.hindiPurport || '',
+      category: s.category || {
+        book: "श्रीमद्भागवतम्",
+        cantoTitleHindi: `स्कन्ध ${s.canto}`,
+        chapterTitleHindi: `अध्याय ${s.chapter}`
+      },
+      tags: s.tags || [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"],
+      isUserEdited: true,
+      lastEditedAt: s.lastEditedAt || new Date().toISOString()
+    }));
+
+    const blob = new Blob([JSON.stringify(cleanEdits, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Vedabase_My_Custom_Edits_${slokas.length}_Verses.json`;
+    a.download = `Vedabase_My_Custom_Edits_${cleanEdits.length}_Verses.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    this.showToast(`📥 ${slokas.length} सम्पादित श्लोक बैकअप डाउनलोड हुआ!`);
+    this.showToast(`📥 ${cleanEdits.length} सम्पादित श्लोक बैकअप डाउनलोड हुआ!`);
   }
 
   // Build high-speed in-memory lookup maps
@@ -1153,6 +1178,9 @@ class VedabaseApp {
       return;
     }
 
+    // Apply user custom edits so backup always has latest custom versions
+    slokas = this.applyUserCustomEdits(slokas);
+
     // Sort by canto, chapter, verse
     slokas.sort((a, b) => {
       if (a.canto !== b.canto) return (a.canto || 0) - (b.canto || 0);
@@ -1162,45 +1190,100 @@ class VedabaseApp {
       return vA - vB;
     });
 
-    const exportData = {
-      title: "Hindi Srimad Bhagavatam - Complete Database Backup",
-      total_slokas: slokas.length,
-      export_date: new Date().toISOString(),
-      verses: slokas.map(s => {
-        let wMeaningsStr = '';
-        if (Array.isArray(s.wordToWord) && s.wordToWord.length > 0) {
-          wMeaningsStr = s.wordToWord.map(w => `${w.sanskrit}—${w.hindi}`).join('; ');
-        }
-        return {
-          sloka_number: s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`,
-          canto: s.canto,
-          chapter: s.chapter,
-          verse_number: s.verse,
-          sloka: s.sanskritDevanagari || '',
-          word_to_word_meaning: wMeaningsStr,
-          wordToWord: s.wordToWord || [],
-          translation: s.hindiTranslation || '',
-          purport: s.hindiPurport || '',
-          category: s.category || {
-            book: "श्रीमद्भागवतम्",
-            cantoTitleHindi: `स्कन्ध ${s.canto}`,
-            chapterTitleHindi: `अध्याय ${s.chapter}`
-          },
-          tags: s.tags || [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"]
-        };
-      })
-    };
+    const cleanSlokas = slokas.map(s => ({
+      id: s.id || `sb-${s.canto}-${s.chapter}-${s.verse}`,
+      canto: Number(s.canto),
+      chapter: Number(s.chapter),
+      verse: isNaN(Number(s.verse)) ? s.verse : Number(s.verse),
+      verseKey: s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`,
+      sanskritDevanagari: s.sanskritDevanagari || '',
+      sanskritIAST: s.sanskritIAST || '',
+      wordToWord: Array.isArray(s.wordToWord) ? s.wordToWord : [],
+      hindiTranslation: s.hindiTranslation || '',
+      hindiPurport: s.hindiPurport || '',
+      category: s.category || {
+        book: "श्रीमद्भागवतम्",
+        cantoTitleHindi: `स्कन्ध ${s.canto}`,
+        chapterTitleHindi: `अध्याय ${s.chapter}`
+      },
+      tags: s.tags || [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"],
+      ...(s.isUserEdited ? { isUserEdited: true, lastEditedAt: s.lastEditedAt || new Date().toISOString() } : {})
+    }));
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(cleanSlokas, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Hindi_Vedabase_Master_Backup_${slokas.length}_Slokas_${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `Hindi_Vedabase_Master_Backup_${cleanSlokas.length}_Slokas.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    this.showToast(`📥 समस्त ${slokas.length} श्लोकों का JSON बैकअप डाउनलोड हुआ!`);
+    this.showToast(`📥 समस्त ${cleanSlokas.length} श्लोकों का JSON बैकअप डाउनलोड हुआ!`);
+  }
+
+  // Export a specific Canto as canto-X.json (100% Identical schema with data/canto-X.json)
+  async exportCantoJSON(cantoNum) {
+    const cNum = Number(cantoNum) || this.currentCanto || 1;
+    this.showToast(`⏳ स्कन्ध ${cNum} का JSON तैयार किया जा रहा है...`);
+
+    // Ensure canto is loaded in memory
+    await this.ensureCantoLoaded(cNum);
+
+    // Get all verses for this canto
+    let slokas = this.allSlokas.filter(s => Number(s.canto) === cNum);
+    if (!slokas || slokas.length === 0) {
+      if (window.vdb && window.vdb.db) {
+        slokas = await window.vdb.getSlokasByCanto(cNum);
+      }
+    }
+
+    if (!slokas || slokas.length === 0) {
+      this.showToast(`स्कन्ध ${cNum} में कोई श्लोक नहीं मिला।`);
+      return;
+    }
+
+    // Apply user custom edits
+    slokas = this.applyUserCustomEdits(slokas);
+
+    // Sort by chapter and verse
+    slokas.sort((a, b) => {
+      if (a.chapter !== b.chapter) return (a.chapter || 0) - (b.chapter || 0);
+      const vA = parseInt(a.verse, 10) || 0;
+      const vB = parseInt(b.verse, 10) || 0;
+      return vA - vB;
+    });
+
+    const cleanSlokas = slokas.map(s => ({
+      id: s.id || `sb-${s.canto}-${s.chapter}-${s.verse}`,
+      canto: Number(s.canto),
+      chapter: Number(s.chapter),
+      verse: isNaN(Number(s.verse)) ? s.verse : Number(s.verse),
+      verseKey: s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`,
+      sanskritDevanagari: s.sanskritDevanagari || '',
+      sanskritIAST: s.sanskritIAST || '',
+      wordToWord: Array.isArray(s.wordToWord) ? s.wordToWord : [],
+      hindiTranslation: s.hindiTranslation || '',
+      hindiPurport: s.hindiPurport || '',
+      category: s.category || {
+        book: "श्रीमद्भागवतम्",
+        cantoTitleHindi: `स्कन्ध ${s.canto}`,
+        chapterTitleHindi: `अध्याय ${s.chapter}`
+      },
+      tags: s.tags || [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"],
+      ...(s.isUserEdited ? { isUserEdited: true, lastEditedAt: s.lastEditedAt || new Date().toISOString() } : {})
+    }));
+
+    const blob = new Blob([JSON.stringify(cleanSlokas, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `canto-${cNum}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    this.showToast(`📥 canto-${cNum}.json (${cleanSlokas.length} श्लोक) डाउनलोड हुआ!`);
   }
 
   // Normalize JSON data (supports standard backup JSON, master JSON, array of verses, or chapters)
@@ -1554,12 +1637,19 @@ class VedabaseApp {
     if (btnOpenManager) {
       btnOpenManager.addEventListener('click', () => {
         this.updateCustomEditsCountBadge();
+        const sel = document.getElementById('exportCantoSelect');
+        if (sel) sel.value = String(this.currentCanto || 1);
         this.openModal('managerModal');
       });
     }
 
     document.getElementById('btnExportJSON')?.addEventListener('click', () => this.exportJSONBackup());
     document.getElementById('btnExportCustomEdits')?.addEventListener('click', () => this.exportCustomEdits());
+    document.getElementById('btnExportCantoJSON')?.addEventListener('click', () => {
+      const sel = document.getElementById('exportCantoSelect');
+      const cNum = sel ? parseInt(sel.value, 10) : (this.currentCanto || 1);
+      this.exportCantoJSON(cNum);
+    });
     document.getElementById('importJSONFile')?.addEventListener('change', (e) => this.importJSONBackup(e.target.files[0]));
 
     // Global Keyboard Shortcuts
