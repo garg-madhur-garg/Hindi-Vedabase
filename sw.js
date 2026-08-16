@@ -1,13 +1,12 @@
-const CACHE_NAME = 'hindi-vedabase-v2';
+const CACHE_NAME = 'hindi-vedabase-v3.2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './css/main.css',
-  './js/db.js',
-  './js/search.js',
   './js/sb-chapters-data.js',
-  './js/seed-data.js',
+  './js/search.js',
   './js/app.js',
+  './data/cantos-manifest.json',
   './vedabase.ico',
   './manifest.json'
 ];

@@ -5,5 +5,5 @@ echo    🕉️ हिन्दी वेदबेस (Hindi Vedabase) सर्
 echo ===================================================
 echo.
 echo Starting local web server on port 8080...
-powershell -ExecutionPolicy Bypass -File "%~dp0server.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0server.ps1"
 pause

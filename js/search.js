@@ -76,15 +76,28 @@ class VedabaseSearchEngine {
     console.log(`Indexed ${slokas.length} slokas and 335 chapters successfully.`);
   }
 
+  // Clear all in-memory search indices
+  clearIndex() {
+    this.slokas = [];
+    this.verseMap.clear();
+    this.wordIndex.clear();
+    this.tagIndex.clear();
+    this.isIndexed = false;
+  }
+
   // Incrementally index newly loaded slokas
   appendIndex(newSlokas) {
     if (!newSlokas || newSlokas.length === 0) return;
     
     for (let i = 0; i < newSlokas.length; i++) {
       const s = newSlokas[i];
-      const key = `${s.canto}.${s.chapter}.${s.verse}`;
+      const key = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
+      
+      if (!this.verseMap.has(key)) {
+        this.slokas.push(s);
+      }
       this.verseMap.set(key, s);
-      this.verseMap.set(s.id, s);
+      if (s.id) this.verseMap.set(s.id, s);
 
       if (Array.isArray(s.tags)) {
         s.tags.forEach(tag => {
@@ -92,7 +105,7 @@ class VedabaseSearchEngine {
           if (!this.tagIndex.has(normTag)) {
             this.tagIndex.set(normTag, new Set());
           }
-          this.tagIndex.get(normTag).add(s.id);
+          this.tagIndex.get(normTag).add(s.id || key);
         });
       }
 
@@ -109,9 +122,11 @@ class VedabaseSearchEngine {
         if (!this.wordIndex.has(tok)) {
           this.wordIndex.set(tok, new Set());
         }
-        this.wordIndex.get(tok).add(s.id);
+        this.wordIndex.get(tok).add(s.id || key);
       });
     }
+
+    this.isIndexed = true;
   }
 
   // Devanagari & Latin text normalization and tokenization
@@ -177,11 +192,11 @@ class VedabaseSearchEngine {
 
     const trimmedQuery = (query || '').trim();
 
-    // 1. Check for Exact Reference Query (e.g. 1.1.1)
+    // 1. Check for Exact Reference Query (e.g. 1.1.1, 1.2.3, 10.14.8)
     const ref = this.parseReferenceQuery(trimmedQuery);
     if (ref && !ref.isChapter) {
       const refKey = `${ref.canto}.${ref.chapter}.${ref.verse}`;
-      const exactMatch = this.verseMap.get(refKey);
+      const exactMatch = this.verseMap.get(refKey) || (window.app && window.app.verseMap && window.app.verseMap.get(refKey));
       if (exactMatch) {
         const timeMs = (performance.now() - startTime).toFixed(2);
         return {
@@ -190,6 +205,19 @@ class VedabaseSearchEngine {
           timeMs,
           isRefMatch: true,
           exactVerseKey: refKey
+        };
+      }
+    } else if (ref && ref.isChapter) {
+      const chKey = `${ref.canto}-${ref.chapter}`;
+      const chVerses = (window.app && window.app.chapterMap && window.app.chapterMap.get(chKey)) || [];
+      if (chVerses.length > 0) {
+        const timeMs = (performance.now() - startTime).toFixed(2);
+        return {
+          results: chVerses.slice(0, limit),
+          totalCount: chVerses.length,
+          timeMs,
+          isRefMatch: true,
+          exactVerseKey: `${ref.canto}.${ref.chapter}.1`
         };
       }
     }
@@ -202,9 +230,10 @@ class VedabaseSearchEngine {
 
     const results = [];
     const normFilterTag = filterTag ? filterTag.toLowerCase() : null;
+    const searchPool = (this.slokas && this.slokas.length > 0) ? this.slokas : ((window.app && window.app.allSlokas) || []);
 
-    for (let i = 0; i < this.slokas.length; i++) {
-      const s = this.slokas[i];
+    for (let i = 0; i < searchPool.length; i++) {
+      const s = searchPool[i];
 
       // Check Tag filter if specified
       if (normFilterTag) {

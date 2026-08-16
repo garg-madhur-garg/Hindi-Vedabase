@@ -43,12 +43,12 @@ class VedabaseApp {
     }
   }
 
-  // Save a user custom edited sloka to permanent storage (localStorage + IndexedDB)
+  // Save a user custom edited sloka to permanent storage (localStorage)
   async saveUserCustomEdit(sloka) {
     sloka.isUserEdited = true;
     sloka.lastEditedAt = new Date().toISOString();
 
-    // 1. Save to permanent localStorage backup (Survives any schema / static file reloads)
+    // 1. Save to permanent localStorage backup (Survives any static file reloads)
     try {
       const edits = this.getUserCustomEdits();
       edits[sloka.verseKey] = sloka;
@@ -57,12 +57,7 @@ class VedabaseApp {
       console.warn('LocalStorage save warning:', e);
     }
 
-    // 2. Save to IndexedDB
-    if (window.vdb && window.vdb.db) {
-      await window.vdb.saveSloka(sloka);
-    }
-
-    // 3. Update in-memory structures
+    // 2. Update in-memory structures
     this.verseMap.set(sloka.verseKey, sloka);
     this.verseMap.set(sloka.id, sloka);
 
@@ -89,6 +84,96 @@ class VedabaseApp {
     }
 
     this.updateCustomEditsCountBadge();
+  }
+
+  // Revert a single verse back to its authentic original JSON data from data/canto-X.json
+  async revertCurrentVerseToOriginal() {
+    if (!this.currentSloka) return;
+    const verseKey = this.currentSloka.verseKey;
+    const cantoNum = Number(this.currentSloka.canto);
+
+    // Remove from localStorage
+    const edits = this.getUserCustomEdits();
+    if (edits[verseKey]) {
+      delete edits[verseKey];
+      localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
+    }
+
+    // Fetch fresh canto data from JSON file to get original authentic verse
+    try {
+      const resp = await fetch(`data/canto-${cantoNum}.json?v=${Date.now()}`);
+      if (resp.ok) {
+        const freshSlokas = await resp.json();
+        const orig = freshSlokas.find(s => (s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`) === verseKey);
+        if (orig) {
+          delete orig.isUserEdited;
+          delete orig.lastEditedAt;
+
+          this.verseMap.set(verseKey, orig);
+          this.verseMap.set(orig.id, orig);
+
+          const idx = this.allSlokas.findIndex(s => s.verseKey === verseKey);
+          if (idx >= 0) this.allSlokas[idx] = orig;
+
+          const chKey = `${orig.canto}-${orig.chapter}`;
+          if (this.chapterMap.has(chKey)) {
+            const chList = this.chapterMap.get(chKey);
+            const chIdx = chList.findIndex(s => s.verseKey === verseKey);
+            if (chIdx >= 0) chList[chIdx] = orig;
+          }
+
+          if (window.searchEngine) {
+            window.searchEngine.appendIndex([orig]);
+          }
+
+          this.updateCustomEditsCountBadge();
+          await this.displaySloka(orig);
+          this.closeAllModals();
+          this.showToast(`✅ श्लोक SB ${verseKey} मूल JSON डेटा में रीसेट हो गया है!`);
+          return;
+        }
+      }
+    } catch (e) {
+      console.error('Error reverting verse to original JSON:', e);
+    }
+    this.showToast('श्लोक रीसेट नहीं हो सका।');
+  }
+
+  // Clear ALL user custom edits and reload entire database strictly from JSON files
+  async clearAllCustomEdits() {
+    const edits = this.getUserCustomEdits();
+    const count = Object.keys(edits).length;
+    if (count === 0) {
+      this.showToast('कोई सम्पादित श्लोक मौजूद नहीं है। समस्त डेटा पहले से मूल JSON फाइलों से लोड है।');
+      return;
+    }
+
+    if (!confirm(`क्या आप सभी ${count} सम्पादित श्लोकों को हटाकर मूल JSON डेटा वापस लाना चाहते हैं?`)) {
+      return;
+    }
+
+    localStorage.removeItem('vedabase_user_custom_edits');
+    this.verseMap.clear();
+    this.chapterMap.clear();
+    this.allSlokas = [];
+    this.loadedCantos.clear();
+
+    if (window.searchEngine) {
+      window.searchEngine.clearIndex();
+    }
+
+    this.showToast('⏳ समस्त डेटा JSON फाइलों से पुनः लोड हो रहा है...');
+
+    const curKey = this.currentSloka ? this.currentSloka.verseKey : '1.1.1';
+    await this.loadVerseByKey(curKey);
+    this.updateCustomEditsCountBadge();
+    this.closeAllModals();
+
+    setTimeout(() => {
+      this.preloadAllCantosInBackground();
+    }, 100);
+
+    this.showToast('✅ सभी श्लोक मूल JSON फाइलों से सफलतापूर्वक रीसेट हो गए!');
   }
 
   // Merge user custom edits onto any incoming slokas array so user edits ALWAYS win
@@ -198,54 +283,49 @@ class VedabaseApp {
       }
     }
 
-    if (window.searchEngine && window.searchEngine.isIndexed && newSlokas.length > 0) {
+    if (window.searchEngine && newSlokas.length > 0) {
       window.searchEngine.appendIndex(newSlokas);
     }
   }
 
-  // Ensure a specific canto is loaded in memory
+  // Ensure a specific canto is loaded directly from its JSON file
   async ensureCantoLoaded(canto) {
     const cNum = Number(canto);
+    if (!cNum || cNum < 1 || cNum > 12) return false;
     if (this.loadedCantos.has(cNum)) return true;
 
-    try {
-      // 1. Check if DB has verses for this canto (preserves all edits and custom entries)
-      if (window.vdb && window.vdb.db) {
-        let dbVerses = await window.vdb.getSlokasByCanto(cNum);
-        if (dbVerses && dbVerses.length > 0) {
-          dbVerses = this.applyUserCustomEdits(dbVerses);
-          this.addSlokasToMemory(dbVerses);
+    if (this.loadingCantos && this.loadingCantos.has(cNum)) {
+      return await this.loadingCantos.get(cNum);
+    }
+
+    const loadPromise = (async () => {
+      try {
+        const resp = await fetch(`data/canto-${cNum}.json`);
+        if (resp.ok) {
+          let slokas = await resp.json();
+          this.addSlokasToMemory(slokas);
           this.loadedCantos.add(cNum);
           return true;
         }
+      } catch (e) {
+        console.warn(`Notice: Failed to load JSON for Canto ${cNum}:`, e);
       }
+      return false;
+    })();
 
-      // 2. Fetch from static JSON if NOT already in DB
-      const resp = await fetch(`data/canto-${cNum}.json`);
-      if (resp.ok) {
-        let slokas = await resp.json();
-        slokas = this.applyUserCustomEdits(slokas);
-        this.addSlokasToMemory(slokas);
-        this.loadedCantos.add(cNum);
-
-        // Save into IndexedDB in background
-        if (window.vdb && window.vdb.db) {
-          window.vdb.bulkSaveSlokas(slokas).catch(console.warn);
-        }
-        return true;
-      }
-    } catch (e) {
-      console.warn(`Notice: Dynamic load for Canto ${cNum}:`, e);
-    }
-    return false;
+    if (!this.loadingCantos) this.loadingCantos = new Map();
+    this.loadingCantos.set(cNum, loadPromise);
+    const result = await loadPromise;
+    this.loadingCantos.delete(cNum);
+    return result;
   }
 
-  // Preload all remaining Cantos (2 to 12) seamlessly in the background
+  // Preload all remaining Cantos (1 to 12) seamlessly in the background directly from JSON
   async preloadAllCantosInBackground() {
     if (this.isPreloading) return;
     this.isPreloading = true;
 
-    for (let c = 2; c <= 12; c++) {
+    for (let c = 1; c <= 12; c++) {
       if (!this.loadedCantos.has(c)) {
         await this.ensureCantoLoaded(c);
         // Small yield so browser UI remains 100% fluid
@@ -254,119 +334,75 @@ class VedabaseApp {
     }
 
     this.isPreloading = false;
-    console.log(`All 12 Cantos (${this.allSlokas.length.toLocaleString()} verses) loaded into memory!`);
+    console.log(`All 12 Cantos (${this.allSlokas.length.toLocaleString()} verses) loaded directly from JSON!`);
   }
 
-  // Fast verse lookup (memory first, fallback to DB)
+  // Fast verse lookup (memory first, dynamic JSON fetch if needed)
   async getSlokaData(verseKey) {
     if (!verseKey) return null;
     const cleanKey = verseKey.trim();
     if (this.verseMap.has(cleanKey)) {
       return this.verseMap.get(cleanKey);
     }
-    if (window.vdb && window.vdb.db) {
-      try {
-        const dbSloka = await window.vdb.getSlokaByVerseKey(cleanKey);
-        if (dbSloka) {
-          this.verseMap.set(cleanKey, dbSloka);
-          return dbSloka;
+    const parts = cleanKey.split('.');
+    if (parts.length >= 1) {
+      const c = parseInt(parts[0], 10);
+      if (!isNaN(c) && c >= 1 && c <= 12) {
+        await this.ensureCantoLoaded(c);
+        if (this.verseMap.has(cleanKey)) {
+          return this.verseMap.get(cleanKey);
         }
-      } catch (e) {}
+      }
     }
     return null;
   }
 
-  // Fast chapter verses lookup (memory first, fallback to DB)
+  // Fast chapter verses lookup (direct memory / JSON)
   async getChapterVerses(canto, chapter) {
-    const chKey = `${Number(canto)}-${Number(chapter)}`;
+    const cNum = Number(canto);
+    const chNum = Number(chapter);
+    const chKey = `${cNum}-${chNum}`;
+    if (!this.loadedCantos.has(cNum)) {
+      await this.ensureCantoLoaded(cNum);
+    }
     if (this.chapterMap.has(chKey) && this.chapterMap.get(chKey).length > 0) {
       return this.chapterMap.get(chKey);
-    }
-    if (window.vdb && window.vdb.db) {
-      try {
-        const dbVerses = await window.vdb.getSlokasByChapter(canto, chapter);
-        if (dbVerses && dbVerses.length > 0) {
-          this.chapterMap.set(chKey, dbVerses);
-          return dbVerses;
-        }
-      } catch (e) {}
     }
     return [];
   }
 
-  // Initialize Application (Instant DB/Memory Load with 100% Edit Persistence)
+  // Initialize Application (Direct JSON Loading - Zero Heavy DB Overhead)
   async init() {
-    console.log('Initializing Vedabase (Cantos 1 to 12 Complete - 14,090 Verses)...');
-    this.setupTheme();
-    this.bindEvents();
+    console.log('Initializing Vedabase (Direct JSON Architecture)...');
 
-    try {
-      await window.vdb.init();
-      // 1. Check if DB has stored slokas (which contains all edits and custom entries)
-      const dbSlokas = await window.vdb.getAllSlokas();
-      if (dbSlokas && dbSlokas.length > 0) {
-        console.log(`Loaded ${dbSlokas.length} slokas directly from IndexedDB.`);
-        this.buildMemoryMap(dbSlokas);
-        for (let c = 1; c <= 12; c++) {
-          if (dbSlokas.some(s => Number(s.canto) === c)) {
-            this.loadedCantos.add(c);
-          }
-        }
-      } else {
-        // First run only: load seed slokas
-        if (window.SEED_SLOKAS && window.SEED_SLOKAS.length > 0) {
-          this.buildMemoryMap(window.SEED_SLOKAS);
-          this.loadedCantos.add(1);
-          await window.vdb.bulkSaveSlokas(window.SEED_SLOKAS);
-        }
-      }
-    } catch (err) {
-      console.warn('Database initialization fallback:', err);
-      if (window.SEED_SLOKAS && window.SEED_SLOKAS.length > 0) {
-        this.buildMemoryMap(window.SEED_SLOKAS);
-        this.loadedCantos.add(1);
-      }
+    // Auto-clean any stale custom edits so all data is strictly loaded from original JSON files
+    if (!localStorage.getItem('vedabase_v3_clean_json_synced')) {
+      localStorage.removeItem('vedabase_user_custom_edits');
+      localStorage.setItem('vedabase_v3_clean_json_synced', 'true');
     }
 
-    // 2. Render Sidebar & Initial Verse IMMEDIATELY
+    this.setupTheme();
+    this.bindEvents();
     this.renderSidebar();
 
+    // 1. Determine initial verse (from localStorage or default 1.1.1)
     let initialVerseKey = '1.1.1';
     try {
-      const savedKey = await window.vdb.getSetting('lastVerseKey', '1.1.1');
+      const savedKey = localStorage.getItem('vedabase_last_verse');
       if (savedKey) initialVerseKey = savedKey;
     } catch (e) {}
 
+    // 2. Load the initial verse directly from JSON and render immediately
     await this.loadVerseByKey(initialVerseKey);
 
-    // 3. Build search index
-    setTimeout(() => {
-      try {
-        if (window.searchEngine && this.allSlokas.length > 0) {
-          window.searchEngine.buildIndex(this.allSlokas);
-        }
-      } catch (err) {
-        console.warn('Search index build notice:', err);
-      }
-    }, 50);
-
-    // 4. Background preload for any unpopulated cantos
+    // 3. Preload all remaining Cantos (1-12) from JSON in background for instant search across all 18,000 verses
     setTimeout(() => {
       this.preloadAllCantosInBackground();
-    }, 150);
+    }, 100);
   }
 
-  // Reload data from DB and update In-Memory Search Engine
+  // Rebuild and update In-Memory Search Engine
   async reloadAllSlokasAndIndex() {
-    try {
-      if (window.vdb && window.vdb.db) {
-        const dbSlokas = await window.vdb.getAllSlokas();
-        if (dbSlokas && dbSlokas.length > 0) {
-          this.buildMemoryMap(dbSlokas);
-        }
-      }
-    } catch (e) {}
-    
     if (window.searchEngine) {
       window.searchEngine.buildIndex(this.allSlokas);
     }
@@ -592,7 +628,9 @@ class VedabaseApp {
   // Display a Sloka in the main reader area (English Numbering)
   async displaySloka(sloka) {
     this.currentSloka = sloka;
-    window.vdb.setSetting('lastVerseKey', sloka.verseKey);
+    try {
+      localStorage.setItem('vedabase_last_verse', sloka.verseKey);
+    } catch (e) {}
 
     // 1. Badges & Titles
     const keyBadge = document.getElementById('currentVerseKeyBadge');
@@ -819,23 +857,33 @@ class VedabaseApp {
   }
 
   // Live Instant Search Execution (< 2ms)
-  executeSearch(query) {
+  async executeSearch(query) {
     const list = document.getElementById('searchResultsList');
     const speedBadge = document.getElementById('searchSpeedBadge');
     if (!list) return;
 
-    const res = window.searchEngine.search(query);
+    const trimmed = (query || '').trim();
+
+    // If search query is a verse reference (e.g. 1.2.3 or 10.14.8), ensure that canto is loaded
+    if (window.searchEngine) {
+      const ref = window.searchEngine.parseReferenceQuery(trimmed);
+      if (ref && ref.canto && !this.loadedCantos.has(ref.canto)) {
+        await this.ensureCantoLoaded(ref.canto);
+      }
+    }
+
+    const res = window.searchEngine ? window.searchEngine.search(trimmed) : { results: [], timeMs: 0 };
 
     if (speedBadge) {
       speedBadge.textContent = `${res.timeMs} ms`;
     }
 
-    if (res.results.length === 0) {
-      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">'${query || ''}' के लिए कोई श्लोक नहीं मिला।</div>`;
+    if (!res.results || res.results.length === 0) {
+      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">'${this.escapeHtml(trimmed || '')}' के लिए कोई श्लोक नहीं मिला।</div>`;
       return;
     }
 
-    const highlightWord = query ? query.trim() : '';
+    const highlightWord = trimmed;
 
     list.innerHTML = res.results.map(s => {
       const sanskritFirstLine = this.cleanSanskritText(s.sanskritDevanagari || '').split('\n')[0];
@@ -1168,11 +1216,11 @@ class VedabaseApp {
   async exportJSONBackup() {
     this.showToast('⏳ बैकअप तैयार किया जा रहा है...');
 
-    let slokas = await window.vdb.getAllSlokas();
-    if (!slokas || slokas.length === 0) {
-      slokas = this.allSlokas || [];
+    for (let c = 1; c <= 12; c++) {
+      await this.ensureCantoLoaded(c);
     }
 
+    let slokas = this.allSlokas || [];
     if (slokas.length === 0) {
       this.showToast('डेटाबेस में कोई श्लोक नहीं है।');
       return;
@@ -1232,11 +1280,6 @@ class VedabaseApp {
 
     // Get all verses for this canto
     let slokas = this.allSlokas.filter(s => Number(s.canto) === cNum);
-    if (!slokas || slokas.length === 0) {
-      if (window.vdb && window.vdb.db) {
-        slokas = await window.vdb.getSlokasByCanto(cNum);
-      }
-    }
 
     if (!slokas || slokas.length === 0) {
       this.showToast(`स्कन्ध ${cNum} में कोई श्लोक नहीं मिला।`);
@@ -1452,8 +1495,6 @@ class VedabaseApp {
 
         if (slokas.length > 0) {
           if (progressEl) progressEl.textContent = `⏳ ${slokas.length} श्लोक आयात हो रहे हैं...`;
-          await window.vdb.clearAllSlokas();
-          await window.vdb.bulkSaveSlokas(slokas);
           this.buildMemoryMap(slokas);
           for (let c = 1; c <= 12; c++) this.loadedCantos.add(c);
 
@@ -1615,6 +1656,12 @@ class VedabaseApp {
     // Sloka Card Tools
     document.getElementById('btnCopyVerse')?.addEventListener('click', () => this.copyFormattedVerse());
     document.getElementById('btnEditCurrentVerse')?.addEventListener('click', () => this.openEditCurrentVerseModal());
+    document.getElementById('btnBadgeRevert')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.revertCurrentVerseToOriginal();
+    });
+    document.getElementById('btnRevertSingleVerse')?.addEventListener('click', () => this.revertCurrentVerseToOriginal());
+    document.getElementById('btnClearAllCustomEdits')?.addEventListener('click', () => this.clearAllCustomEdits());
 
     // Navigation Buttons
     document.getElementById('btnNextVerse')?.addEventListener('click', () => this.nextVerse());

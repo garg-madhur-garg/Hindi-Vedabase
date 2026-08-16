@@ -4,6 +4,6 @@ echo ===================================================
 echo    🕉️ हिन्दी वेदबेस (Hindi Vedabase) - 18,000 श्लोक
 echo ===================================================
 echo.
-echo Opening Hindi Vedabase in your default browser...
-start "" "%~dp0index.html"
-exit
+echo Starting local server and opening Hindi Vedabase...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0server.ps1"
+pause

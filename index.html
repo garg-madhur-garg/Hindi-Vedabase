@@ -105,7 +105,10 @@
         <div class="sloka-header">
           <div class="verse-badge-group">
             <span class="verse-key-badge" id="currentVerseKeyBadge">SB 1.1.1</span>
-            <span class="badge-user-edited" id="userEditedBadge" style="display: none;">✏️ सम्पादित (Custom Edited)</span>
+            <span class="badge-user-edited" id="userEditedBadge" style="display: none;" title="यह श्लोक सम्पादित है">
+              <span>✏️ सम्पादित (Custom Edited)</span>
+              <button type="button" id="btnBadgeRevert" style="background: none; border: none; cursor: pointer; color: inherit; font-size: 0.9rem; margin-left: 0.25rem; display: inline-flex; align-items: center; padding: 0;" title="मूल JSON डेटा पर रीसेट करें (Revert to Original JSON)">↩️</button>
+            </span>
             <span class="chapter-title-text" id="currentChapterName">अध्याय 1 - शौनकादि ऋषियों के प्रश्न</span>
           </div>
 
@@ -259,6 +262,9 @@
               <button type="button" class="btn-action btn-presentation" id="btnExportCustomEdits" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
                 📥 केवल मेरे सम्पादित श्लोक डाउनलोड करें (.json)
               </button>
+              <button type="button" class="btn-action" id="btnClearAllCustomEdits" style="font-size: 0.9rem; padding: 0.55rem 1.15rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+                🗑️ सभी सम्पादित श्लोक रीसेट करें (Revert All to JSON)
+              </button>
             </div>
           </div>
 
@@ -387,9 +393,12 @@
           </div>
 
           <!-- Footer Action Buttons -->
-          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">
-            <button type="button" class="btn-action" style="background: var(--bg-tertiary); color: var(--text-secondary);" id="btnCancelEdit">रद्द करें</button>
-            <button type="submit" class="btn-action btn-primary" id="btnSaveEditedVerse">💾 सुरक्षित करें (Save Changes)</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap;">
+            <button type="button" class="btn-action" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 0.875rem;" id="btnRevertSingleVerse">↩️ मूल JSON डेटा रीसेट करें (Revert)</button>
+            <div style="display: flex; gap: 0.75rem;">
+              <button type="button" class="btn-action" style="background: var(--bg-tertiary); color: var(--text-secondary);" id="btnCancelEdit">रद्द करें</button>
+              <button type="submit" class="btn-action btn-primary" id="btnSaveEditedVerse">💾 सुरक्षित करें (Save Changes)</button>
+            </div>
           </div>
         </form>
       </div>
@@ -489,11 +498,9 @@
   <!-- Toast Alert Notifications Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- JavaScript Modules -->
-  <script src="js/db.js"></script>
-  <script src="js/search.js"></script>
-  <script src="js/sb-chapters-data.js"></script>
-  <script src="js/seed-data.js"></script>
-  <script src="js/app.js"></script>
+  <!-- JavaScript Modules (Direct JSON Architecture) -->
+  <script src="js/sb-chapters-data.js?v=3.2"></script>
+  <script src="js/search.js?v=3.2"></script>
+  <script src="js/app.js?v=3.2"></script>
 </body>
 </html>
