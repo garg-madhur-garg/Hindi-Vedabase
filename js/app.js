@@ -1,8 +1,7 @@
 /**
  * Hindi Vedabase - Main Application Controller (app.js)
- * High-performance state management, instant search rendering, keyboard shortcuts & UI flows
+ * High-performance state management, instant search rendering, presentation mode, sloka editing & backup
  * Fully integrated with Srimad Bhagavatam 12 Cantos & 335 Chapters (English Numbering)
- * Includes Full 18,000 Slokas Corpus Engine
  */
 
 function getCantoStructure() {
@@ -14,15 +13,14 @@ class VedabaseApp {
     this.currentSloka = null;
     this.currentCanto = 1;
     this.currentChapter = 1;
-    this.currentVerseIndex = 0;
     this.chapterSlokas = [];
     this.allSlokas = [];
     this.verseMap = new Map();
     this.chapterMap = new Map();
     this.loadedCantos = new Set();
     this.currentTheme = 'dark';
-    this.fontSizeMultiplier = 1;
-    this.parsedPendingSlokas = [];
+    this.currentHighlightWord = null;
+    this.highlightFadeTimer = null;
     this.isPreloading = false;
     this.isPresentationOpen = false;
     this.presFontScale = 1;
@@ -70,8 +68,6 @@ class VedabaseApp {
     if (window.searchEngine && window.searchEngine.isIndexed && newSlokas.length > 0) {
       window.searchEngine.appendIndex(newSlokas);
     }
-
-    this.updateCounters();
   }
 
   // Ensure a specific canto is loaded in memory
@@ -90,7 +86,7 @@ class VedabaseApp {
         }
       }
 
-      // 2. Only fetch from static JSON if NOT already in DB
+      // 2. Fetch from static JSON if NOT already in DB
       const resp = await fetch(`data/canto-${cNum}.json`);
       if (resp.ok) {
         const slokas = await resp.json();
@@ -199,7 +195,6 @@ class VedabaseApp {
 
     // 2. Render Sidebar & Initial Verse IMMEDIATELY
     this.renderSidebar();
-    this.updateCounters();
 
     let initialVerseKey = '1.1.1';
     try {
@@ -226,24 +221,6 @@ class VedabaseApp {
     }, 150);
   }
 
-  // Purge any legacy duplicate placeholder records
-  async purgeDummySlokas() {
-    try {
-      if (!window.vdb || !window.vdb.db) return;
-      const all = await window.vdb.getAllSlokas();
-      const dummyIds = all
-        .filter(s => s.sanskritDevanagari && s.sanskritDevanagari.includes('तस्माद् इदं भागवतं'))
-        .map(s => s.id);
-
-      if (dummyIds.length > 0) {
-        console.log(`Purging ${dummyIds.length} legacy dummy records...`);
-        await window.vdb.bulkDeleteSlokas(dummyIds);
-      }
-    } catch (e) {
-      console.warn('Purge notice:', e);
-    }
-  }
-
   // Reload data from DB and update In-Memory Search Engine
   async reloadAllSlokasAndIndex() {
     try {
@@ -258,30 +235,6 @@ class VedabaseApp {
     if (window.searchEngine) {
       window.searchEngine.buildIndex(this.allSlokas);
     }
-    this.updateCounters();
-    this.renderPopularSearchTags();
-  }
-
-  // Update total count badge (English Numbering)
-  updateCounters() {
-    const el = document.getElementById('totalSlokasCount');
-    if (el) {
-      el.textContent = `${this.allSlokas.length.toLocaleString()} श्लोक संगृहीत • समस्त 12 स्कन्ध (335 अध्याय)`;
-    }
-  }
-
-  // Render Popular Tags in Search Modal
-  renderPopularSearchTags() {
-    const container = document.getElementById('searchTagPills');
-    if (!container) return;
-
-    if (!window.searchEngine) return;
-    const tags = window.searchEngine.getAllTagsWithCount().slice(0, 10);
-    container.innerHTML = tags.map(t => `
-      <button class="tag-badge" onclick="window.app.triggerTagSearch('${t.tag}')">
-        #${t.tag} (${t.count})
-      </button>
-    `).join('');
   }
 
   // Render Sidebar Cantos and all 335 Chapters with authentic Hindi names (English Numbering)
@@ -354,7 +307,6 @@ class VedabaseApp {
     if (this.chapterSlokas.length > 0) {
       await this.displaySloka(this.chapterSlokas[0]);
     } else {
-      // Lookup authentic chapter name & total verses
       const cantos = getCantoStructure();
       const cantoObj = cantos.find(c => c.canto === this.currentCanto);
       const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
@@ -367,11 +319,11 @@ class VedabaseApp {
         chapter: chapter,
         verse: 1,
         verseKey: `${canto}.${chapter}.1`,
-        sanskritDevanagari: `इस श्लोक (SB ${canto}.${chapter}.1) का मूल संस्कृत पाठ जोड़ने हेतु ऊपर '📥' बटन दबाकर PDF से पेस्ट करें।`,
+        sanskritDevanagari: `श्लोक लोड हो रहा है...`,
         sanskritIAST: '',
         wordToWord: [],
-        hindiTranslation: `यह ${cantoObj?.name || `स्कन्ध ${canto}`}, ${chapterTitle} का श्लोक 1 है। (इस अध्याय में कुल ${totalV} श्लोक हैं)।\n\nआप ऊपर '📥' बटन पर क्लिक करके अपने PDF से इस अध्याय के श्लोक तुरंत आयात कर सकते हैं या '✍️ नया श्लोक लिखें' द्वारा जोड़ सकते हैं।`,
-        hindiPurport: `श्रील प्रभुपाद तात्पर्य: श्रीमद्भागवतम् के इस अध्याय का अध्ययन करने हेतु आप अपने PDF या ग्रन्थ से श्लोक यहाँ सीधे सहेज सकते हैं।`,
+        hindiTranslation: `यह ${cantoObj?.name || `स्कन्ध ${canto}`}, ${chapterTitle} का श्लोक 1 है। (कुल ${totalV} श्लोक)।`,
+        hindiPurport: ``,
         category: {
           book: "श्रीमद्भागवतम्",
           cantoTitleHindi: cantoObj?.name || `स्कन्ध ${canto}`,
@@ -385,7 +337,7 @@ class VedabaseApp {
     this.highlightActiveSidebar();
   }
 
-  // Highlight helpers for keyword search and concordance
+  // Highlight helpers for keyword search
   highlightInText(text, keyword) {
     if (!text) return '';
     const safeText = this.escapeHtml(text);
@@ -463,11 +415,11 @@ class VedabaseApp {
             chapter: ch,
             verse: v,
             verseKey: `${c}.${ch}.${v}`,
-            sanskritDevanagari: `इस श्लोक (SB ${c}.${ch}.${v}) का मूल संस्कृत पाठ जोड़ने हेतु ऊपर '📥' बटन दबाकर PDF से पेस्ट करें।`,
+            sanskritDevanagari: `श्लोक लोड हो रहा है...`,
             sanskritIAST: '',
             wordToWord: [],
-            hindiTranslation: `यह ${cantoObj?.name || `स्कन्ध ${c}`}, ${chapterTitle} का श्लोक ${v} है। (इस अध्याय में कुल ${totalV} श्लोक हैं)।\n\nआप ऊपर '📥' बटन पर क्लिक करके अपने PDF से इस अध्याय के श्लोक तुरंत आयात कर सकते हैं या '✍️ नया श्लोक लिखें' द्वारा जोड़ सकते हैं।`,
-            hindiPurport: `श्रील प्रभुपाद तात्पर्य: श्रीमद्भागवतम् के इस अध्याय का अध्ययन करने हेतु आप अपने PDF या ग्रन्थ से श्लोक यहाँ सीधे सहेज सकते हैं।`,
+            hindiTranslation: `यह ${cantoObj?.name || `स्कन्ध ${c}`}, ${chapterTitle} का श्लोक ${v} है। (कुल ${totalV} श्लोक)।`,
+            hindiPurport: ``,
             category: {
               book: "श्रीमद्भागवतम्",
               cantoTitleHindi: cantoObj?.name || `स्कन्ध ${c}`,
@@ -507,12 +459,7 @@ class VedabaseApp {
     this.currentSloka = sloka;
     window.vdb.setSetting('lastVerseKey', sloka.verseKey);
 
-    // 1. Breadcrumbs & Badges
-    const breadcrumb = document.getElementById('breadcrumbText');
-    if (breadcrumb) {
-      breadcrumb.textContent = `स्कन्ध ${sloka.canto} • अध्याय ${sloka.chapter} • श्लोक ${sloka.verse}`;
-    }
-
+    // 1. Badges & Titles
     const keyBadge = document.getElementById('currentVerseKeyBadge');
     if (keyBadge) keyBadge.textContent = `SB ${sloka.verseKey}`;
 
@@ -579,7 +526,7 @@ class VedabaseApp {
     // 7. Update Counter & Navigation status
     this.updateNavCounter();
 
-    // 9. Update Presentation Slide if open
+    // 8. Update Presentation Slide if open
     if (this.isPresentationOpen) {
       this.renderPresentationSlide();
     }
@@ -693,28 +640,6 @@ class VedabaseApp {
     }
   }
 
-  // Load Complete 18,000 Slokas Database (Offline)
-  async loadFull18kCorpus() {
-    const progressEl = document.getElementById('corpusLoadProgress');
-    if (progressEl) progressEl.textContent = '18,000 श्लोक तैयार किए जा रहे हैं...';
-
-    const fullCorpus = window.SBCorpusGenerator.generateFullCorpus((curr, total) => {
-      if (progressEl) progressEl.textContent = `श्लोक तैयार हो रहे हैं: ${curr.toLocaleString()} / ${total.toLocaleString()}`;
-    });
-
-    if (progressEl) progressEl.textContent = `डेटाबेस में सुरक्षित हो रहे हैं...`;
-
-    await window.vdb.bulkSaveSlokas(fullCorpus, (count, total) => {
-      if (progressEl) progressEl.textContent = `सहेजे जा रहे हैं: ${count.toLocaleString()} / ${total.toLocaleString()}`;
-    });
-
-    await this.reloadAllSlokasAndIndex();
-
-    if (progressEl) progressEl.textContent = `✅ समस्त 18,000 श्लोक सफलतापूर्वक लोड हो गए!`;
-    this.showToast(`🚀 समस्त 18,000 श्लोक डेटाबेस में लोड हो गए!`);
-    await this.loadVerseByKey(this.currentSloka?.verseKey || '1.1.1');
-  }
-
   // Directly search any Sanskrit / Hindi word in the global Search Dialog Modal
   searchWordDirectly(sanskritWord) {
     if (!sanskritWord) return;
@@ -734,10 +659,6 @@ class VedabaseApp {
     this.executeSearch(cleanWord);
   }
 
-  openWordConcordance(sanskritWord) {
-    this.searchWordDirectly(sanskritWord);
-  }
-
   // Copy formatted verse for WhatsApp / Notes
   copyFormattedVerse() {
     if (!this.currentSloka) return;
@@ -748,8 +669,7 @@ class VedabaseApp {
       `📜 *संस्कृत श्लोक:*\n${s.sanskritDevanagari}\n\n` +
       (wordMeaningsText ? `✨ *शब्दार्थ:*\n${wordMeaningsText}\n\n` : '') +
       `📖 *अनुवाद:*\n${s.hindiTranslation}\n\n` +
-      (s.hindiPurport ? `🪔 *तात्पर्य:*\n${s.hindiPurport.substring(0, 400)}...\n\n` : '') +
-      `— *हिन्दी वेदबेस* (https://vedabase.hindi)`;
+      (s.hindiPurport ? `🪔 *तात्पर्य:*\n${s.hindiPurport.substring(0, 400)}...\n\n` : '');
 
     navigator.clipboard.writeText(formatted).then(() => {
       this.showToast('📋 श्लोक क्लिपबोर्ड में कॉपी हो गया!');
@@ -759,19 +679,19 @@ class VedabaseApp {
   }
 
   // Live Instant Search Execution (< 2ms)
-  executeSearch(query, tag = null) {
+  executeSearch(query) {
     const list = document.getElementById('searchResultsList');
     const speedBadge = document.getElementById('searchSpeedBadge');
     if (!list) return;
 
-    const res = window.searchEngine.search(query, tag);
+    const res = window.searchEngine.search(query);
 
     if (speedBadge) {
       speedBadge.textContent = `${res.timeMs} ms`;
     }
 
     if (res.results.length === 0) {
-      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">'${query || tag}' के लिए कोई श्लोक नहीं मिला।</div>`;
+      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">'${query || ''}' के लिए कोई श्लोक नहीं मिला।</div>`;
       return;
     }
 
@@ -792,14 +712,6 @@ class VedabaseApp {
     }).join('');
   }
 
-  triggerTagSearch(tag) {
-    this.closeAllModals();
-    this.openModal('searchModal');
-    const input = document.getElementById('modalSearchInput');
-    if (input) input.value = '';
-    this.executeSearch('', tag);
-  }
-
   selectVerseFromSearch(verseKey, highlightWord = null) {
     this.closeAllModals();
     this.loadVerseByKey(verseKey, highlightWord);
@@ -807,8 +719,6 @@ class VedabaseApp {
 
   // =========================================================================
   // PRESENTATION / SLIDE SHOW MODE CONTROLLER
-  // =========================================================================
-  // PRESENTATION MODE (Full-Screen Slide Projection with Floating Hamburger)
   // =========================================================================
 
   openPresentationMode() {
@@ -993,10 +903,9 @@ class VedabaseApp {
     // Trigger auto fade of search highlight
     this.triggerHighlightFadeTimer();
 
-    // Reset slide scroll position to top and start auto-hide timer
+    // Reset slide scroll position to top
     const stage = document.getElementById('presentationStage');
     if (stage) stage.scrollTop = 0;
-    this.resetPresHeaderTimer();
   }
 
   // Theme Management (Dark / Light / Sepia)
@@ -1020,103 +929,6 @@ class VedabaseApp {
     const themes = ['dark', 'light', 'sepia'];
     const nextIdx = (themes.indexOf(this.currentTheme) + 1) % themes.length;
     this.setTheme(themes[nextIdx]);
-  }
-
-  // Smart PDF Parser Preview & Save
-  previewParsedText() {
-    const rawText = document.getElementById('importRawText').value;
-    const defaultCanto = parseInt(document.getElementById('importCanto').value, 10) || 1;
-    const defaultChapter = parseInt(document.getElementById('importChapter').value, 10) || 1;
-
-    if (!rawText.trim()) {
-      this.showToast('कृपया पहले टेक्स्ट पेस्ट करें।');
-      return;
-    }
-
-    const parsed = window.vParser.parseRawText(rawText, defaultCanto, defaultChapter);
-    this.parsedPendingSlokas = parsed;
-
-    const previewArea = document.getElementById('parsePreviewArea');
-    const previewBadge = document.getElementById('previewCountBadge');
-    const previewContent = document.getElementById('previewCardContent');
-
-    if (!parsed || parsed.length === 0) {
-      this.showToast('टेक्स्ट में श्लोक प्रारूप नहीं पहचाना जा सका।');
-      return;
-    }
-
-    previewBadge.textContent = `सफलतापूर्वक पहचाने गए श्लोक: ${parsed.length}`;
-    previewContent.innerHTML = parsed.map((p, idx) => `
-      <div style="background: var(--bg-card); padding: 0.85rem; border-radius: 8px; margin-bottom: 0.75rem; border: 1px solid var(--border-color);">
-        <div style="font-weight: 700; color: var(--accent-gold);">श्लोक ${idx + 1}: SB ${p.verseKey}</div>
-        <div style="font-family: var(--font-sanskrit); color: var(--accent-gold-light); margin: 0.35rem 0;">${p.sanskritDevanagari.split('\n').join(' | ')}</div>
-        <div style="font-size: 0.8rem; color: var(--accent-saffron);"><b>शब्दार्थ (${p.wordToWord.length} पद):</b> ${p.wordToWord.map(w => `${w.sanskrit}=${w.hindi}`).join(', ')}</div>
-        <div style="margin-top: 0.35rem; color: var(--text-primary);"><b>अनुवाद:</b> ${p.hindiTranslation}</div>
-        ${p.hindiPurport ? `<div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;"><b>तात्पर्य:</b> ${p.hindiPurport.substring(0, 150)}...</div>` : ''}
-      </div>
-    `).join('');
-
-    previewArea.style.display = 'block';
-  }
-
-  async saveParsedSlokas() {
-    if (!this.parsedPendingSlokas || this.parsedPendingSlokas.length === 0) return;
-
-    await window.vdb.bulkSaveSlokas(this.parsedPendingSlokas);
-    await this.reloadAllSlokasAndIndex();
-
-    this.showToast(`✅ ${this.parsedPendingSlokas.length} श्लोक वेदबेस में सुरक्षित हो गए!`);
-    
-    // Jump to the first imported sloka
-    const firstKey = this.parsedPendingSlokas[0].verseKey;
-    this.closeAllModals();
-    await this.loadVerseByKey(firstKey);
-  }
-
-  // Save Manual Verse Form
-  async saveManualVerse(event) {
-    event.preventDefault();
-    const canto = parseInt(document.getElementById('manualCanto').value, 10);
-    const chapter = parseInt(document.getElementById('manualChapter').value, 10);
-    const verse = document.getElementById('manualVerse').value.trim();
-    const sanskrit = document.getElementById('manualSanskrit').value.trim();
-    const wordMeaningsRaw = document.getElementById('manualWordMeanings').value.trim();
-    const translation = document.getElementById('manualTranslation').value.trim();
-    const purport = document.getElementById('manualPurport').value.trim();
-    const tagsRaw = document.getElementById('manualTags').value.trim();
-
-    const wordToWord = window.vParser.parseWordToWordPairs(wordMeaningsRaw);
-    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : window.vParser.autoGenerateTags(`${sanskrit} ${translation}`);
-
-    const cantos = getCantoStructure();
-    const cantoObj = cantos.find(c => c.canto === canto);
-    const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === chapter);
-
-    const sloka = {
-      id: `sb-${canto}-${chapter}-${verse}`,
-      canto,
-      chapter,
-      verse,
-      verseKey: `${canto}.${chapter}.${verse}`,
-      sanskritDevanagari: sanskrit,
-      sanskritIAST: '',
-      wordToWord,
-      hindiTranslation: translation,
-      hindiPurport: purport,
-      category: {
-        book: "श्रीमद्भागवतम्",
-        cantoTitleHindi: cantoObj?.name || `स्कन्ध ${canto}`,
-        chapterTitleHindi: chapterObj ? `अध्याय ${chapter} - ${chapterObj.name}` : `अध्याय ${chapter}`
-      },
-      tags
-    };
-
-    await window.vdb.saveSloka(sloka);
-    await this.reloadAllSlokasAndIndex();
-
-    this.showToast(`✅ श्लोक SB ${sloka.verseKey} सुरक्षित हुआ!`);
-    this.closeAllModals();
-    await this.loadVerseByKey(sloka.verseKey);
   }
 
   // Open Edit Modal for the current verse
@@ -1451,9 +1263,6 @@ class VedabaseApp {
             window.searchEngine.buildIndex(slokas);
           }
 
-          const countEl = document.getElementById('totalSlokasCount');
-          if (countEl) countEl.textContent = `${slokas.length.toLocaleString('en-IN')} श्लोक संगृहीत • समस्त 12 स्कन्ध (335 अध्याय)`;
-
           if (progressEl) progressEl.textContent = `✅ ${slokas.length} श्लोक सफलतापूर्वक रीस्टोर हुए!`;
           this.showToast(`✅ ${slokas.length} श्लोक JSON से सफलतापूर्वक रीस्टोर हुए!`);
           this.closeAllModals();
@@ -1468,26 +1277,6 @@ class VedabaseApp {
       }
     };
     reader.readAsText(file);
-  }
-
-  // Reset to default seed data
-  async resetDefaultData() {
-    if (confirm('क्या आप सुनिश्चित हैं? यह वर्तमान डेटाबेस को रीसेट कर देगा।')) {
-      await window.vdb.clearAllSlokas();
-      this.loadedCantos.clear();
-      this.allSlokas = [];
-      if (window.SEED_SLOKAS) {
-        this.buildMemoryMap(window.SEED_SLOKAS);
-        this.loadedCantos.add(1);
-        await window.vdb.bulkSaveSlokas(window.SEED_SLOKAS);
-      }
-      await window.vdb.setSetting('dataset_version', 'cantos-1-12-v1');
-      await window.vdb.setSetting('lastVerseKey', '1.1.1');
-      this.showToast('🔄 समस्त 12 स्कन्ध डिफ़ॉल्ट डेटा रीसेट हुआ!');
-      this.closeAllModals();
-      await this.loadVerseByKey('1.1.1');
-      this.preloadAllCantosInBackground();
-    }
   }
 
   // Helper to format prose into clean paragraphs (<p class="para-block">) and quotes
@@ -1556,7 +1345,7 @@ class VedabaseApp {
 
   // Bind all event listeners & keyboard shortcuts
   bindEvents() {
-    // Quick Search Buttons & Shortcuts
+    // Quick Search Button & Shortcuts
     const btnOpenSearch = document.getElementById('btnOpenSearch');
     if (btnOpenSearch) {
       btnOpenSearch.addEventListener('click', () => {
@@ -1581,7 +1370,7 @@ class VedabaseApp {
           // 1. Direct verse number match (e.g. "1.1.1", "10.2.4")
           const verseMatch = query.replace(/^SB\s*/i, '').match(/^(\d{1,2})\.(\d{1,3})\.(\d{1,3})$/);
           if (verseMatch) {
-            const verseKey = `${parseInt(verseMatch[1])}.${parseInt(verseMatch[2])}.${parseInt(verseMatch[3])}`;
+            const verseKey = `${parseInt(verseMatch[1], 10)}.${parseInt(verseMatch[2], 10)}.${parseInt(verseMatch[3], 10)}`;
             this.selectVerseFromSearch(verseKey);
             return;
           }
@@ -1591,19 +1380,6 @@ class VedabaseApp {
           if (res.results && res.results.length > 0) {
             this.selectVerseFromSearch(res.results[0].verseKey, query);
           }
-        }
-      });
-    }
-
-    // Quick Jump Form in Breadcrumbs Bar
-    const quickJumpForm = document.getElementById('quickJumpForm');
-    if (quickJumpForm) {
-      quickJumpForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = document.getElementById('quickJumpInput');
-        if (input && input.value.trim()) {
-          this.loadVerseByKey(input.value.trim());
-          input.value = '';
         }
       });
     }
@@ -1648,7 +1424,6 @@ class VedabaseApp {
 
     // Modal Close Buttons
     document.getElementById('btnCloseSearch')?.addEventListener('click', () => this.closeAllModals());
-    document.getElementById('btnCloseConcordance')?.addEventListener('click', () => this.closeAllModals());
     document.getElementById('btnCloseManager')?.addEventListener('click', () => this.closeAllModals());
     document.getElementById('btnCloseEditModal')?.addEventListener('click', () => this.closeAllModals());
     document.getElementById('btnCancelEdit')?.addEventListener('click', () => this.closeAllModals());
@@ -1659,99 +1434,9 @@ class VedabaseApp {
       this.saveEditedVerse();
     });
 
-    // Modal Tabs Navigation
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const targetTab = e.target.getAttribute('data-tab');
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        e.target.classList.add('active');
-        document.getElementById(targetTab)?.classList.add('active');
-      });
-    });
-
-    // JSON Chapter File Selection
-    const chapterJsonInput = document.getElementById('importChapterJsonFile');
-    const jsonProgress = document.getElementById('jsonImportProgress');
-
-    document.getElementById('btnSelectChapterJson')?.addEventListener('click', () => {
-      chapterJsonInput?.click();
-    });
-
-    chapterJsonInput?.addEventListener('change', async (e) => {
-      const files = Array.from(e.target.files);
-      if (files.length === 0) return;
-
-      let totalImported = 0;
-      let firstVerseKey = null;
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (jsonProgress) jsonProgress.textContent = `[${i + 1}/${files.length}] ${file.name} पढ़ी जा रही है...`;
-        try {
-          const text = await file.text();
-          const raw = JSON.parse(text);
-          const slokas = this.normalizeJsonToSlokas(raw);
-          if (slokas.length > 0) {
-            await window.vdb.bulkSaveSlokas(slokas);
-            totalImported += slokas.length;
-            if (!firstVerseKey) firstVerseKey = slokas[0].verseKey;
-          }
-        } catch (err) {
-          console.error(`Error importing ${file.name}:`, err);
-        }
-      }
-
-      await this.reloadAllSlokasAndIndex();
-      if (jsonProgress) jsonProgress.textContent = `✅ ${totalImported} श्लोक सफलतापूर्वक लोड हुए!`;
-      this.showToast(`✅ ${totalImported} श्लोक JSON से सुरक्षित हो गए!`);
-      if (firstVerseKey) {
-        this.closeAllModals();
-        await this.loadVerseByKey(firstVerseKey);
-      }
-    });
-
-    // Paste JSON Raw Text Button
-    document.getElementById('btnLoadJsonRaw')?.addEventListener('click', async () => {
-      const rawText = document.getElementById('importJsonRawText')?.value.trim();
-      if (!rawText) {
-        this.showToast('कृपया पहले JSON टेक्स्ट पेस्ट करें।');
-        return;
-      }
-
-      try {
-        const parsed = JSON.parse(rawText);
-        const slokas = this.normalizeJsonToSlokas(parsed);
-        if (slokas.length > 0) {
-          await window.vdb.bulkSaveSlokas(slokas);
-          await this.reloadAllSlokasAndIndex();
-          this.showToast(`✅ ${slokas.length} श्लोक JSON से लोड हुए!`);
-          this.closeAllModals();
-          await this.loadVerseByKey(slokas[0].verseKey);
-        } else {
-          this.showToast('JSON में कोई श्लोक नहीं मिला।');
-        }
-      } catch (err) {
-        this.showToast('अमान्य JSON प्रारूप: ' + err.message);
-      }
-    });
-
-    document.getElementById('btnPreviewParse')?.addEventListener('click', () => this.previewParsedText());
-    document.getElementById('btnConfirmSaveImport')?.addEventListener('click', () => this.saveParsedSlokas());
-    document.getElementById('manualVerseForm')?.addEventListener('submit', (e) => this.saveManualVerse(e));
+    // Backup & Restore
     document.getElementById('btnExportJSON')?.addEventListener('click', () => this.exportJSONBackup());
     document.getElementById('importJSONFile')?.addEventListener('change', (e) => this.importJSONBackup(e.target.files[0]));
-    document.getElementById('btnResetSeedData')?.addEventListener('click', () => this.resetDefaultData());
-    document.getElementById('btnLoadFull18kCorpus')?.addEventListener('click', () => this.loadFull18kCorpus());
-
-    // Edit Current Sloka Bindings
-    document.getElementById('btnEditCurrentVerse')?.addEventListener('click', () => this.openEditModal());
-    document.getElementById('btnCloseEditModal')?.addEventListener('click', () => this.closeAllModals());
-    document.getElementById('btnCancelEdit')?.addEventListener('click', () => this.closeAllModals());
-    document.getElementById('editVerseForm')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.saveEditedVerse();
-    });
 
     // Global Keyboard Shortcuts
     window.addEventListener('keydown', (e) => {

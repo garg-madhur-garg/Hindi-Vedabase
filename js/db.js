@@ -6,7 +6,6 @@
 const DB_NAME = 'HindiVedabaseDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'slokas';
-const BOOKMARKS_STORE = 'bookmarks';
 const SETTINGS_STORE = 'settings';
 
 class VedabaseDB {
@@ -31,11 +30,6 @@ class VedabaseDB {
           slokaStore.createIndex('canto', 'canto', { unique: false });
           slokaStore.createIndex('canto_chapter', ['canto', 'chapter'], { unique: false });
           slokaStore.createIndex('tags', 'tags', { multiEntry: true, unique: false });
-        }
-
-        // Bookmarks Object Store
-        if (!db.objectStoreNames.contains(BOOKMARKS_STORE)) {
-          db.createObjectStore(BOOKMARKS_STORE, { keyPath: 'verseKey' });
         }
 
         // Settings Object Store
@@ -79,10 +73,6 @@ class VedabaseDB {
       req.onsuccess = () => resolve(req.result || 0);
       req.onerror = () => reject(req.error);
     });
-  }
-
-  async getSlokasCount() {
-    return this.getSlokaCount();
   }
 
   // Get single sloka by verseKey (e.g. "1.1.1")
@@ -228,47 +218,6 @@ class VedabaseDB {
       const store = tx.objectStore(STORE_NAME);
       const req = store.clear();
       req.onsuccess = () => resolve(true);
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  // Bookmarks Management
-  async toggleBookmark(verseKey, note = '') {
-    await this.init();
-    const isBookmarked = await this.isBookmarked(verseKey);
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction([BOOKMARKS_STORE], 'readwrite');
-      const store = tx.objectStore(BOOKMARKS_STORE);
-      if (isBookmarked) {
-        const req = store.delete(verseKey);
-        req.onsuccess = () => resolve(false);
-        req.onerror = () => reject(req.error);
-      } else {
-        const req = store.put({ verseKey, note, createdAt: new Date().toISOString() });
-        req.onsuccess = () => resolve(true);
-        req.onerror = () => reject(req.error);
-      }
-    });
-  }
-
-  async isBookmarked(verseKey) {
-    await this.init();
-    return new Promise((resolve) => {
-      const tx = this.db.transaction([BOOKMARKS_STORE], 'readonly');
-      const store = tx.objectStore(BOOKMARKS_STORE);
-      const req = store.get(verseKey);
-      req.onsuccess = () => resolve(!!req.result);
-      req.onerror = () => resolve(false);
-    });
-  }
-
-  async getAllBookmarks() {
-    await this.init();
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction([BOOKMARKS_STORE], 'readonly');
-      const store = tx.objectStore(BOOKMARKS_STORE);
-      const req = store.getAll();
-      req.onsuccess = () => resolve(req.result || []);
       req.onerror = () => reject(req.error);
     });
   }

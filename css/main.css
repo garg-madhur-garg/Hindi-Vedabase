@@ -127,7 +127,7 @@ input, textarea, select {
 }
 
 /* ==========================================================================
-   Header & Navbar (Ultra-Premium Glassmorphism Design)
+   Header & Navbar (Glassmorphism Design)
    ========================================================================== */
 
 .app-header {
@@ -193,7 +193,7 @@ input, textarea, select {
 .logo-text {
   display: flex;
   align-items: center;
-  padding-top: 4px; /* Shifted down slightly so top Hindi matras are fully visible */
+  padding-top: 4px;
 }
 
 .logo-text h1 {
@@ -204,24 +204,12 @@ input, textarea, select {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 0.02em;
-  line-height: 1.35; /* Generous line height so top/bottom accents never get clipped */
+  line-height: 1.35;
   margin: 0;
   padding: 2px 0;
 }
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  padding: 0.12rem 0.55rem;
-  border-radius: 9999px;
-  font-size: 0.725rem;
-  font-weight: 600;
-}
 
-[data-theme="light"] .badge-live-count {
-  background: rgba(245, 158, 11, 0.12);
-  color: #b45309;
-  border-color: rgba(245, 158, 11, 0.35);
-}
-
-/* Unified Right Toolbar in Header */
+/* Header Action Controls */
 .header-actions {
   display: flex;
   align-items: center;
@@ -293,26 +281,17 @@ input, textarea, select {
   transition: all 0.2s ease;
 }
 
-.btn-presentation,
-.btn-audience {
+.btn-presentation {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(249, 115, 22, 0.2));
   color: var(--accent-gold);
   border: 1px solid rgba(245, 158, 11, 0.4);
   cursor: pointer;
 }
 
-.btn-presentation:hover,
-.btn-audience:hover {
+.btn-presentation:hover {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.35), rgba(249, 115, 22, 0.35));
   border-color: var(--accent-gold);
   color: var(--accent-gold-light);
-  transform: translateY(-1px);
-}
-
-.btn-audience:hover {
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-saffron));
-  color: #000;
-  box-shadow: var(--glow-gold);
   transform: translateY(-1px);
 }
 
@@ -541,81 +520,6 @@ input, textarea, select {
   flex-direction: column;
   gap: 1.5rem;
   min-width: 0;
-}
-
-/* Quick Jump & Breadcrumb Bar */
-.top-action-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  background: var(--bg-card);
-  padding: 0.85rem 1.25rem;
-  border-radius: 14px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--card-shadow);
-}
-
-.breadcrumb-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.breadcrumb-info .current-verse-title {
-  color: var(--accent-gold);
-  font-family: var(--font-devanagari);
-  font-size: 1.1rem;
-}
-
-.quick-jump-form {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.quick-jump-input {
-  width: 120px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  border-radius: 8px;
-  padding: 0.4rem 0.65rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-.quick-jump-input:focus {
-  border-color: var(--accent-gold);
-  outline: none;
-}
-
-.font-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0.2rem 0.4rem;
-}
-
-.btn-font {
-  padding: 0.2rem 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  border-radius: 4px;
-}
-
-.btn-font:hover {
-  background: var(--bg-tertiary);
-  color: var(--accent-gold);
 }
 
 /* Main Sloka Container Card */
@@ -851,35 +755,79 @@ input, textarea, select {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.22);
   padding: 0.35rem 0.75rem;
   border-radius: 8px;
-  font-size: 0.9rem;
-  transition: all 0.15s ease;
+  font-size: 0.925rem;
+  line-height: 1.4;
   cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
 }
 
 .word-chip:hover {
+  background: rgba(245, 158, 11, 0.18);
   border-color: var(--accent-gold);
-  background: rgba(245, 158, 11, 0.12);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
 }
 
-.chip-sanskrit {
-  font-family: var(--font-devanagari);
+.word-chip .chip-sanskrit {
+  font-family: var(--font-sanskrit);
   font-weight: 700;
   color: var(--accent-gold);
 }
 
-.chip-sep {
+.word-chip .chip-sep {
   color: var(--text-muted);
-  font-weight: 400;
+  font-size: 0.85rem;
 }
 
-.chip-hindi {
+.word-chip .chip-hindi {
   color: var(--text-primary);
-  font-weight: 500;
+  font-family: var(--font-devanagari);
+}
+
+[data-theme="light"] .word-chip {
+  background: #fdf8ee;
+  border: 1px solid #f1e3c8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .word-chip:hover {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+[data-theme="light"] .word-chip .chip-sanskrit {
+  color: #c2410c;
+  font-weight: 700;
+}
+
+[data-theme="light"] .word-chip .chip-hindi {
+  color: #334155;
+}
+
+[data-theme="sepia"] .word-chip {
+  background: #fbf5e8;
+  border: 1px solid #e7d8bd;
+}
+
+[data-theme="sepia"] .word-chip:hover {
+  background: #f4ebd5;
+  border-color: #d97706;
+}
+
+[data-theme="sepia"] .word-chip .chip-sanskrit {
+  color: #92400e;
+  font-weight: 700;
+}
+
+[data-theme="sepia"] .word-chip .chip-hindi {
+  color: #451a03;
 }
 
 /* Hindi Translation Section */
@@ -943,32 +891,6 @@ input, textarea, select {
   line-height: 1.9;
 }
 
-/* Tags Section */
-.tags-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag-badge {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  padding: 0.25rem 0.65rem;
-  border-radius: 9999px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  transition: all 0.15s ease;
-  cursor: pointer;
-}
-
-.tag-badge:hover {
-  background: rgba(245, 158, 11, 0.15);
-  color: var(--accent-gold);
-  border-color: rgba(245, 158, 11, 0.3);
-}
-
 /* Bottom Verse Navigation Bar */
 .sloka-navigation-bar {
   display: flex;
@@ -1027,7 +949,7 @@ input, textarea, select {
   overflow: hidden;
 }
 
-/* Subtle Floating Hamburger Trigger Button (Non-intrusive in Presentation Mode) */
+/* Subtle Floating Hamburger Trigger Button */
 .pres-hamburger-trigger {
   position: fixed;
   top: 16px;
@@ -1090,7 +1012,7 @@ input, textarea, select {
   color: #92400e;
 }
 
-/* Presentation Floating Glass Pill Header (Toggles on Hamburger Click) */
+/* Presentation Floating Glass Pill Header */
 .pres-header {
   position: fixed;
   top: 15px;
@@ -1283,7 +1205,7 @@ input, textarea, select {
   color: #fff;
 }
 
-/* Presentation Slide Stage (Takes 100% Full Screen Width and Height) */
+/* Presentation Slide Stage */
 .presentation-stage {
   position: absolute;
   inset: 0;
@@ -1297,8 +1219,6 @@ input, textarea, select {
   padding: 4.25rem 2rem 5rem 2rem;
   gap: 1.75rem;
   box-sizing: border-box;
-}
-  width: 100%;
 }
 
 .pres-sanskrit-box {
@@ -1329,7 +1249,7 @@ input, textarea, select {
   text-shadow: none;
 }
 
-/* Word to Word Meanings: Left-aligned and fully wrapping */
+/* Word to Word Meanings in Presentation */
 .pres-words-box {
   width: 100%;
   max-width: 1150px;
@@ -1354,86 +1274,6 @@ input, textarea, select {
   gap: 0.55rem;
   width: 100%;
   text-align: left;
-}
-
-/* Interactive Word-to-Word Meaning Chips (Warm parchment aesthetic) */
-.word-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.22);
-  padding: 0.35rem 0.75rem;
-  border-radius: 8px;
-  font-size: 0.925rem;
-  line-height: 1.4;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.word-chip:hover {
-  background: rgba(245, 158, 11, 0.18);
-  border-color: var(--accent-gold);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
-}
-
-.word-chip .chip-sanskrit {
-  font-family: var(--font-sanskrit);
-  font-weight: 700;
-  color: var(--accent-gold);
-}
-
-.word-chip .chip-sep {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-.word-chip .chip-hindi {
-  color: var(--text-primary);
-  font-family: var(--font-devanagari);
-}
-
-[data-theme="light"] .word-chip {
-  background: #fdf8ee;
-  border: 1px solid #f1e3c8;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-[data-theme="light"] .word-chip:hover {
-  background: #fef3c7;
-  border-color: #f59e0b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
-}
-
-[data-theme="light"] .word-chip .chip-sanskrit {
-  color: #c2410c;
-  font-weight: 700;
-}
-
-[data-theme="light"] .word-chip .chip-hindi {
-  color: #334155;
-}
-
-[data-theme="sepia"] .word-chip {
-  background: #fbf5e8;
-  border: 1px solid #e7d8bd;
-}
-
-[data-theme="sepia"] .word-chip:hover {
-  background: #f4ebd5;
-  border-color: #d97706;
-}
-
-[data-theme="sepia"] .word-chip .chip-sanskrit {
-  color: #92400e;
-  font-weight: 700;
-}
-
-[data-theme="sepia"] .word-chip .chip-hindi {
-  color: #451a03;
 }
 
 .pres-translation-box {
@@ -1465,31 +1305,7 @@ input, textarea, select {
   transition: font-size 0.2s ease;
 }
 
-/* Keyword & Concordance Search Highlight */
-.search-highlight {
-  background: rgba(245, 158, 11, 0.4);
-  color: inherit;
-  border-bottom: 2px solid var(--accent-gold);
-  border-radius: 4px;
-  padding: 0.1rem 0.35rem;
-  font-weight: 700;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
-  animation: highlightPulse 2.5s ease;
-}
-
-[data-theme="light"] .search-highlight {
-  background: rgba(251, 191, 36, 0.5);
-  border-bottom-color: #d97706;
-  color: #78350f;
-}
-
-@keyframes highlightPulse {
-  0% { background: rgba(249, 115, 22, 0.85); transform: scale(1.05); }
-  50% { background: rgba(245, 158, 11, 0.55); }
-  100% { background: rgba(245, 158, 11, 0.35); }
-}
-
-/* Purport Box: Full text shown in main stage */
+/* Purport Box in Presentation */
 .pres-purport-box {
   width: 100%;
   max-width: 1150px;
@@ -1516,129 +1332,35 @@ input, textarea, select {
   color: var(--text-primary);
 }
 
-/* Modal Overlay Layering */
-.modal-overlay {
-  z-index: 100020;
-}
-
 /* ==========================================================================
-   Edit Sloka Modal Styling
+   Search Highlights
    ========================================================================== */
-.edit-form-group {
-  margin-bottom: 1.25rem;
-}
 
-.edit-form-label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.875rem;
+.search-highlight {
+  background: rgba(245, 158, 11, 0.4);
+  color: inherit;
+  border-bottom: 2px solid var(--accent-gold);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
   font-weight: 700;
-  color: var(--accent-gold);
-  margin-bottom: 0.45rem;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+  animation: highlightPulse 2.5s ease;
 }
 
-.edit-meta-chips {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  margin-bottom: 1.25rem;
-  flex-wrap: wrap;
+[data-theme="light"] .search-highlight {
+  background: rgba(251, 191, 36, 0.5);
+  border-bottom-color: #d97706;
+  color: #78350f;
 }
 
-.edit-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  padding: 0.35rem 0.85rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.edit-chip-val {
-  color: var(--accent-saffron);
-  font-weight: 800;
-}
-
-.edit-textarea {
-  width: 100%;
-  background: var(--bg-secondary);
-  border: 1.5px solid var(--border-color);
-  border-radius: 12px;
-  padding: 0.85rem 1rem;
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  resize: vertical;
-  transition: all 0.2s ease;
-}
-
-.edit-textarea:focus {
-  outline: none;
-  border-color: var(--accent-saffron);
-  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
-  background: var(--bg-card);
-}
-
-.edit-textarea.sanskrit-field {
-  font-family: 'Rozha One', 'Tiro Devanagari Sanskrit', serif;
-  font-size: 1.15rem;
-  line-height: 1.9;
-  color: var(--accent-maroon);
-}
-
-[data-theme="dark"] .edit-textarea.sanskrit-field {
-  color: #fde047;
-}
-
-.edit-hint {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 0.35rem;
-}
-
-.edit-modal-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
-  margin-top: 1.25rem;
-}
-
-/* Audience Mode Exit Banner */
-.audience-banner {
-  display: none;
-  position: fixed;
-  top: 15px;
-  right: 20px;
-  z-index: 200;
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-saffron));
-  color: #000;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  font-weight: 700;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-}
-
-body.audience-mode .audience-banner {
-  display: block;
+@keyframes highlightPulse {
+  0% { background: rgba(249, 115, 22, 0.85); transform: scale(1.05); }
+  50% { background: rgba(245, 158, 11, 0.55); }
+  100% { background: rgba(245, 158, 11, 0.35); }
 }
 
 /* ==========================================================================
-   Modals (Search, Importer, Concordance, Bookmarks)
+   Modals (Search, Backup, Edit)
    ========================================================================== */
 
 .modal-overlay {
@@ -1661,8 +1383,7 @@ body.audience-mode .audience-banner {
   opacity: 1;
 }
 
-.modal-container,
-.modal-card {
+.modal-container {
   background: var(--bg-card) !important;
   border: 1.5px solid var(--border-color);
   border-radius: 20px;
@@ -1678,8 +1399,7 @@ body.audience-mode .audience-banner {
   z-index: 160;
 }
 
-[data-theme="light"] .modal-container,
-[data-theme="light"] .modal-card {
+[data-theme="light"] .modal-container {
   background: #ffffff !important;
   border-color: #cbd5e1;
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.25), 0 0 0 1px #e2e8f0;
@@ -1700,8 +1420,7 @@ body.audience-mode .audience-banner {
   flex-shrink: 0;
 }
 
-.modal-header h2,
-.modal-header .modal-title {
+.modal-header h2 {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--accent-gold);
@@ -1711,13 +1430,11 @@ body.audience-mode .audience-banner {
   margin: 0;
 }
 
-[data-theme="light"] .modal-header h2,
-[data-theme="light"] .modal-header .modal-title {
+[data-theme="light"] .modal-header h2 {
   color: #b45309;
 }
 
-.btn-close-modal,
-.modal-close-btn {
+.btn-close-modal {
   width: 34px;
   height: 34px;
   border-radius: 8px;
@@ -1732,8 +1449,7 @@ body.audience-mode .audience-banner {
   transition: all 0.15s ease;
 }
 
-.btn-close-modal:hover,
-.modal-close-btn:hover {
+.btn-close-modal:hover {
   color: #ffffff;
   background: #e11d48;
   border-color: #e11d48;
@@ -1787,36 +1503,6 @@ body.audience-mode .audience-banner {
 
 [data-theme="light"] .modal-body .search-input {
   color: #0f172a;
-}
-
-.search-tag-chip {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 9999px;
-  padding: 0.3rem 0.75rem;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.search-tag-chip:hover {
-  border-color: var(--accent-gold);
-  color: var(--accent-gold);
-  background: rgba(245, 158, 11, 0.1);
-  transform: translateY(-1px);
-}
-
-[data-theme="light"] .search-tag-chip {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #475569;
-}
-
-[data-theme="light"] .search-tag-chip:hover {
-  background: #fef3c7;
-  border-color: #f59e0b;
-  color: #b45309;
 }
 
 .search-results-list {
@@ -1907,91 +1593,80 @@ body.audience-mode .audience-banner {
   overflow: hidden;
 }
 
-/* Tabs inside Importer / Manager Modal */
-.modal-tabs {
+/* ==========================================================================
+   Edit Sloka Modal Styling
+   ========================================================================== */
+
+.edit-meta-chips {
   display: flex;
-  gap: 0.5rem;
-  border-bottom: 1px solid var(--border-color);
-  padding: 0 1.5rem;
-  background: var(--bg-tertiary);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
 }
 
-.tab-btn {
-  padding: 0.85rem 1.1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  border-bottom: 2px solid transparent;
+.edit-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  padding: 0.35rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.edit-chip-val {
+  color: var(--accent-saffron);
+  font-weight: 800;
+}
+
+.edit-textarea {
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  resize: vertical;
   transition: all 0.2s ease;
 }
 
-.tab-btn:hover {
-  color: var(--text-primary);
-}
-
-.tab-btn.active {
-  color: var(--accent-gold);
-  border-bottom-color: var(--accent-gold);
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-/* Form Controls in Modal */
-.form-group {
-  margin-bottom: 1.1rem;
-}
-
-.form-label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 0.4rem;
-}
-
-.form-input, .form-textarea, .form-select {
-  width: 100%;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 0.65rem 0.85rem;
-  color: var(--text-primary);
-  font-size: 0.95rem;
+.edit-textarea:focus {
   outline: none;
-  transition: border-color 0.2s ease;
+  border-color: var(--accent-saffron);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+  background: var(--bg-card);
 }
 
-.form-input:focus, .form-textarea:focus, .form-select:focus {
-  border-color: var(--accent-gold);
+.edit-textarea.sanskrit-field {
+  font-family: var(--font-sanskrit);
+  font-size: 1.15rem;
+  line-height: 1.9;
+  color: var(--accent-gold-light);
 }
 
-.form-textarea {
-  min-height: 90px;
-  resize: vertical;
+[data-theme="light"] .edit-textarea.sanskrit-field {
+  color: #9a3412;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
+[data-theme="sepia"] .edit-textarea.sanskrit-field {
+  color: #7c2d12;
 }
 
-/* Live Preview Box */
-.preview-box {
-  background: var(--bg-primary);
-  border: 1px dashed var(--border-color);
-  border-radius: 12px;
-  padding: 1rem;
-  margin-top: 1rem;
-}
+/* ==========================================================================
+   Toast Notifications
+   ========================================================================== */
 
-/* Toast Notifications */
 .toast-container {
   position: fixed;
   bottom: 24px;
