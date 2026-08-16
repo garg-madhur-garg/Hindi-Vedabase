@@ -6,9 +6,18 @@
   <title>हिन्दी वेदबेस | श्रीमद्भागवतम् - समस्त 12 स्कन्ध (श्रील प्रभुपाद)</title>
   <meta name="description" content="श्रीमद्भागवतम् समस्त 12 स्कन्ध - 14,090 प्रामाणिक श्लोक, पदच्छेद, शब्दार्थ, हिन्दी अनुवाद एवं श्रील प्रभुपाद तात्पर्य सहित उच्च-गति सर्च योग्य वेदबेस">
   
-  <!-- Main Stylesheet -->
+  <!-- Main Stylesheet & PWA Manifest -->
   <link rel="stylesheet" href="css/main.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b0f19">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕉️</text></svg>">
+  <script>
+    if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
 </head>
 <body>
 

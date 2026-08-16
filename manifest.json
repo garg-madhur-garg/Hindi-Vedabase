@@ -1,0 +1,16 @@
+{
+  "name": "हिन्दी वेदबेस - श्रीमद्भागवतम्",
+  "short_name": "वेदबेस",
+  "description": "श्रीमद्भागवतम् समस्त 12 स्कन्ध (14,090 श्लोक) - श्रील प्रभुपाद",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "icons": [
+    {
+      "src": "vedabase.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
