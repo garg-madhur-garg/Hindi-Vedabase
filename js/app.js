@@ -1156,7 +1156,7 @@ class VedabaseApp {
     this.openModal('editVerseModal');
   }
 
-  // Save changes from Edit Sloka Modal
+  // Save changes from Edit Sloka Modal (Direct Hard Disk JSON Update)
   async saveEditedVerse() {
     const verseKey = document.getElementById('editVerseKey').value;
     const canto = parseInt(document.getElementById('editCanto').value, 10);
@@ -1204,12 +1204,66 @@ class VedabaseApp {
       tags: this.currentSloka?.tags || [`स्कन्ध ${canto}`, `अध्याय ${chapter}`]
     };
 
-    await this.saveUserCustomEdit(sloka);
-    await this.reloadAllSlokasAndIndex();
+    // 1. Send update directly to server API to write into data/canto-X.json on disk
+    let diskSaved = false;
+    try {
+      const resp = await fetch('/api/save-verse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sloka)
+      });
+      if (resp.ok) {
+        const result = await resp.json();
+        if (result.success) {
+          diskSaved = true;
+        }
+      }
+    } catch (e) {
+      console.warn('Server direct file-save notice:', e);
+    }
 
-    this.showToast(`✅ श्लोक SB ${verseKey} स्थायी रूप से सुरक्षित (Saved Permanently)!`);
+    // 2. Update in-memory structures so change is instantly live
+    this.verseMap.set(sloka.verseKey, sloka);
+    this.verseMap.set(sloka.id, sloka);
+
+    const idx = this.allSlokas.findIndex(s => s.verseKey === sloka.verseKey);
+    if (idx >= 0) {
+      this.allSlokas[idx] = sloka;
+    } else {
+      this.allSlokas.push(sloka);
+    }
+
+    const chKey = `${sloka.canto}-${sloka.chapter}`;
+    if (this.chapterMap.has(chKey)) {
+      const chList = this.chapterMap.get(chKey);
+      const chIdx = chList.findIndex(s => s.verseKey === sloka.verseKey);
+      if (chIdx >= 0) {
+        chList[chIdx] = sloka;
+      } else {
+        chList.push(sloka);
+      }
+    }
+
+    if (window.searchEngine) {
+      window.searchEngine.appendIndex([sloka]);
+    }
+
+    // 3. Remove localStorage override if disk write was successful
+    if (diskSaved) {
+      const edits = this.getUserCustomEdits();
+      if (edits[verseKey]) {
+        delete edits[verseKey];
+        localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
+      }
+      this.updateCustomEditsCountBadge();
+      this.showToast(`💾 श्लोक SB ${verseKey} सीधे data/canto-${canto}.json फ़ाइल में सुरक्षित हो गया!`);
+    } else {
+      await this.saveUserCustomEdit(sloka);
+      this.showToast(`✅ श्लोक SB ${verseKey} सुरक्षित हुआ (Local Backup)`);
+    }
+
     this.closeAllModals();
-    await this.loadVerseByKey(verseKey);
+    await this.displaySloka(sloka);
   }
 
   // Export JSON Backup to Laptop (Includes all slokas in Master JSON format)
