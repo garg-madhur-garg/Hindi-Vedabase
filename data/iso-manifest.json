@@ -1,0 +1,28 @@
+{
+  "title": "श्री ईशोपनिषद् (Sri Isopanisad)",
+  "subtitle": "यजुर्वेदीय काण्व शाखा संहिता (अध्याय ४०)",
+  "totalMantras": 19,
+  "language": "Sanskrit & Hindi",
+  "commentary": "His Divine Grace A.C. Bhaktivedanta Swami Prabhupada",
+  "mantras": [
+    { "mantra": 0, "key": "inv", "name": "मंगलाचरण (Invocation)" },
+    { "mantra": 1, "key": "1", "name": "मंत्र १ (Mantra 1)" },
+    { "mantra": 2, "key": "2", "name": "मंत्र २ (Mantra 2)" },
+    { "mantra": 3, "key": "3", "name": "मंत्र ३ (Mantra 3)" },
+    { "mantra": 4, "key": "4", "name": "मंत्र ४ (Mantra 4)" },
+    { "mantra": 5, "key": "5", "name": "मंत्र ५ (Mantra 5)" },
+    { "mantra": 6, "key": "6", "name": "मंत्र ६ (Mantra 6)" },
+    { "mantra": 7, "key": "7", "name": "मंत्र ७ (Mantra 7)" },
+    { "mantra": 8, "key": "8", "name": "मंत्र ८ (Mantra 8)" },
+    { "mantra": 9, "key": "9", "name": "मंत्र ९ (Mantra 9)" },
+    { "mantra": 10, "key": "10", "name": "मंत्र १० (Mantra 10)" },
+    { "mantra": 11, "key": "11", "name": "मंत्र ११ (Mantra 11)" },
+    { "mantra": 12, "key": "12", "name": "मंत्र १२ (Mantra 12)" },
+    { "mantra": 13, "key": "13", "name": "मंत्र १३ (Mantra 13)" },
+    { "mantra": 14, "key": "14", "name": "मंत्र १४ (Mantra 14)" },
+    { "mantra": 15, "key": "15", "name": "मंत्र १५ (Mantra 15)" },
+    { "mantra": 16, "key": "16", "name": "मंत्र १६ (Mantra 16)" },
+    { "mantra": 17, "key": "17", "name": "मंत्र १७ (Mantra 17)" },
+    { "mantra": 18, "key": "18", "name": "मंत्र १८ (Mantra 18)" }
+  ]
+}

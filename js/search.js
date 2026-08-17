@@ -1,7 +1,11 @@
 /**
  * Hindi Vedabase - Ultra-Fast In-Memory Search Engine (search.js)
- * Designed for instant live audience search (< 2ms latency across all slokas)
- * Full support for both Srimad Bhagavatam (18,000 verses) & Srimad Bhagavad Gita (700 verses)
+ * Designed for instant live audience search (< 2ms latency across all scriptures)
+ * Full support for:
+ *  - Srimad Bhagavad Gita (18 Chapters, 700 Verses)
+ *  - Sri Isopanisad (Invocation + 18 Mantras)
+ *  - Srimad Bhagavatam (12 Cantos, 335 Chapters, 18,000 Verses)
+ *  - Sri Caitanya-caritamrta (3 Lilas: Adi, Madhya, Antya; 62 Chapters)
  */
 
 class VedabaseSearchEngine {
@@ -11,6 +15,21 @@ class VedabaseSearchEngine {
     this.wordIndex = new Map(); // word -> Set of sloka ids
     this.tagIndex = new Map();  // tag -> Set of sloka ids
     this.isIndexed = false;
+  }
+
+  // Helper to get lila name string
+  getLilaKey(lila) {
+    if (typeof lila === 'string') {
+      const l = lila.toLowerCase();
+      if (l.startsWith('a') && !l.startsWith('an')) return 'adi';
+      if (l.startsWith('m')) return 'madhya';
+      if (l.startsWith('an')) return 'antya';
+    }
+    const num = Number(lila);
+    if (num === 1) return 'adi';
+    if (num === 2) return 'madhya';
+    if (num === 3) return 'antya';
+    return 'adi';
   }
 
   // Build high-speed in-memory inverted indices
@@ -23,15 +42,55 @@ class VedabaseSearchEngine {
 
     for (let i = 0; i < this.slokas.length; i++) {
       const s = this.slokas[i];
-      const isBG = s.book === 'BG' || (s.id && s.id.startsWith('bg-'));
-      const key = s.verseKey || (isBG ? `${s.chapter}.${s.verse}` : `${s.canto}.${s.chapter}.${s.verse}`);
+      const isCC = s.book === 'CC' || (s.id && s.id.startsWith('cc-'));
+      const isISO = !isCC && (s.book === 'ISO' || (s.id && s.id.startsWith('iso-')));
+      const isBG = !isCC && !isISO && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
+
+      let key;
+      if (isCC) {
+        const lilaKey = this.getLilaKey(s.lila || s.canto || (s.category?.cantoTitleHindi?.includes('मध्य') ? 2 : (s.category?.cantoTitleHindi?.includes('अन्त्य') ? 3 : 1)));
+        key = `cc ${lilaKey} ${s.chapter}.${s.verse}`;
+      } else if (isISO) {
+        key = `iso ${s.verseKey || s.verse}`;
+      } else if (isBG) {
+        key = s.verseKey || `${s.chapter}.${s.verse}`;
+      } else {
+        key = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
+      }
 
       this.verseMap.set(key, s);
       if (s.id) this.verseMap.set(s.id, s);
-      if (isBG) {
+      if (s.verseKey) this.verseMap.set(s.verseKey, s);
+
+      if (isCC) {
+        const lilaKey = this.getLilaKey(s.lila || s.canto || 1);
+        const lilaNum = lilaKey === 'adi' ? 1 : (lilaKey === 'madhya' ? 2 : 3);
+
+        this.verseMap.set(`cc-${lilaKey}-${s.chapter}-${s.verse}`, s);
+        this.verseMap.set(`cc.${lilaKey}.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`cc ${lilaKey}.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`cc ${lilaKey} ${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`${lilaKey}.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`${lilaKey} ${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`cc ${lilaNum}.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`cc-${lilaNum}-${s.chapter}-${s.verse}`, s);
+      } else if (isISO) {
+        const vK = String(s.verseKey || s.verse).toLowerCase();
+        this.verseMap.set(`iso-${vK}`, s);
+        this.verseMap.set(`iso.${vK}`, s);
+        this.verseMap.set(`iso ${vK}`, s);
+        this.verseMap.set(`iso${vK}`, s);
+        if (vK === 'inv' || vK === '0') {
+          this.verseMap.set('iso 0', s);
+          this.verseMap.set('iso-0', s);
+          this.verseMap.set('iso inv', s);
+          this.verseMap.set('iso invocation', s);
+        }
+      } else if (isBG) {
         this.verseMap.set(`bg-${s.chapter}-${s.verse}`, s);
         this.verseMap.set(`bg.${s.chapter}.${s.verse}`, s);
         this.verseMap.set(`bg ${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`bg${s.chapter}.${s.verse}`, s);
       } else {
         this.verseMap.set(`sb-${s.canto}-${s.chapter}-${s.verse}`, s);
         this.verseMap.set(`sb.${s.canto}.${s.chapter}.${s.verse}`, s);
@@ -49,7 +108,7 @@ class VedabaseSearchEngine {
         });
       }
 
-      // Index words from Sanskrit, Word meanings, Hindi translation, Purport
+      // Index words from Sanskrit/Bengali, Word meanings, Hindi translation, Purport
       const textToTokenize = [
         s.sanskritDevanagari || '',
         s.sanskritIAST || '',
@@ -64,6 +123,36 @@ class VedabaseSearchEngine {
           this.wordIndex.set(tok, new Set());
         }
         this.wordIndex.get(tok).add(s.id || key);
+      });
+    }
+
+    // Index Sri Caitanya-caritamrta metadata
+    if (window.CC_LILAS_DATA) {
+      window.CC_LILAS_DATA.forEach(l => {
+        (l.chapters || []).forEach(ch => {
+          const chText = `चैतन्य चरितामृत चैतन्य-चरितामृत ${l.name} ${ch.name} ${ch.englishName || ''} अध्याय ${ch.chapter}`;
+          const chTokens = this.tokenize(chText);
+          chTokens.forEach(tok => {
+            if (!this.wordIndex.has(tok)) {
+              this.wordIndex.set(tok, new Set());
+            }
+            this.wordIndex.get(tok).add(`cc-${l.key}-${ch.chapter}-1`);
+          });
+        });
+      });
+    }
+
+    // Index Sri Isopanisad metadata
+    if (window.ISO_DATA && Array.isArray(window.ISO_DATA.mantras)) {
+      window.ISO_DATA.mantras.forEach(m => {
+        const mText = `श्री ईशोपनिषद् ईशोपनिषद् उपनिषद् ${m.label} ${m.name}`;
+        const mTokens = this.tokenize(mText);
+        mTokens.forEach(tok => {
+          if (!this.wordIndex.has(tok)) {
+            this.wordIndex.set(tok, new Set());
+          }
+          this.wordIndex.get(tok).add(`iso-${m.key}`);
+        });
       });
     }
 
@@ -99,7 +188,7 @@ class VedabaseSearchEngine {
 
     this.isIndexed = true;
     console.timeEnd('SearchIndexBuild');
-    console.log(`Indexed ${this.slokas.length} slokas, 18 BG chapters & 335 SB chapters successfully.`);
+    console.log(`Indexed ${this.slokas.length} verses across BG, ISO, CC & SB successfully.`);
   }
 
   // Clear all in-memory search indices
@@ -117,15 +206,54 @@ class VedabaseSearchEngine {
 
     for (let i = 0; i < newSlokas.length; i++) {
       const s = newSlokas[i];
-      const isBG = s.book === 'BG' || (s.id && s.id.startsWith('bg-'));
-      const key = s.verseKey || (isBG ? `${s.chapter}.${s.verse}` : `${s.canto}.${s.chapter}.${s.verse}`);
+      const isCC = s.book === 'CC' || (s.id && s.id.startsWith('cc-'));
+      const isISO = !isCC && (s.book === 'ISO' || (s.id && s.id.startsWith('iso-')));
+      const isBG = !isCC && !isISO && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
+
+      let key;
+      if (isCC) {
+        const lilaKey = this.getLilaKey(s.lila || s.canto || 1);
+        key = `cc ${lilaKey} ${s.chapter}.${s.verse}`;
+      } else if (isISO) {
+        key = `iso ${s.verseKey || s.verse}`;
+      } else if (isBG) {
+        key = s.verseKey || `${s.chapter}.${s.verse}`;
+      } else {
+        key = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
+      }
 
       if (!this.verseMap.has(key)) {
         this.slokas.push(s);
       }
       this.verseMap.set(key, s);
       if (s.id) this.verseMap.set(s.id, s);
-      if (isBG) {
+      if (s.verseKey) this.verseMap.set(s.verseKey, s);
+
+      if (isCC) {
+        const lilaKey = this.getLilaKey(s.lila || s.canto || 1);
+        const lilaNum = lilaKey === 'adi' ? 1 : (lilaKey === 'madhya' ? 2 : 3);
+
+        this.verseMap.set(`cc-${lilaKey}-${s.chapter}-${s.verse}`, s);
+        this.verseMap.set(`cc.${lilaKey}.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`cc ${lilaKey}.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`cc ${lilaKey} ${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`${lilaKey}.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`${lilaKey} ${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`cc ${lilaNum}.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`cc-${lilaNum}-${s.chapter}-${s.verse}`, s);
+      } else if (isISO) {
+        const vK = String(s.verseKey || s.verse).toLowerCase();
+        this.verseMap.set(`iso-${vK}`, s);
+        this.verseMap.set(`iso.${vK}`, s);
+        this.verseMap.set(`iso ${vK}`, s);
+        this.verseMap.set(`iso${vK}`, s);
+        if (vK === 'inv' || vK === '0') {
+          this.verseMap.set('iso 0', s);
+          this.verseMap.set('iso-0', s);
+          this.verseMap.set('iso inv', s);
+          this.verseMap.set('iso invocation', s);
+        }
+      } else if (isBG) {
         this.verseMap.set(`bg-${s.chapter}-${s.verse}`, s);
         this.verseMap.set(`bg.${s.chapter}.${s.verse}`, s);
         this.verseMap.set(`bg ${s.chapter}.${s.verse}`, s);
@@ -165,7 +293,7 @@ class VedabaseSearchEngine {
     this.isIndexed = true;
   }
 
-  // Devanagari & Latin text normalization and tokenization
+  // Text normalization and tokenization
   tokenize(text) {
     if (!text) return [];
     return text
@@ -175,9 +303,73 @@ class VedabaseSearchEngine {
       .filter(t => t.length >= 1);
   }
 
-  // Parse reference queries like "BG 2.13", "18.66", "1.1.1", "10 14 8", "SB 1.1.1"
+  // Parse reference queries like "CC Adi 1.1", "CC Madhya 20.108", "CC Antya 20.12", "CC 1.1.1", "ISO 1", "BG 2.13", "18.66", "1.1.1"
   parseReferenceQuery(query) {
     const trimmed = query.trim().toLowerCase();
+
+    // Pattern 0A: Sri Caitanya-caritamrta with named lila: "cc adi 1.1", "cc madhya 20.108", "cc antya 20.12", "adi 1.1", "madhya 20.108"
+    const ccNamedMatch = trimmed.match(/^(?:cc\s*)?(adi|madhya|antya|आदि|मध्य|अन्त्य)[\s.\-:]*(\d+)[.\-:\s]+(\d+[\-\d]*)$/i);
+    if (ccNamedMatch) {
+      const lStr = ccNamedMatch[1].toLowerCase();
+      let lilaNum = 1;
+      let lilaKey = 'adi';
+      if (lStr.startsWith('m') || lStr.includes('मध्य')) { lilaNum = 2; lilaKey = 'madhya'; }
+      else if (lStr.startsWith('an') || lStr.includes('अन्त्य')) { lilaNum = 3; lilaKey = 'antya'; }
+
+      return {
+        book: 'CC',
+        lila: lilaNum,
+        lilaKey,
+        chapter: parseInt(ccNamedMatch[2], 10),
+        verse: ccNamedMatch[3]
+      };
+    }
+
+    // Pattern 0B: Sri Caitanya-caritamrta with numeric lila: "cc 1.1.1", "cc 2.20.108", "cc 3.20.12"
+    const ccNumMatch = trimmed.match(/^cc[\s.\-:]*([1-3])[.\-:\s]+(\d+)[.\-:\s]+(\d+[\-\d]*)$/i);
+    if (ccNumMatch) {
+      const lilaNum = parseInt(ccNumMatch[1], 10);
+      const lilaKey = lilaNum === 1 ? 'adi' : (lilaNum === 2 ? 'madhya' : 'antya');
+      return {
+        book: 'CC',
+        lila: lilaNum,
+        lilaKey,
+        chapter: parseInt(ccNumMatch[2], 10),
+        verse: ccNumMatch[3]
+      };
+    }
+
+    // Pattern 0C: CC Chapter match: "cc adi 1", "cc madhya 20", "cc antya 20"
+    const ccChapMatch = trimmed.match(/^(?:cc\s*)?(adi|madhya|antya|आदि|मध्य|अन्त्य)[\s.\-:]*(\d+)$/i);
+    if (ccChapMatch) {
+      const lStr = ccChapMatch[1].toLowerCase();
+      let lilaNum = 1;
+      let lilaKey = 'adi';
+      if (lStr.startsWith('m') || lStr.includes('मध्य')) { lilaNum = 2; lilaKey = 'madhya'; }
+      else if (lStr.startsWith('an') || lStr.includes('अन्त्य')) { lilaNum = 3; lilaKey = 'antya'; }
+
+      return {
+        book: 'CC',
+        lila: lilaNum,
+        lilaKey,
+        chapter: parseInt(ccChapMatch[2], 10),
+        isChapter: true
+      };
+    }
+
+    // Pattern 0D: Sri Isopanisad query: "iso 1", "iso inv", "iso 18", "isopanisad 15", "iso:1"
+    const isoInvMatch = trimmed.match(/^(?:iso|isopanisad|ईशोपनिषद्|ईशोपनिषद)[\s.\-:]*(?:inv|invocation|0|मंगलाचरण)$/i);
+    if (isoInvMatch) {
+      return { book: 'ISO', verse: 'inv', verseNum: 0 };
+    }
+
+    const isoNumMatch = trimmed.match(/^(?:iso|isopanisad|ईशोपनिषद्|ईशोपनिषद)[\s.\-:]*(\d+)$/i);
+    if (isoNumMatch) {
+      const vNum = parseInt(isoNumMatch[1], 10);
+      if (vNum >= 1 && vNum <= 18) {
+        return { book: 'ISO', verse: String(vNum), verseNum: vNum };
+      }
+    }
 
     // Pattern 1: Explicit BG query: "bg 2.13", "bg 18.66", "bg 2 13", "bg:2:13", "bg-2-13"
     const bgMatch = trimmed.match(/^bg[\s.\-:]*(\d+)[.\-:\s]+(\d+[\-\d]*)$/i);
@@ -198,24 +390,21 @@ class VedabaseSearchEngine {
     }
 
     // Pattern 4: Two parts without prefix: "2.13", "18.66", "1.1"
-    // Could be BG chapter.verse OR SB canto.chapter
     const twoPartMatch = trimmed.match(/^(\d+)[.\-:\s]+(\d+[\-\d]*)$/);
     if (twoPartMatch) {
       const p1 = parseInt(twoPartMatch[1], 10);
       const p2 = twoPartMatch[2];
       const p2Num = parseInt(p2, 10);
 
-      // If p1 is 1..18 and current view is BG or p2 > 30, it's overwhelmingly Bhagavad Gita verse!
+      // If in BG mode or p2 > 30, it's overwhelmingly Bhagavad Gita verse!
       if (window.app && window.app.currentBook === 'BG') {
         return { book: 'BG', chapter: p1, verse: p2 };
       }
 
-      // Check if p1 is a valid BG chapter (1..18)
       if (p1 >= 1 && p1 <= 18) {
         return { book: 'BG', chapter: p1, verse: p2, alsoSBChapter: (p1 <= 12) ? { canto: p1, chapter: p2Num } : null };
       }
 
-      // Fallback for SB Chapter
       if (p1 >= 1 && p1 <= 12) {
         return { book: 'SB', canto: p1, chapter: p2Num, isChapter: true };
       }
@@ -239,8 +428,18 @@ class VedabaseSearchEngine {
       'vasudevaya': 'वासुदेवाय',
       'krishna': 'कृष्ण',
       'krsna': 'कृष्ण',
+      'caitanya': 'चैतन्य',
+      'chaitanya': 'चैतन्य',
+      'mahaprabhu': 'महाप्रभु',
+      'nityananda': 'नित्यानन्द',
+      'advaita': 'अद्वैत',
+      'pancatattva': 'पंचतत्त्व',
       'arjuna': 'अर्जुन',
-      'arjun': 'अर्जुन',
+      'isavasya': 'ईशावास्य',
+      'isopanisad': 'ईशोपनिषद्',
+      'purnam': 'पूर्णम्',
+      'hiranmayena': 'हिरण्मयेन',
+      'agne': 'अग्ने',
       'rama': 'राम',
       'govinda': 'गोविन्द',
       'dharma': 'धर्म',
@@ -253,15 +452,13 @@ class VedabaseSearchEngine {
       'satyam': 'सत्यं',
       'param': 'परं',
       'dhimahi': 'धीमहि',
-      'narayana': 'नारायण',
-      'brahma': 'ब्रह्म',
-      'shloka': 'श्लोक',
-      'sloka': 'श्लोक'
+      'siksastaka': 'शिक्षाष्टक',
+      'cetodarpana': 'चेतोदर्पण'
     };
     return map[roman.toLowerCase()] || roman;
   }
 
-  // Main high-speed Search Method
+  // Main high-speed Search Method (< 2ms)
   search(query, filterTag = null, limit = 50) {
     const startTime = performance.now();
     if (!query && !filterTag) {
@@ -270,10 +467,45 @@ class VedabaseSearchEngine {
 
     const trimmedQuery = (query || '').trim();
 
-    // 1. Check for Exact Reference Query (e.g. BG 2.13, 18.66, SB 1.1.1, 10.14.8)
+    // 1. Check for Exact Reference Query (e.g. CC Adi 1.1, ISO 1, BG 2.13, 18.66, SB 1.1.1)
     const ref = this.parseReferenceQuery(trimmedQuery);
     if (ref) {
-      if (ref.book === 'BG' && !ref.isChapter) {
+      if (ref.book === 'CC' && !ref.isChapter) {
+        const ccKey = `${ref.lilaKey}.${ref.chapter}.${ref.verse}`;
+        const exactMatch = this.verseMap.get(`cc ${ccKey}`) ||
+                           this.verseMap.get(`cc-${ref.lilaKey}-${ref.chapter}-${ref.verse}`) ||
+                           this.verseMap.get(ccKey) ||
+                           (window.app && window.app.ccMap && window.app.ccMap.get(ccKey));
+
+        if (exactMatch) {
+          const timeMs = (performance.now() - startTime).toFixed(2);
+          return {
+            results: [exactMatch],
+            totalCount: 1,
+            timeMs,
+            isRefMatch: true,
+            exactVerseKey: `CC ${ref.lilaKey.toUpperCase()} ${ref.chapter}.${ref.verse}`,
+            book: 'CC'
+          };
+        }
+      } else if (ref.book === 'ISO') {
+        const isoKey = `iso ${ref.verse}`;
+        const exactMatch = this.verseMap.get(isoKey) ||
+                           this.verseMap.get(`iso-${ref.verse}`) ||
+                           (window.app && window.app.isoMap && window.app.isoMap.get(ref.verse));
+
+        if (exactMatch) {
+          const timeMs = (performance.now() - startTime).toFixed(2);
+          return {
+            results: [exactMatch],
+            totalCount: 1,
+            timeMs,
+            isRefMatch: true,
+            exactVerseKey: `ISO ${ref.verse === 'inv' ? 'मंगलाचरण' : ref.verse}`,
+            book: 'ISO'
+          };
+        }
+      } else if (ref.book === 'BG' && !ref.isChapter) {
         const bgKey = `${ref.chapter}.${ref.verse}`;
         const exactMatch = this.verseMap.get(`bg-${ref.chapter}-${ref.verse}`) ||
                            this.verseMap.get(bgKey) ||
@@ -308,8 +540,21 @@ class VedabaseSearchEngine {
           };
         }
       } else if (ref.isChapter) {
-        if (ref.book === 'BG') {
-          const chKey = `bg-${ref.chapter}`;
+        if (ref.book === 'CC') {
+          const chKey = `${ref.lilaKey}-${ref.chapter}`;
+          const chVerses = (window.app && window.app.ccChapterMap && window.app.ccChapterMap.get(chKey)) || [];
+          if (chVerses.length > 0) {
+            const timeMs = (performance.now() - startTime).toFixed(2);
+            return {
+              results: chVerses.slice(0, limit),
+              totalCount: chVerses.length,
+              timeMs,
+              isRefMatch: true,
+              exactVerseKey: `CC ${ref.lilaKey.toUpperCase()} ${ref.chapter}.1`,
+              book: 'CC'
+            };
+          }
+        } else if (ref.book === 'BG') {
           const chVerses = (window.app && window.app.bgChapterMap && window.app.bgChapterMap.get(ref.chapter)) || [];
           if (chVerses.length > 0) {
             const timeMs = (performance.now() - startTime).toFixed(2);
@@ -352,7 +597,9 @@ class VedabaseSearchEngine {
 
     for (let i = 0; i < searchPool.length; i++) {
       const s = searchPool[i];
-      const isBG = s.book === 'BG' || (s.id && s.id.startsWith('bg-'));
+      const isCC = s.book === 'CC' || (s.id && s.id.startsWith('cc-'));
+      const isISO = !isCC && (s.book === 'ISO' || (s.id && s.id.startsWith('iso-')));
+      const isBG = !isCC && !isISO && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
 
       // Check Tag filter if specified
       if (normFilterTag) {
@@ -366,7 +613,17 @@ class VedabaseSearchEngine {
       }
 
       let score = 0;
-      const key = s.verseKey || (isBG ? `${s.chapter}.${s.verse}` : `${s.canto}.${s.chapter}.${s.verse}`);
+      let key;
+      if (isCC) {
+        const lilaKey = this.getLilaKey(s.lila || s.canto || 1);
+        key = `cc ${lilaKey} ${s.chapter}.${s.verse}`;
+      } else if (isISO) {
+        key = `iso ${s.verseKey || s.verse}`;
+      } else if (isBG) {
+        key = s.verseKey || `${s.chapter}.${s.verse}`;
+      } else {
+        key = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
+      }
 
       // Boost if query matches verseKey
       if (key.includes(trimmedQuery)) {
@@ -425,44 +682,6 @@ class VedabaseSearchEngine {
       timeMs,
       isRefMatch: false
     };
-  }
-
-  // Find all occurrences of a specific Sanskrit word across all verses (Concordance)
-  findSanskritWordConcordance(sanskritWord) {
-    if (!sanskritWord) return [];
-    const cleanWord = sanskritWord.trim().toLowerCase();
-    const matches = [];
-
-    for (const s of this.slokas) {
-      const wList = s.wordToWord || [];
-      const foundWord = wList.find(w => w.sanskrit && w.sanskrit.toLowerCase().includes(cleanWord));
-      if (foundWord) {
-        matches.push({
-          sloka: s,
-          sanskrit: foundWord.sanskrit,
-          hindi: foundWord.hindi
-        });
-      }
-    }
-    return matches;
-  }
-
-  // Get all unique tags with count
-  getAllTagsWithCount() {
-    const counts = {};
-    for (const s of this.slokas) {
-      if (Array.isArray(s.tags)) {
-        s.tags.forEach(t => {
-          const tag = t.trim();
-          if (tag) {
-            counts[tag] = (counts[tag] || 0) + 1;
-          }
-        });
-      }
-    }
-    return Object.entries(counts)
-      .map(([tag, count]) => ({ tag, count }))
-      .sort((a, b) => b.count - a.count);
   }
 }
 

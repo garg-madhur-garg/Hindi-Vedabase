@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>हिन्दी वेदबेस | श्रीमद्भगवद्गीता एवं श्रीमद्भागवतम् (श्रील प्रभुपाद)</title>
-  <meta name="description" content="श्रीमद्भगवद्गीता (700 श्लोक) एवं श्रीमद्भागवतम् (18,000 श्लोक) - प्रामाणिक श्लोक, पदच्छेद, शब्दार्थ, हिन्दी अनुवाद एवं श्रील प्रभुपाद तात्पर्य सहित उच्च-गति सर्च योग्य वेदबेस">
+  <title>हिन्दी वेदबेस | श्रीमद्भगवद्गीता, श्री ईशोपनिषद्, श्रीमद्भागवतम् एवं श्री चैतन्य-चरितामृत (श्रील प्रभुपाद)</title>
+  <meta name="description" content="श्रीमद्भगवद्गीता (700 श्लोक), श्री ईशोपनिषद् (19 मंत्र), श्रीमद्भागवतम् (18,000 श्लोक) एवं श्री चैतन्य-चरितामृत (62 अध्याय) - प्रामाणिक श्लोक, पदच्छेद, शब्दार्थ, हिन्दी अनुवाद एवं श्रील प्रभुपाद तात्पर्य सहित उच्च-गति सर्च योग्य वेदबेस">
   
   <!-- Main Stylesheet & PWA Manifest -->
   <link rel="stylesheet" href="css/main.css">
@@ -93,7 +93,26 @@
           </ul>
         </div>
 
-        <!-- Scripture Item 2: Srimad Bhagavatam (Expandable) -->
+        <!-- Scripture Item 2: Sri Isopanisad (Expandable) -->
+        <div class="scripture-group" id="scriptureGroupISO">
+          <button class="scripture-header-btn" onclick="window.app.toggleScriptureAccordion('scriptureGroupISO')">
+            <div class="scripture-info">
+              <span class="scripture-icon">🪔</span>
+              <div class="scripture-titles">
+                <span class="scripture-name">श्री ईशोपनिषद्</span>
+                <span class="scripture-badge">मंगलाचरण + 18 मंत्र</span>
+              </div>
+            </div>
+            <span class="scripture-arrow">▾</span>
+          </button>
+          
+          <!-- Mantras List -->
+          <ul class="canto-list" id="isoMantraListContainer">
+            <!-- Generated dynamically via app.js -->
+          </ul>
+        </div>
+
+        <!-- Scripture Item 3: Srimad Bhagavatam (Expandable) -->
         <div class="scripture-group" id="scriptureGroupSB">
           <button class="scripture-header-btn" onclick="window.app.toggleScriptureAccordion('scriptureGroupSB')">
             <div class="scripture-info">
@@ -108,6 +127,25 @@
           
           <!-- Cantos 1 to 12 List -->
           <ul class="canto-list" id="cantoListContainer">
+            <!-- Generated dynamically via app.js -->
+          </ul>
+        </div>
+
+        <!-- Scripture Item 4: Sri Caitanya-caritamrta (Expandable) -->
+        <div class="scripture-group" id="scriptureGroupCC">
+          <button class="scripture-header-btn" onclick="window.app.toggleScriptureAccordion('scriptureGroupCC')">
+            <div class="scripture-info">
+              <span class="scripture-icon">🌺</span>
+              <div class="scripture-titles">
+                <span class="scripture-name">श्री चैतन्य-चरितामृत</span>
+                <span class="scripture-badge">3 लीला • 62 अध्याय</span>
+              </div>
+            </div>
+            <span class="scripture-arrow">▾</span>
+          </button>
+          
+          <!-- Lilas & Chapters List -->
+          <ul class="canto-list" id="ccLilaListContainer">
             <!-- Generated dynamically via app.js -->
           </ul>
         </div>
@@ -297,6 +335,32 @@
             </p>
             <button type="button" class="btn-action btn-presentation" id="btnExportBgJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
               📥 सम्पूर्ण भगवद्गीता JSON डाउनलोड करें (.json)
+            </button>
+          </div>
+
+          <!-- Card 3: Download Sri Isopanisad JSON (isopanisad.json) -->
+          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+              <span>🪔</span> <span>श्री ईशोपनिषद् JSON डाउनलोड करें (Sri Isopanisad Export)</span>
+            </h3>
+            <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
+              श्री ईशोपनिषद् के मंगलाचरण और 18 मंत्रों का सम्पूर्ण <code>isopanisad.json</code> डाउनलोड करें जिसे <code>data/</code> फोल्डर में सीधे रखा जा सकता है।
+            </p>
+            <button type="button" class="btn-action btn-presentation" id="btnExportIsoJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+              📥 सम्पूर्ण श्री ईशोपनिषद् JSON डाउनलोड करें (.json)
+            </button>
+          </div>
+
+          <!-- Card 4: Download Sri Caitanya-caritamrta JSON (chaitanya-charitamrita.json) -->
+          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+              <span>🌺</span> <span>श्री चैतन्य-चरितामृत JSON डाउनलोड करें (Caitanya-caritamrta Export)</span>
+            </h3>
+            <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
+              श्री चैतन्य-चरितामृत (आदि, मध्य एवं अन्त्य-लीला) के पयारों का सम्पूर्ण <code>chaitanya-charitamrita.json</code> डाउनलोड करें।
+            </p>
+            <button type="button" class="btn-action btn-presentation" id="btnExportCcJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+              📥 सम्पूर्ण चैतन्य-चरितामृत JSON डाउनलोड करें (.json)
             </button>
           </div>
 
@@ -531,9 +595,11 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JavaScript Modules (Direct JSON Architecture) -->
-  <script src="js/bg-chapters-data.js?v=3.3"></script>
-  <script src="js/sb-chapters-data.js?v=3.3"></script>
-  <script src="js/search.js?v=3.3"></script>
-  <script src="js/app.js?v=3.3"></script>
+  <script src="js/bg-chapters-data.js?v=3.5"></script>
+  <script src="js/iso-chapters-data.js?v=3.5"></script>
+  <script src="js/cc-chapters-data.js?v=3.5"></script>
+  <script src="js/sb-chapters-data.js?v=3.5"></script>
+  <script src="js/search.js?v=3.5"></script>
+  <script src="js/app.js?v=3.5"></script>
 </body>
 </html>

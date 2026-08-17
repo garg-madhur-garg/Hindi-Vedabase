@@ -1,0 +1,35 @@
+{
+  "title": "श्री चैतन्य-चरितामृत (Sri Caitanya-caritamrta)",
+  "author": "श्रील कृष्णदास कविराज गोस्वामी",
+  "commentary": "श्री श्रीमद् ए.सी. भक्तिवेदान्त स्वामी प्रभुपाद",
+  "language": "हिन्दी (मूल बंगाली व संस्कृत सहित)",
+  "totalLilas": 3,
+  "totalChapters": 62,
+  "totalVerses": 11546,
+  "lilas": [
+    {
+      "lila": 1,
+      "key": "adi",
+      "name": "आदि-लीला (Adi-lila)",
+      "englishName": "Adi-lila",
+      "totalChapters": 17,
+      "totalVerses": 1810
+    },
+    {
+      "lila": 2,
+      "key": "madhya",
+      "name": "मध्य-लीला (Madhya-lila)",
+      "englishName": "Madhya-lila",
+      "totalChapters": 25,
+      "totalVerses": 6192
+    },
+    {
+      "lila": 3,
+      "key": "antya",
+      "name": "अन्त्य-लीला (Antya-lila)",
+      "englishName": "Antya-lila",
+      "totalChapters": 20,
+      "totalVerses": 3544
+    }
+  ]
+}

@@ -98,9 +98,93 @@ while ($listener.IsListening) {
                 }
                 $cantoNum = [int]$slokaData.canto
                 $verseKey = [string]$slokaData.verseKey
-                $isBG = ($slokaData.book -eq "BG") -or ([string]$slokaData.id -like "bg-*") -or ($cantoNum -eq 0)
+                $isCC = ($slokaData.book -eq "CC") -or ([string]$slokaData.id -like "cc-*") -or ($cantoNum -eq -2)
+                $isISO = -not $isCC -and (($slokaData.book -eq "ISO") -or ([string]$slokaData.id -like "iso-*") -or ($cantoNum -eq -1))
+                $isBG = -not $isCC -and -not $isISO -and (($slokaData.book -eq "BG") -or ([string]$slokaData.id -like "bg-*") -or ($cantoNum -eq 0))
 
-                if ($isBG -and -not [string]::IsNullOrEmpty($verseKey)) {
+                if ($isCC -and -not [string]::IsNullOrEmpty($verseKey)) {
+                    $ccFilePath = Join-Path $baseDir "data\chaitanya-charitamrita.json"
+                    if (Test-Path $ccFilePath) {
+                        $jsonRaw = [System.IO.File]::ReadAllText($ccFilePath, [System.Text.Encoding]::UTF8)
+                        $ccVerses = $jsonRaw | ConvertFrom-Json
+
+                        $found = $false
+                        for ($i = 0; $i -lt $ccVerses.Count; $i++) {
+                            $s = $ccVerses[$i]
+                            $vKey = [string]$s.verseKey
+                            if ($vKey -eq $verseKey -or [string]$s.id -eq [string]$slokaData.id) {
+                                if ($slokaData.sanskritDevanagari -ne $null) { $s.sanskritDevanagari = [string]$slokaData.sanskritDevanagari }
+                                if ($slokaData.sanskritIAST -ne $null) { $s.sanskritIAST = [string]$slokaData.sanskritIAST }
+                                if ($slokaData.wordToWord -ne $null) { $s.wordToWord = $slokaData.wordToWord }
+                                if ($slokaData.hindiTranslation -ne $null) { $s.hindiTranslation = [string]$slokaData.hindiTranslation }
+                                if ($slokaData.hindiPurport -ne $null) { $s.hindiPurport = [string]$slokaData.hindiPurport }
+                                $found = $true
+                                break
+                            }
+                        }
+
+                        if ($found) {
+                            $newJson = $ccVerses | ConvertTo-Json -Depth 10
+                            [System.IO.File]::WriteAllText($ccFilePath, $newJson, $utf8NoBom)
+                            Write-Host "✅ [SAVED DIRECTLY TO DISK] पयार CC $verseKey -> data/chaitanya-charitamrita.json" -ForegroundColor Green
+
+                            $resObj = @{
+                                success = $true
+                                message = "पयार CC $verseKey सीधे data/chaitanya-charitamrita.json में सुरक्षित हो गया!"
+                                verseKey = $verseKey
+                                book = "CC"
+                            }
+                            $statusCode = 200
+                        } else {
+                            $resObj = @{ success = $false; message = "पयार CC $verseKey फ़ाइल में नहीं मिला।" }
+                            $statusCode = 404
+                        }
+                    } else {
+                        $resObj = @{ success = $false; message = "data/chaitanya-charitamrita.json फ़ाइल नहीं मिली।" }
+                        $statusCode = 404
+                    }
+                } elseif ($isISO -and -not [string]::IsNullOrEmpty($verseKey)) {
+                    $isoFilePath = Join-Path $baseDir "data\isopanisad.json"
+                    if (Test-Path $isoFilePath) {
+                        $jsonRaw = [System.IO.File]::ReadAllText($isoFilePath, [System.Text.Encoding]::UTF8)
+                        $isoMantras = $jsonRaw | ConvertFrom-Json
+
+                        $found = $false
+                        for ($i = 0; $i -lt $isoMantras.Count; $i++) {
+                            $s = $isoMantras[$i]
+                            $vKey = [string]$s.verseKey
+                            if ($vKey -eq $verseKey -or [string]$s.id -eq [string]$slokaData.id) {
+                                if ($slokaData.sanskritDevanagari -ne $null) { $s.sanskritDevanagari = [string]$slokaData.sanskritDevanagari }
+                                if ($slokaData.sanskritIAST -ne $null) { $s.sanskritIAST = [string]$slokaData.sanskritIAST }
+                                if ($slokaData.wordToWord -ne $null) { $s.wordToWord = $slokaData.wordToWord }
+                                if ($slokaData.hindiTranslation -ne $null) { $s.hindiTranslation = [string]$slokaData.hindiTranslation }
+                                if ($slokaData.hindiPurport -ne $null) { $s.hindiPurport = [string]$slokaData.hindiPurport }
+                                $found = $true
+                                break
+                            }
+                        }
+
+                        if ($found) {
+                            $newJson = $isoMantras | ConvertTo-Json -Depth 10
+                            [System.IO.File]::WriteAllText($isoFilePath, $newJson, $utf8NoBom)
+                            Write-Host "✅ [SAVED DIRECTLY TO DISK] मंत्र ISO $verseKey -> data/isopanisad.json" -ForegroundColor Green
+
+                            $resObj = @{
+                                success = $true
+                                message = "मंत्र ISO $verseKey सीधे data/isopanisad.json में सुरक्षित हो गया!"
+                                verseKey = $verseKey
+                                book = "ISO"
+                            }
+                            $statusCode = 200
+                        } else {
+                            $resObj = @{ success = $false; message = "मंत्र ISO $verseKey फ़ाइल में नहीं मिला।" }
+                            $statusCode = 404
+                        }
+                    } else {
+                        $resObj = @{ success = $false; message = "data/isopanisad.json फ़ाइल नहीं मिली।" }
+                        $statusCode = 404
+                    }
+                } elseif ($isBG -and -not [string]::IsNullOrEmpty($verseKey)) {
                     $bgFilePath = Join-Path $baseDir "data\bhagavad-gita.json"
                     if (Test-Path $bgFilePath) {
                         $jsonRaw = [System.IO.File]::ReadAllText($bgFilePath, [System.Text.Encoding]::UTF8)

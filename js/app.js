@@ -3,7 +3,9 @@
  * High-performance state management, instant search rendering, presentation mode, sloka editing & backup
  * Fully integrated with:
  *  - Srimad Bhagavad Gita (18 Chapters, 700 Verses)
+ *  - Sri Isopanisad (Invocation + 18 Mantras)
  *  - Srimad Bhagavatam (12 Cantos, 335 Chapters, 18,000 Verses)
+ *  - Sri Caitanya-caritamrta (3 Lilas, 62 Chapters, 11,546 Verses)
  */
 
 function getCantoStructure() {
@@ -14,21 +16,39 @@ function getBgChapters() {
   return window.BG_CHAPTERS_DATA || [];
 }
 
+function getIsoData() {
+  return window.ISO_DATA || { mantras: [] };
+}
+
+function getCcLilas() {
+  return window.CC_LILAS_DATA || [];
+}
+
 class VedabaseApp {
   constructor() {
-    this.currentBook = 'BG'; // 'BG' or 'SB'
+    this.currentBook = 'BG';    // 'BG', 'ISO', 'CC', or 'SB'
     this.currentSloka = null;
     this.currentCanto = 1;      // for SB
-    this.currentChapter = 1;    // for BG or SB
+    this.currentLila = 1;       // for CC (1=Adi, 2=Madhya, 3=Antya)
+    this.currentChapter = 1;    // for BG, SB, or CC
     this.chapterSlokas = [];
     this.allSlokas = [];
     this.verseMap = new Map();
-    this.chapterMap = new Map();   // key: "canto-chapter" for SB
-    this.bgChapterMap = new Map(); // key: chapter (number) for BG
+    this.chapterMap = new Map();     // key: "canto-chapter" for SB
+    this.bgChapterMap = new Map();   // key: chapter (number) for BG
+    this.isoMap = new Map();         // key: "inv", "1" to "18" for ISO
+    this.isoSlokas = [];
+    this.ccMap = new Map();          // key: "adi.1.1", "madhya.20.108" for CC
+    this.ccChapterMap = new Map();   // key: "adi-1", "madhya-20" for CC
+    this.ccSlokas = [];
     this.loadedCantos = new Set();
     this.isBgLoaded = false;
+    this.isIsoLoaded = false;
+    this.isCcLoaded = false;
     this.loadingCantos = new Map();
     this.loadingBg = null;
+    this.loadingIso = null;
+    this.loadingCc = null;
     this.currentTheme = 'dark';
     this.currentHighlightWord = null;
     this.highlightFadeTimer = null;
@@ -41,6 +61,21 @@ class VedabaseApp {
       translation: true,
       purport: true
     };
+  }
+
+  // Helper to get lila string key
+  getLilaKey(lila) {
+    if (typeof lila === 'string') {
+      const l = lila.toLowerCase();
+      if (l.startsWith('a') && !l.startsWith('an')) return 'adi';
+      if (l.startsWith('m')) return 'madhya';
+      if (l.startsWith('an')) return 'antya';
+    }
+    const num = Number(lila);
+    if (num === 1) return 'adi';
+    if (num === 2) return 'madhya';
+    if (num === 3) return 'antya';
+    return 'adi';
   }
 
   // Get all user custom edited slokas from localStorage
@@ -59,13 +94,28 @@ class VedabaseApp {
     sloka.isUserEdited = true;
     sloka.lastEditedAt = new Date().toISOString();
 
-    const isBG = sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')) || !sloka.canto;
-    const key = isBG ? `bg-${sloka.chapter}-${sloka.verse}` : (sloka.verseKey || `${sloka.canto}.${sloka.chapter}.${sloka.verse}`);
+    const isCC = sloka.book === 'CC' || (sloka.id && sloka.id.startsWith('cc-'));
+    const isISO = !isCC && (sloka.book === 'ISO' || (sloka.id && sloka.id.startsWith('iso-')));
+    const isBG = !isCC && !isISO && (sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')));
+
+    let key;
+    if (isCC) {
+      const lilaKey = this.getLilaKey(sloka.lila || sloka.canto || 1);
+      key = `cc-${lilaKey}-${sloka.chapter}-${sloka.verse}`;
+    } else if (isISO) {
+      key = `iso-${sloka.verseKey || sloka.verse}`;
+    } else if (isBG) {
+      key = `bg-${sloka.chapter}-${sloka.verse}`;
+    } else {
+      key = sloka.verseKey || `${sloka.canto}.${sloka.chapter}.${sloka.verse}`;
+    }
 
     // 1. Save to permanent localStorage backup
     try {
       const edits = this.getUserCustomEdits();
       edits[key] = sloka;
+      if (sloka.verseKey) edits[sloka.verseKey] = sloka;
+      if (sloka.id) edits[sloka.id] = sloka;
       localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
     } catch (e) {
       console.warn('LocalStorage save warning:', e);
@@ -74,19 +124,36 @@ class VedabaseApp {
     // 2. Update in-memory structures
     this.verseMap.set(sloka.verseKey, sloka);
     this.verseMap.set(sloka.id, sloka);
-    if (isBG) {
+
+    if (isCC) {
+      const lilaKey = this.getLilaKey(sloka.lila || sloka.canto || 1);
+      const chKey = `${lilaKey}-${sloka.chapter}`;
+      this.ccMap.set(`${lilaKey}.${sloka.chapter}.${sloka.verse}`, sloka);
+      this.verseMap.set(`cc ${lilaKey} ${sloka.chapter}.${sloka.verse}`, sloka);
+      this.verseMap.set(`cc-${lilaKey}-${sloka.chapter}-${sloka.verse}`, sloka);
+
+      if (!this.ccChapterMap.has(chKey)) {
+        this.ccChapterMap.set(chKey, []);
+      }
+      const chList = this.ccChapterMap.get(chKey);
+      const chIdx = chList.findIndex(s => s.id === sloka.id || s.verseKey === sloka.verseKey);
+      if (chIdx >= 0) chList[chIdx] = sloka;
+      else chList.push(sloka);
+
+      const ccIdx = this.ccSlokas.findIndex(s => s.id === sloka.id || s.verseKey === sloka.verseKey);
+      if (ccIdx >= 0) this.ccSlokas[ccIdx] = sloka;
+      else this.ccSlokas.push(sloka);
+    } else if (isISO) {
+      const vK = String(sloka.verseKey || sloka.verse).toLowerCase();
+      this.isoMap.set(vK, sloka);
+      this.verseMap.set(`iso ${vK}`, sloka);
+      this.verseMap.set(`iso-${vK}`, sloka);
+      const isoIdx = this.isoSlokas.findIndex(s => s.id === sloka.id || s.verseKey === sloka.verseKey);
+      if (isoIdx >= 0) this.isoSlokas[isoIdx] = sloka;
+      else this.isoSlokas.push(sloka);
+    } else if (isBG) {
       this.verseMap.set(`bg-${sloka.chapter}-${sloka.verse}`, sloka);
       this.verseMap.set(`bg ${sloka.chapter}.${sloka.verse}`, sloka);
-    }
-
-    const idx = this.allSlokas.findIndex(s => s.id === sloka.id || s.verseKey === sloka.verseKey);
-    if (idx >= 0) {
-      this.allSlokas[idx] = sloka;
-    } else {
-      this.allSlokas.push(sloka);
-    }
-
-    if (isBG) {
       const chNum = Number(sloka.chapter);
       if (this.bgChapterMap.has(chNum)) {
         const chList = this.bgChapterMap.get(chNum);
@@ -104,6 +171,13 @@ class VedabaseApp {
       }
     }
 
+    const idx = this.allSlokas.findIndex(s => s.id === sloka.id || s.verseKey === sloka.verseKey);
+    if (idx >= 0) {
+      this.allSlokas[idx] = sloka;
+    } else {
+      this.allSlokas.push(sloka);
+    }
+
     if (window.searchEngine && window.searchEngine.isIndexed) {
       window.searchEngine.appendIndex([sloka]);
     }
@@ -114,20 +188,92 @@ class VedabaseApp {
   // Revert a single verse back to its authentic original JSON data
   async revertCurrentVerseToOriginal() {
     if (!this.currentSloka) return;
-    const isBG = this.currentBook === 'BG' || this.currentSloka.book === 'BG' || this.currentSloka.id?.startsWith('bg-');
+    const isCC = this.currentBook === 'CC' || this.currentSloka.book === 'CC' || this.currentSloka.id?.startsWith('cc-');
+    const isISO = !isCC && (this.currentBook === 'ISO' || this.currentSloka.book === 'ISO' || this.currentSloka.id?.startsWith('iso-'));
+    const isBG = !isCC && !isISO && (this.currentBook === 'BG' || this.currentSloka.book === 'BG' || this.currentSloka.id?.startsWith('bg-'));
     const verseKey = this.currentSloka.verseKey;
 
     // Remove from localStorage
     const edits = this.getUserCustomEdits();
-    const editKey = isBG ? `bg-${this.currentSloka.chapter}-${this.currentSloka.verse}` : verseKey;
-    if (edits[editKey] || edits[verseKey]) {
+    let editKey;
+    if (isCC) {
+      const lilaKey = this.getLilaKey(this.currentSloka.lila || this.currentSloka.canto || 1);
+      editKey = `cc-${lilaKey}-${this.currentSloka.chapter}-${this.currentSloka.verse}`;
+    } else if (isISO) {
+      editKey = `iso-${this.currentSloka.verseKey || this.currentSloka.verse}`;
+    } else if (isBG) {
+      editKey = `bg-${this.currentSloka.chapter}-${this.currentSloka.verse}`;
+    } else {
+      editKey = verseKey;
+    }
+
+    if (edits[editKey] || edits[verseKey] || edits[this.currentSloka.id]) {
       delete edits[editKey];
       delete edits[verseKey];
+      delete edits[this.currentSloka.id];
       localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
     }
 
     try {
-      if (isBG) {
+      if (isCC) {
+        const resp = await fetch(`data/chaitanya-charitamrita.json?v=${Date.now()}`);
+        if (resp.ok) {
+          const freshSlokas = await resp.json();
+          const orig = freshSlokas.find(s => s.verseKey === verseKey || s.id === this.currentSloka.id);
+          if (orig) {
+            delete orig.isUserEdited;
+            delete orig.lastEditedAt;
+
+            const lilaKey = this.getLilaKey(orig.lila || orig.canto || 1);
+            this.ccMap.set(`${lilaKey}.${orig.chapter}.${orig.verse}`, orig);
+            this.verseMap.set(`cc ${lilaKey} ${orig.chapter}.${orig.verse}`, orig);
+            this.verseMap.set(orig.id, orig);
+
+            const idx = this.allSlokas.findIndex(s => s.id === orig.id);
+            if (idx >= 0) this.allSlokas[idx] = orig;
+
+            const ccIdx = this.ccSlokas.findIndex(s => s.id === orig.id);
+            if (ccIdx >= 0) this.ccSlokas[ccIdx] = orig;
+
+            if (window.searchEngine) window.searchEngine.appendIndex([orig]);
+
+            this.updateCustomEditsCountBadge();
+            await this.displaySloka(orig);
+            this.closeAllModals();
+            this.showToast(`✅ पयार CC ${verseKey} मूल JSON डेटा में रीसेट हो गया!`);
+            return;
+          }
+        }
+      } else if (isISO) {
+        const resp = await fetch(`data/isopanisad.json?v=${Date.now()}`);
+        if (resp.ok) {
+          const freshSlokas = await resp.json();
+          const orig = freshSlokas.find(s => s.verseKey === verseKey || s.id === this.currentSloka.id);
+          if (orig) {
+            delete orig.isUserEdited;
+            delete orig.lastEditedAt;
+
+            this.isoMap.set(String(orig.verseKey), orig);
+            this.verseMap.set(`iso ${orig.verseKey}`, orig);
+            this.verseMap.set(`iso-${orig.verseKey}`, orig);
+            this.verseMap.set(orig.id, orig);
+
+            const idx = this.allSlokas.findIndex(s => s.id === orig.id);
+            if (idx >= 0) this.allSlokas[idx] = orig;
+
+            const isoIdx = this.isoSlokas.findIndex(s => s.id === orig.id);
+            if (isoIdx >= 0) this.isoSlokas[isoIdx] = orig;
+
+            if (window.searchEngine) window.searchEngine.appendIndex([orig]);
+
+            this.updateCustomEditsCountBadge();
+            await this.displaySloka(orig);
+            this.closeAllModals();
+            this.showToast(`✅ ईशोपनिषद् मंत्र ${verseKey} मूल JSON डेटा में रीसेट हो गया!`);
+            return;
+          }
+        }
+      } else if (isBG) {
         const resp = await fetch(`data/bhagavad-gita.json?v=${Date.now()}`);
         if (resp.ok) {
           const freshSlokas = await resp.json();
@@ -215,9 +361,16 @@ class VedabaseApp {
     this.verseMap.clear();
     this.chapterMap.clear();
     this.bgChapterMap.clear();
+    this.isoMap.clear();
+    this.isoSlokas = [];
+    this.ccMap.clear();
+    this.ccChapterMap.clear();
+    this.ccSlokas = [];
     this.allSlokas = [];
     this.loadedCantos.clear();
     this.isBgLoaded = false;
+    this.isIsoLoaded = false;
+    this.isCcLoaded = false;
 
     if (window.searchEngine) {
       window.searchEngine.clearIndex();
@@ -226,7 +379,9 @@ class VedabaseApp {
     this.showToast('⏳ समस्त डेटा JSON फाइलों से पुनः लोड हो रहा है...');
 
     await this.ensureBgLoaded();
-    const curKey = this.currentSloka ? this.currentSloka.verseKey : (this.currentBook === 'BG' ? '1.1' : '1.1.1');
+    await this.ensureIsoLoaded();
+    await this.ensureCcLoaded();
+    const curKey = this.currentSloka ? this.currentSloka.verseKey : '1.1';
     await this.loadVerseByKey(curKey);
     this.updateCustomEditsCountBadge();
     this.closeAllModals();
@@ -238,17 +393,29 @@ class VedabaseApp {
     this.showToast('✅ सभी श्लोक मूल JSON फाइलों से सफलतापूर्वक रीसेट हो गए!');
   }
 
-  // Merge user custom edits onto any incoming slokas array so user edits ALWAYS win
+  // Merge user custom edits onto any incoming slokas array
   applyUserCustomEdits(slokas) {
     if (!slokas || slokas.length === 0) return slokas;
     const userEdits = this.getUserCustomEdits();
     return slokas.map(s => {
-      const isBG = s.book === 'BG' || (s.id && s.id.startsWith('bg-')) || !s.canto;
-      const vKey = s.verseKey || (isBG ? `${s.chapter}.${s.verse}` : `${s.canto}.${s.chapter}.${s.verse}`);
-      const bgKey = isBG ? `bg-${s.chapter}-${s.verse}` : null;
+      const isCC = s.book === 'CC' || (s.id && s.id.startsWith('cc-'));
+      const isISO = !isCC && (s.book === 'ISO' || (s.id && s.id.startsWith('iso-')));
+      const isBG = !isCC && !isISO && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
 
-      if (bgKey && userEdits[bgKey]) return { ...userEdits[bgKey] };
-      if (userEdits[vKey]) return { ...userEdits[vKey] };
+      let editKey;
+      if (isCC) {
+        const lilaKey = this.getLilaKey(s.lila || s.canto || 1);
+        editKey = `cc-${lilaKey}-${s.chapter}-${s.verse}`;
+      } else if (isISO) {
+        editKey = `iso-${s.verseKey || s.verse}`;
+      } else if (isBG) {
+        editKey = `bg-${s.chapter}-${s.verse}`;
+      } else {
+        editKey = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
+      }
+
+      if (editKey && userEdits[editKey]) return { ...userEdits[editKey] };
+      if (s.verseKey && userEdits[s.verseKey]) return { ...userEdits[s.verseKey] };
       if (s.id && userEdits[s.id]) return { ...userEdits[s.id] };
       return s;
     });
@@ -272,41 +439,129 @@ class VedabaseApp {
       return;
     }
 
-    const cleanEdits = slokas.map(s => {
-      const isBG = s.book === 'BG' || (s.id && s.id.startsWith('bg-')) || !s.canto;
-      return {
-        id: s.id || (isBG ? `bg-${s.chapter}-${s.verse}` : `sb-${s.canto}-${s.chapter}-${s.verse}`),
-        book: isBG ? "BG" : "SB",
-        ...(isBG ? {} : { canto: Number(s.canto) }),
-        chapter: Number(s.chapter),
-        verse: isNaN(Number(s.verse)) ? s.verse : Number(s.verse),
-        verseKey: s.verseKey || (isBG ? `${s.chapter}.${s.verse}` : `${s.canto}.${s.chapter}.${s.verse}`),
-        sanskritDevanagari: s.sanskritDevanagari || '',
-        sanskritIAST: s.sanskritIAST || '',
-        wordToWord: Array.isArray(s.wordToWord) ? s.wordToWord : [],
-        hindiTranslation: s.hindiTranslation || '',
-        hindiPurport: s.hindiPurport || '',
-        category: s.category || {
-          book: isBG ? "श्रीमद्भगवद्गीता" : "श्रीमद्भागवतम्",
-          cantoTitleHindi: isBG ? "श्रीमद्भगवद्गीता यथारूप" : `स्कन्ध ${s.canto}`,
-          chapterTitleHindi: `अध्याय ${s.chapter}`
-        },
-        tags: s.tags || (isBG ? ["श्रीमद्भगवद्गीता", `अध्याय ${s.chapter}`] : [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"]),
-        isUserEdited: true,
-        lastEditedAt: s.lastEditedAt || new Date().toISOString()
-      };
-    });
-
-    const blob = new Blob([JSON.stringify(cleanEdits, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(slokas, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Vedabase_My_Custom_Edits_${cleanEdits.length}_Verses.json`;
+    a.download = `Vedabase_My_Custom_Edits_${slokas.length}_Verses.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    this.showToast(`📥 ${cleanEdits.length} सम्पादित श्लोक बैकअप डाउनलोड हुआ!`);
+    this.showToast(`📥 ${slokas.length} सम्पादित श्लोक बैकअप डाउनलोड हुआ!`);
+  }
+
+  // Ensure Sri Caitanya-caritamrta JSON is loaded
+  async ensureCcLoaded() {
+    if (this.isCcLoaded) return true;
+    if (this.loadingCc) return await this.loadingCc;
+
+    this.loadingCc = (async () => {
+      try {
+        const resp = await fetch('data/chaitanya-charitamrita.json');
+        if (resp.ok) {
+          let verses = await resp.json();
+          verses = this.applyUserCustomEdits(verses);
+          this.ccSlokas = verses;
+
+          for (let i = 0; i < verses.length; i++) {
+            const s = verses[i];
+            s.book = 'CC';
+            const lilaKey = this.getLilaKey(s.lila || s.canto || 1);
+            const lilaNum = lilaKey === 'adi' ? 1 : (lilaKey === 'madhya' ? 2 : 3);
+            s.lila = lilaNum;
+
+            const key = `${lilaKey}.${s.chapter}.${s.verse}`;
+            const id = s.id || `cc-${lilaKey}-${s.chapter}-${s.verse}`;
+            const chKey = `${lilaKey}-${s.chapter}`;
+
+            this.ccMap.set(key, s);
+            this.verseMap.set(key, s);
+            this.verseMap.set(id, s);
+            this.verseMap.set(`cc ${key}`, s);
+            this.verseMap.set(`cc ${lilaKey} ${s.chapter}.${s.verse}`, s);
+            this.verseMap.set(`cc-${lilaKey}-${s.chapter}-${s.verse}`, s);
+
+            if (!this.ccChapterMap.has(chKey)) {
+              this.ccChapterMap.set(chKey, []);
+            }
+            this.ccChapterMap.get(chKey).push(s);
+
+            const existsIdx = this.allSlokas.findIndex(x => x.id === id);
+            if (existsIdx >= 0) this.allSlokas[existsIdx] = s;
+            else this.allSlokas.push(s);
+          }
+
+          if (window.searchEngine) {
+            window.searchEngine.appendIndex(verses);
+          }
+
+          this.isCcLoaded = true;
+          return true;
+        }
+      } catch (e) {
+        console.warn('Notice: Failed to load chaitanya-charitamrita.json:', e);
+      }
+      return false;
+    })();
+
+    const result = await this.loadingCc;
+    this.loadingCc = null;
+    return result;
+  }
+
+  // Ensure Sri Isopanisad JSON is loaded
+  async ensureIsoLoaded() {
+    if (this.isIsoLoaded) return true;
+    if (this.loadingIso) return await this.loadingIso;
+
+    this.loadingIso = (async () => {
+      try {
+        const resp = await fetch('data/isopanisad.json');
+        if (resp.ok) {
+          let mantras = await resp.json();
+          mantras = this.applyUserCustomEdits(mantras);
+          this.isoSlokas = mantras;
+
+          for (let i = 0; i < mantras.length; i++) {
+            const m = mantras[i];
+            m.book = 'ISO';
+            const vK = String(m.verseKey || m.verse).toLowerCase();
+            const id = m.id || `iso-${vK}`;
+
+            this.isoMap.set(vK, m);
+            this.verseMap.set(`iso ${vK}`, m);
+            this.verseMap.set(`iso-${vK}`, m);
+            this.verseMap.set(id, m);
+
+            if (vK === 'inv' || vK === '0') {
+              this.isoMap.set('inv', m);
+              this.isoMap.set('0', m);
+              this.verseMap.set('iso 0', m);
+              this.verseMap.set('iso inv', m);
+            }
+
+            const existsIdx = this.allSlokas.findIndex(x => x.id === id);
+            if (existsIdx >= 0) this.allSlokas[existsIdx] = m;
+            else this.allSlokas.push(m);
+          }
+
+          if (window.searchEngine) {
+            window.searchEngine.appendIndex(mantras);
+          }
+
+          this.isIsoLoaded = true;
+          return true;
+        }
+      } catch (e) {
+        console.warn('Notice: Failed to load isopanisad.json:', e);
+      }
+      return false;
+    })();
+
+    const result = await this.loadingIso;
+    this.loadingIso = null;
+    return result;
   }
 
   // Ensure Srimad Bhagavad Gita JSON is loaded
@@ -446,6 +701,18 @@ class VedabaseApp {
       return this.verseMap.get(cleanKey);
     }
 
+    // Check CC keys
+    if (cleanKey.toLowerCase().startsWith('cc') || cleanKey.toLowerCase().startsWith('adi') || cleanKey.toLowerCase().startsWith('madhya') || cleanKey.toLowerCase().startsWith('antya')) {
+      await this.ensureCcLoaded();
+      if (this.verseMap.has(cleanKey)) return this.verseMap.get(cleanKey);
+    }
+
+    // Check ISO keys
+    if (cleanKey.toLowerCase().startsWith('iso')) {
+      await this.ensureIsoLoaded();
+      if (this.verseMap.has(cleanKey)) return this.verseMap.get(cleanKey);
+    }
+
     // Check BG keys
     if (cleanKey.toLowerCase().startsWith('bg')) {
       await this.ensureBgLoaded();
@@ -463,7 +730,6 @@ class VedabaseApp {
         if (this.verseMap.has(sbKey)) return this.verseMap.get(sbKey);
       }
     } else if (parts.length === 2) {
-      // Could be BG (ch.v)
       await this.ensureBgLoaded();
       const bgKey = `${parts[0]}.${parts[1]}`;
       if (this.verseMap.has(bgKey)) return this.verseMap.get(bgKey);
@@ -475,9 +741,8 @@ class VedabaseApp {
 
   // Initialize Application
   async init() {
-    console.log('Initializing Hindi Vedabase (Direct JSON Multi-Scripture Architecture)...');
+    console.log('Initializing Hindi Vedabase (BG, ISO, CC & SB Architecture)...');
 
-    // Auto-clean stale localStorage overrides if needed
     if (!localStorage.getItem('vedabase_v3_clean_json_synced')) {
       localStorage.removeItem('vedabase_user_custom_edits');
       localStorage.setItem('vedabase_v3_clean_json_synced', 'true');
@@ -487,10 +752,12 @@ class VedabaseApp {
     this.bindEvents();
     this.renderSidebar();
 
-    // 1. Always load Bhagavad Gita initially
+    // 1. Load Bhagavad Gita, Sri Isopanisad & Sri Caitanya-caritamrta initially
     await this.ensureBgLoaded();
+    await this.ensureIsoLoaded();
+    await this.ensureCcLoaded();
 
-    // 2. Determine initial verse (from localStorage or default BG 1.1)
+    // 2. Determine initial verse
     let initialVerseKey = 'bg 1.1';
     try {
       const savedKey = localStorage.getItem('vedabase_last_verse');
@@ -500,13 +767,13 @@ class VedabaseApp {
     // 3. Load initial verse
     await this.loadVerseByKey(initialVerseKey);
 
-    // 4. Preload all remaining Cantos (1-12) from JSON in background for instant search across all verses
+    // 4. Preload all Cantos (1-12) from JSON in background
     setTimeout(() => {
       this.preloadAllCantosInBackground();
     }, 100);
   }
 
-  // Render Sidebar with both Bhagavad Gita (18 Chapters) & Srimad Bhagavatam (12 Cantos / 335 Chapters)
+  // Render Sidebar with BG, ISO, CC & SB
   renderSidebar() {
     // 1. Render Bhagavad Gita Chapters (1 to 18)
     const bgContainer = document.getElementById('bgChapterListContainer');
@@ -525,7 +792,51 @@ class VedabaseApp {
       `).join('');
     }
 
-    // 2. Render Srimad Bhagavatam Cantos (1 to 12)
+    // 2. Render Sri Isopanisad Mantras
+    const isoContainer = document.getElementById('isoMantraListContainer');
+    if (isoContainer) {
+      const isoData = getIsoData();
+      isoContainer.innerHTML = (isoData.mantras || []).map(m => `
+        <li>
+          <button class="chapter-btn ${this.currentBook === 'ISO' && String(this.currentSloka?.verseKey) === String(m.key) ? 'active' : ''}"
+            id="iso-mantra-btn-${m.key}"
+            onclick="window.app.loadIsoMantra('${m.key}')"
+            title="${m.label} - ${m.name}">
+            <div style="font-weight: 600;">${m.label}</div>
+            <div style="font-size: 0.725rem; color: var(--accent-gold);">${m.name}</div>
+          </button>
+        </li>
+      `).join('');
+    }
+
+    // 3. Render Sri Caitanya-caritamrta (3 Lilas & 62 Chapters)
+    const ccContainer = document.getElementById('ccLilaListContainer');
+    if (ccContainer) {
+      const ccLilas = getCcLilas();
+      ccContainer.innerHTML = ccLilas.map(l => `
+        <li class="canto-item ${this.currentBook === 'CC' && l.lila === this.currentLila ? 'expanded active' : ''}" id="cc-lila-item-${l.key}">
+          <button class="canto-header-btn" onclick="window.app.toggleCcLilaAccordion('${l.key}')">
+            <span style="font-weight: 700;">${l.name}</span>
+            <span style="font-size: 0.75rem; opacity: 0.7;">▾</span>
+          </button>
+          <ul class="chapter-sublist" id="cc-chapter-list-${l.key}">
+            ${(l.chapters || []).map(ch => `
+              <li>
+                <button class="chapter-btn ${this.currentBook === 'CC' && l.lila === this.currentLila && ch.chapter === this.currentChapter ? 'active' : ''}" 
+                  id="cc-chap-btn-${l.key}-${ch.chapter}"
+                  onclick="window.app.loadCcChapter('${l.key}', ${ch.chapter})"
+                  title="${ch.name} (${ch.totalVerses} पयार)">
+                  <div style="font-weight: 600;">अध्याय ${ch.chapter}: ${ch.name}</div>
+                  <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} पयार</div>
+                </button>
+              </li>
+            `).join('')}
+          </ul>
+        </li>
+      `).join('');
+    }
+
+    // 4. Render Srimad Bhagavatam Cantos (1 to 12)
     const sbContainer = document.getElementById('cantoListContainer');
     if (sbContainer) {
       const cantos = getCantoStructure();
@@ -561,6 +872,14 @@ class VedabaseApp {
     }
   }
 
+  // Accordion toggle: Toggles CC Lila open/close
+  toggleCcLilaAccordion(lilaKey) {
+    const targetItem = document.getElementById(`cc-lila-item-${lilaKey}`);
+    if (targetItem) {
+      targetItem.classList.toggle('expanded');
+    }
+  }
+
   // Accordion toggle: Toggles canto open/close
   toggleCantoAccordion(canto) {
     const targetItem = document.getElementById(`canto-item-${canto}`);
@@ -573,9 +892,74 @@ class VedabaseApp {
   cleanSanskritText(text) {
     if (!text) return '';
     return text
-      .replace(/^॥\s*(?:श्रीमद्भागवतम्|श्रीमद्भगवद्गीता)[^॥\n]*॥\s*\n?/gi, '')
-      .replace(/॥\s*(?:श्रीमद्भागवतम्|श्रीमद्भगवद्गीता)[^॥\n]*॥/gi, '')
+      .replace(/^॥\s*(?:श्रीमद्भागवतम्|श्रीमद्भगवद्गीता|श्री ईशोपनिषद्|श्री चैतन्य-चरितामृत)[^॥\n]*॥\s*\n?/gi, '')
+      .replace(/॥\s*(?:श्रीमद्भागवतम्|श्रीमद्भगवद्गीता|श्री ईशोपनिषद्|श्री चैतन्य-चरितामृत)[^॥\n]*॥/gi, '')
       .trim();
+  }
+
+  // Load Sri Caitanya-caritamrta Chapter
+  async loadCcChapter(lila, chapter) {
+    const lilaKey = this.getLilaKey(lila);
+    const lilaNum = lilaKey === 'adi' ? 1 : (lilaKey === 'madhya' ? 2 : 3);
+    const chNum = Number(chapter) || 1;
+
+    this.currentBook = 'CC';
+    this.currentLila = lilaNum;
+    this.currentChapter = chNum;
+
+    await this.ensureCcLoaded();
+
+    const chKey = `${lilaKey}-${chNum}`;
+    const chVerses = this.ccChapterMap.get(chKey) || [];
+    this.chapterSlokas = chVerses;
+
+    if (chVerses.length > 0) {
+      await this.displaySloka(chVerses[0]);
+    } else {
+      const ccLilas = getCcLilas();
+      const lilaObj = ccLilas.find(l => l.lila === lilaNum);
+      const chObj = lilaObj?.chapters?.find(ch => ch.chapter === chNum);
+      const chTitle = chObj ? `अध्याय ${chNum} - ${chObj.name}` : `अध्याय ${chNum}`;
+      const totalV = chObj ? chObj.totalVerses : 1;
+
+      const placeholder = {
+        id: `cc-${lilaKey}-${chNum}-1`,
+        book: "CC",
+        lila: lilaNum,
+        canto: lilaNum,
+        chapter: chNum,
+        verse: 1,
+        verseKey: `${lilaKey}.${chNum}.1`,
+        sanskritDevanagari: `पयार लोड हो रहा है...`,
+        sanskritIAST: '',
+        wordToWord: [],
+        hindiTranslation: `यह श्री चैतन्य-चरितामृत, ${lilaObj?.name || lilaKey}, ${chTitle} का पयार 1 है। (कुल ${totalV} पयार)।`,
+        hindiPurport: ``,
+        category: {
+          book: "श्री चैतन्य-चरितामृत",
+          cantoTitleHindi: lilaObj?.name || lilaKey,
+          chapterTitleHindi: chTitle
+        },
+        tags: ["श्री चैतन्य-चरितामृत", lilaObj?.name || lilaKey, `अध्याय ${chNum}`]
+      };
+      await this.displaySloka(placeholder);
+    }
+
+    this.highlightActiveSidebar();
+  }
+
+  // Load Sri Isopanisad Mantra
+  async loadIsoMantra(mantraKey) {
+    this.currentBook = 'ISO';
+    await this.ensureIsoLoaded();
+
+    const cleanK = String(mantraKey || 'inv').toLowerCase();
+    const mantra = this.isoMap.get(cleanK) || this.isoSlokas[0];
+
+    if (mantra) {
+      await this.displaySloka(mantra);
+    }
+    this.highlightActiveSidebar();
   }
 
   // Load Bhagavad Gita Chapter
@@ -698,13 +1082,85 @@ class VedabaseApp {
     }
   }
 
-  // Load verse by VerseKey (e.g. "bg 2.13", "2.13", "1.1.1", "10.14.8")
+  // Load verse by VerseKey (e.g. "cc adi 1.1", "cc madhya 20.108", "iso 1", "bg 2.13", "1.1.1")
   async loadVerseByKey(verseKey, highlightWord = null) {
     if (!verseKey) return;
     const cleanKey = verseKey.trim();
     this.currentHighlightWord = (highlightWord && highlightWord.trim().length >= 2) ? highlightWord.trim() : null;
 
-    // Check if BG key
+    // 1. Check if CC query
+    const isCcQuery = cleanKey.toLowerCase().startsWith('cc') ||
+                     cleanKey.toLowerCase().startsWith('adi') ||
+                     cleanKey.toLowerCase().startsWith('madhya') ||
+                     cleanKey.toLowerCase().startsWith('antya') ||
+                     cleanKey.toLowerCase().startsWith('चैतन्य') ||
+                     (this.currentBook === 'CC' && cleanKey.split('.').length >= 2);
+
+    if (isCcQuery) {
+      await this.ensureCcLoaded();
+      const cleanCc = cleanKey.replace(/^cc[\s.\-:]*/i, '');
+      const parts = cleanCc.split(/[.\-:\s]+/);
+
+      let lilaKey = 'adi';
+      let ch = 1;
+      let v = '1';
+
+      if (parts[0].toLowerCase().startsWith('m') || parts[0].includes('मध्य')) {
+        lilaKey = 'madhya';
+        ch = parseInt(parts[1], 10) || 1;
+        v = parts[2] || '1';
+      } else if (parts[0].toLowerCase().startsWith('an') || parts[0].includes('अन्त्य')) {
+        lilaKey = 'antya';
+        ch = parseInt(parts[1], 10) || 1;
+        v = parts[2] || '1';
+      } else if (parts[0].toLowerCase().startsWith('a') || parts[0].includes('आदि')) {
+        lilaKey = 'adi';
+        ch = parseInt(parts[1], 10) || 1;
+        v = parts[2] || '1';
+      } else if (parts.length === 3 && parseInt(parts[0], 10) <= 3) {
+        const lNum = parseInt(parts[0], 10);
+        lilaKey = lNum === 1 ? 'adi' : (lNum === 2 ? 'madhya' : 'antya');
+        ch = parseInt(parts[1], 10) || 1;
+        v = parts[2] || '1';
+      } else if (this.currentBook === 'CC') {
+        lilaKey = this.getLilaKey(this.currentLila);
+        ch = parseInt(parts[0], 10) || 1;
+        v = parts[1] || '1';
+      }
+
+      const exactKey = `${lilaKey}.${ch}.${v}`;
+      const sloka = await this.getSlokaData(exactKey) || await this.getSlokaData(`cc ${exactKey}`);
+
+      this.currentBook = 'CC';
+      this.currentLila = lilaKey === 'adi' ? 1 : (lilaKey === 'madhya' ? 2 : 3);
+      this.currentChapter = ch;
+      const chKey = `${lilaKey}-${ch}`;
+      this.chapterSlokas = this.ccChapterMap.get(chKey) || [];
+
+      if (sloka) {
+        await this.displaySloka(sloka);
+      } else {
+        await this.loadCcChapter(lilaKey, ch);
+        const found = this.chapterSlokas.find(s => String(s.verse) === String(v));
+        if (found) await this.displaySloka(found);
+      }
+      this.highlightActiveSidebar();
+      return;
+    }
+
+    // 2. Check if ISO query
+    const isIsoQuery = cleanKey.toLowerCase().startsWith('iso') ||
+                       cleanKey.toLowerCase().startsWith('ईशोपनिषद्') ||
+                       (this.currentBook === 'ISO' && (!cleanKey.includes('.') || cleanKey.toLowerCase() === 'inv'));
+
+    if (isIsoQuery) {
+      await this.ensureIsoLoaded();
+      const cleanMantraKey = cleanKey.replace(/^(?:iso|isopanisad|ईशोपनिषद्)[\s.\-:]*/i, '').trim() || 'inv';
+      await this.loadIsoMantra(cleanMantraKey);
+      return;
+    }
+
+    // 3. Check if BG query
     const isBgQuery = cleanKey.toLowerCase().startsWith('bg') ||
                      (this.currentBook === 'BG' && cleanKey.split('.').length === 2) ||
                      (!cleanKey.toLowerCase().startsWith('sb') && cleanKey.split('.').length === 2 && parseInt(cleanKey.split('.')[0], 10) > 12);
@@ -733,7 +1189,7 @@ class VedabaseApp {
       return;
     }
 
-    // Otherwise SB query (3 parts: Canto.Chapter.Verse)
+    // 4. Otherwise SB query (3 parts: Canto.Chapter.Verse)
     const cleanSbKey = cleanKey.replace(/^sb[\s.\-:]*/i, '');
     const parts = cleanSbKey.split(/[.\-:\s]+/);
 
@@ -773,24 +1229,42 @@ class VedabaseApp {
     this.highlightActiveSidebar();
   }
 
-  // Highlight active Scripture, Canto & Chapter in Sidebar
+  // Highlight active Scripture, Canto/Lila & Chapter in Sidebar
   highlightActiveSidebar() {
+    const isCC = this.currentBook === 'CC';
+    const isISO = this.currentBook === 'ISO';
     const isBG = this.currentBook === 'BG';
 
     const groupBG = document.getElementById('scriptureGroupBG');
+    const groupISO = document.getElementById('scriptureGroupISO');
+    const groupCC = document.getElementById('scriptureGroupCC');
     const groupSB = document.getElementById('scriptureGroupSB');
 
-    if (isBG) {
-      if (groupBG) {
-        groupBG.classList.add('active', 'expanded');
-      }
+    if (isCC) {
+      if (groupCC) groupCC.classList.add('active', 'expanded');
+      const lilaKey = this.getLilaKey(this.currentLila);
+      document.querySelectorAll('#ccLilaListContainer .canto-item').forEach(el => {
+        if (el.id === `cc-lila-item-${lilaKey}`) {
+          el.classList.add('active', 'expanded');
+        } else {
+          el.classList.remove('active', 'expanded');
+        }
+      });
+      document.querySelectorAll('#ccLilaListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
+      const activeCcBtn = document.getElementById(`cc-chap-btn-${lilaKey}-${this.currentChapter}`);
+      if (activeCcBtn) activeCcBtn.classList.add('active');
+    } else if (isISO) {
+      if (groupISO) groupISO.classList.add('active', 'expanded');
+      document.querySelectorAll('#isoMantraListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
+      const activeIsoBtn = document.getElementById(`iso-mantra-btn-${this.currentSloka?.verseKey || 'inv'}`);
+      if (activeIsoBtn) activeIsoBtn.classList.add('active');
+    } else if (isBG) {
+      if (groupBG) groupBG.classList.add('active', 'expanded');
       document.querySelectorAll('#bgChapterListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
       const activeBgBtn = document.getElementById(`bg-chap-btn-${this.currentChapter}`);
       if (activeBgBtn) activeBgBtn.classList.add('active');
     } else {
-      if (groupSB) {
-        groupSB.classList.add('active', 'expanded');
-      }
+      if (groupSB) groupSB.classList.add('active', 'expanded');
       document.querySelectorAll('.canto-item').forEach(el => {
         if (el.id === `canto-item-${this.currentCanto}`) {
           el.classList.add('active', 'expanded');
@@ -807,17 +1281,35 @@ class VedabaseApp {
   // Display a Sloka in the main reader area
   async displaySloka(sloka) {
     this.currentSloka = sloka;
-    const isBG = sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')) || !sloka.canto;
-    this.currentBook = isBG ? 'BG' : 'SB';
+    const isCC = sloka.book === 'CC' || (sloka.id && sloka.id.startsWith('cc-'));
+    const isISO = !isCC && (sloka.book === 'ISO' || (sloka.id && sloka.id.startsWith('iso-')));
+    const isBG = !isCC && !isISO && (sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')) || (!sloka.canto && !sloka.lila));
+
+    if (isCC) this.currentBook = 'CC';
+    else if (isISO) this.currentBook = 'ISO';
+    else if (isBG) this.currentBook = 'BG';
+    else this.currentBook = 'SB';
 
     try {
-      localStorage.setItem('vedabase_last_verse', isBG ? `bg ${sloka.verseKey}` : sloka.verseKey);
+      if (isCC) localStorage.setItem('vedabase_last_verse', `cc ${sloka.verseKey}`);
+      else if (isISO) localStorage.setItem('vedabase_last_verse', `iso ${sloka.verseKey}`);
+      else if (isBG) localStorage.setItem('vedabase_last_verse', `bg ${sloka.verseKey}`);
+      else localStorage.setItem('vedabase_last_verse', sloka.verseKey);
     } catch (e) {}
 
     // 1. Badges & Titles
     const keyBadge = document.getElementById('currentVerseKeyBadge');
     if (keyBadge) {
-      keyBadge.textContent = isBG ? `BG ${sloka.verseKey}` : `SB ${sloka.verseKey}`;
+      if (isCC) {
+        const lKey = this.getLilaKey(sloka.lila || sloka.canto || 1).toUpperCase();
+        keyBadge.textContent = `CC ${lKey} ${sloka.chapter}.${sloka.verse}`;
+      } else if (isISO) {
+        keyBadge.textContent = `ISO ${sloka.verseKey === 'inv' ? 'मंगलाचरण' : 'मंत्र ' + sloka.verseKey}`;
+      } else if (isBG) {
+        keyBadge.textContent = `BG ${sloka.verseKey}`;
+      } else {
+        keyBadge.textContent = `SB ${sloka.verseKey}`;
+      }
     }
 
     const userEditBadge = document.getElementById('userEditedBadge');
@@ -827,7 +1319,14 @@ class VedabaseApp {
 
     const chTitle = document.getElementById('currentChapterName');
     if (chTitle) {
-      if (isBG) {
+      if (isCC) {
+        const ccLilas = getCcLilas();
+        const lilaObj = ccLilas.find(l => l.lila === (sloka.lila || 1));
+        const chObj = lilaObj?.chapters?.find(ch => ch.chapter === Number(sloka.chapter));
+        chTitle.textContent = `${lilaObj?.name || 'आदि-लीला'} • ${chObj ? `अध्याय ${sloka.chapter} - ${chObj.name}` : (sloka.category?.chapterTitleHindi || `अध्याय ${sloka.chapter}`)}`;
+      } else if (isISO) {
+        chTitle.textContent = sloka.category?.chapterTitleHindi || `मंत्र ${sloka.verseKey}`;
+      } else if (isBG) {
         const bgChapters = getBgChapters();
         const chObj = bgChapters.find(ch => ch.chapter === Number(sloka.chapter));
         chTitle.textContent = chObj ? `अध्याय ${sloka.chapter} - ${chObj.name}` : (sloka.category?.chapterTitleHindi || `अध्याय ${sloka.chapter}`);
@@ -836,10 +1335,10 @@ class VedabaseApp {
       }
     }
 
-    // 2. Render Interactive Horizontal Verse Strip (1, 2, 3... N)
+    // 2. Render Interactive Horizontal Verse Strip
     this.renderVerseSelectorStrip();
 
-    // 3. Sanskrit Verse & IAST
+    // 3. Sanskrit / Bengali Verse & IAST
     const sanskritEl = document.getElementById('sanskritDevanagari');
     if (sanskritEl) {
       sanskritEl.innerHTML = this.highlightInText(this.cleanSanskritText(sloka.sanskritDevanagari), this.currentHighlightWord) || 'श्लोक उपलब्ध नहीं है';
@@ -906,43 +1405,93 @@ class VedabaseApp {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Render the interactive horizontal verse numbers: [1] [2] [3]... [N]
+  // Render the interactive horizontal verse selector strip
   renderVerseSelectorStrip() {
     const scrollContainer = document.getElementById('verseStripScroll');
     if (!scrollContainer || !this.currentSloka) return;
 
+    const isCC = this.currentBook === 'CC';
+    const isISO = this.currentBook === 'ISO';
     const isBG = this.currentBook === 'BG';
-    let totalVerses = 1;
+    const buttons = [];
 
-    if (isBG) {
+    if (isCC) {
+      const ccLilas = getCcLilas();
+      const lilaObj = ccLilas.find(l => l.lila === (this.currentLila || 1));
+      const chObj = lilaObj?.chapters?.find(ch => ch.chapter === Number(this.currentChapter));
+      const totalVerses = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const lilaKey = this.getLilaKey(this.currentLila);
+
+      const existingMap = new Map();
+      this.chapterSlokas.forEach(s => existingMap.set(parseInt(s.verse, 10), s));
+      const currentVNum = parseInt(this.currentSloka.verse, 10);
+
+      for (let v = 1; v <= totalVerses; v++) {
+        const isCurrent = currentVNum === v;
+        const isLoaded = existingMap.has(v);
+        buttons.push(`
+          <button class="verse-strip-btn ${isCurrent ? 'active' : ''} ${isLoaded ? 'has-data' : ''}"
+            onclick="window.app.loadVerseByKey('cc ${lilaKey} ${this.currentChapter}.${v}')"
+            title="पयार ${v} ${isLoaded ? '(डेटा उपलब्ध)' : ''}">
+            ${v}
+          </button>
+        `);
+      }
+    } else if (isISO) {
+      const isoData = getIsoData();
+      const currentVK = String(this.currentSloka?.verseKey || 'inv').toLowerCase();
+
+      (isoData.mantras || []).forEach(m => {
+        const isCurrent = currentVK === String(m.key).toLowerCase() || (currentVK === '0' && m.key === 'inv');
+        const btnLabel = m.key === 'inv' ? 'मंगलाचरण' : m.key;
+
+        buttons.push(`
+          <button class="verse-strip-btn has-data ${isCurrent ? 'active' : ''}"
+            onclick="window.app.loadIsoMantra('${m.key}')"
+            title="${m.label} (${m.name})">
+            ${btnLabel}
+          </button>
+        `);
+      });
+    } else if (isBG) {
       const bgChapters = getBgChapters();
       const chObj = bgChapters.find(ch => ch.chapter === Number(this.currentChapter));
-      totalVerses = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const totalVerses = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const existingMap = new Map();
+      this.chapterSlokas.forEach(s => existingMap.set(parseInt(s.verse, 10), s));
+      const currentVNum = parseInt(this.currentSloka.verse, 10);
+
+      for (let v = 1; v <= totalVerses; v++) {
+        const isCurrent = currentVNum === v;
+        const isLoaded = existingMap.has(v);
+        buttons.push(`
+          <button class="verse-strip-btn ${isCurrent ? 'active' : ''} ${isLoaded ? 'has-data' : ''}"
+            onclick="window.app.loadVerseByKey('bg ${this.currentChapter}.${v}')"
+            title="श्लोक ${v} ${isLoaded ? '(डेटा उपलब्ध)' : ''}">
+            ${v}
+          </button>
+        `);
+      }
     } else {
       const cantos = getCantoStructure();
       const cantoObj = cantos.find(c => c.canto === this.currentCanto);
       const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
-      totalVerses = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
-    }
+      const totalVerses = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const existingMap = new Map();
+      this.chapterSlokas.forEach(s => existingMap.set(parseInt(s.verse, 10), s));
+      const currentVNum = parseInt(this.currentSloka.verse, 10);
 
-    const existingMap = new Map();
-    this.chapterSlokas.forEach(s => existingMap.set(parseInt(s.verse, 10), s));
-
-    const currentVNum = parseInt(this.currentSloka.verse, 10);
-    const buttons = [];
-
-    for (let v = 1; v <= totalVerses; v++) {
-      const isCurrent = currentVNum === v;
-      const isLoaded = existingMap.has(v);
-      const loadKey = isBG ? `bg ${this.currentChapter}.${v}` : `${this.currentCanto}.${this.currentChapter}.${v}`;
-
-      buttons.push(`
-        <button class="verse-strip-btn ${isCurrent ? 'active' : ''} ${isLoaded ? 'has-data' : ''}"
-          onclick="window.app.loadVerseByKey('${loadKey}')"
-          title="श्लोक ${v} ${isLoaded ? '(डेटा उपलब्ध)' : ''}">
-          ${v}
-        </button>
-      `);
+      for (let v = 1; v <= totalVerses; v++) {
+        const isCurrent = currentVNum === v;
+        const isLoaded = existingMap.has(v);
+        buttons.push(`
+          <button class="verse-strip-btn ${isCurrent ? 'active' : ''} ${isLoaded ? 'has-data' : ''}"
+            onclick="window.app.loadVerseByKey('${this.currentCanto}.${this.currentChapter}.${v}')"
+            title="श्लोक ${v} ${isLoaded ? '(डेटा उपलब्ध)' : ''}">
+            ${v}
+          </button>
+        `);
+      }
     }
 
     scrollContainer.innerHTML = buttons.join('');
@@ -953,34 +1502,80 @@ class VedabaseApp {
     }
   }
 
-  // Update verse navigation counter (e.g. 1 / 46 or 1 / 23)
+  // Update verse navigation counter
   updateNavCounter() {
     const counter = document.getElementById('verseCounterStatus');
     if (!counter) return;
 
+    const isCC = this.currentBook === 'CC';
+    const isISO = this.currentBook === 'ISO';
     const isBG = this.currentBook === 'BG';
-    let totalV = 1;
 
-    if (isBG) {
+    if (isCC) {
+      const ccLilas = getCcLilas();
+      const lilaObj = ccLilas.find(l => l.lila === (this.currentLila || 1));
+      const chObj = lilaObj?.chapters?.find(ch => ch.chapter === Number(this.currentChapter));
+      const totalV = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const vNum = parseInt(this.currentSloka?.verse, 10) || 1;
+      counter.textContent = `${vNum} / ${totalV}`;
+    } else if (isISO) {
+      const currentVK = String(this.currentSloka?.verseKey || 'inv');
+      counter.textContent = currentVK === 'inv' ? 'मंगलाचरण / 18' : `${currentVK} / 18`;
+    } else if (isBG) {
       const bgChapters = getBgChapters();
       const chObj = bgChapters.find(ch => ch.chapter === Number(this.currentChapter));
-      totalV = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const totalV = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const vNum = parseInt(this.currentSloka?.verse, 10) || 1;
+      counter.textContent = `${vNum} / ${totalV}`;
     } else {
       const cantos = getCantoStructure();
       const cantoObj = cantos.find(c => c.canto === this.currentCanto);
       const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
-      totalV = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const totalV = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const vNum = parseInt(this.currentSloka?.verse, 10) || 1;
+      counter.textContent = `${vNum} / ${totalV}`;
     }
-
-    const vNum = parseInt(this.currentSloka?.verse, 10) || 1;
-    counter.textContent = `${vNum} / ${totalV}`;
   }
 
   // Next Verse
   async nextVerse() {
+    const isCC = this.currentBook === 'CC';
+    const isISO = this.currentBook === 'ISO';
     const isBG = this.currentBook === 'BG';
 
-    if (isBG) {
+    if (isCC) {
+      const lilaKey = this.getLilaKey(this.currentLila);
+      const ccLilas = getCcLilas();
+      const lilaObj = ccLilas.find(l => l.lila === this.currentLila);
+      const chObj = lilaObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
+      const maxVerses = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
+
+      if (currentVNum < maxVerses) {
+        await this.loadVerseByKey(`cc ${lilaKey} ${this.currentChapter}.${currentVNum + 1}`);
+      } else {
+        if (lilaObj && this.currentChapter < lilaObj.totalChapters) {
+          await this.loadCcChapter(lilaKey, this.currentChapter + 1);
+        } else if (this.currentLila < 3) {
+          const nextLilaKey = this.currentLila === 1 ? 'madhya' : 'antya';
+          await this.loadCcChapter(nextLilaKey, 1);
+        } else {
+          this.showToast('श्री चैतन्य-चरितामृत का अन्तिम पयार!');
+        }
+      }
+    } else if (isISO) {
+      const currentVK = String(this.currentSloka?.verseKey || 'inv').toLowerCase();
+      if (currentVK === 'inv' || currentVK === '0') {
+        await this.loadIsoMantra('1');
+      } else {
+        const vNum = parseInt(currentVK, 10) || 1;
+        if (vNum < 18) {
+          await this.loadIsoMantra(String(vNum + 1));
+        } else {
+          this.showToast('श्री ईशोपनिषद् का अन्तिम मंत्र!');
+        }
+      }
+    } else if (isBG) {
       const bgChapters = getBgChapters();
       const chObj = bgChapters.find(ch => ch.chapter === Number(this.currentChapter));
       const maxVerses = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
@@ -1019,9 +1614,46 @@ class VedabaseApp {
 
   // Previous Verse
   async prevVerse() {
+    const isCC = this.currentBook === 'CC';
+    const isISO = this.currentBook === 'ISO';
     const isBG = this.currentBook === 'BG';
 
-    if (isBG) {
+    if (isCC) {
+      const lilaKey = this.getLilaKey(this.currentLila);
+      const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
+      if (currentVNum > 1) {
+        await this.loadVerseByKey(`cc ${lilaKey} ${this.currentChapter}.${currentVNum - 1}`);
+      } else {
+        if (this.currentChapter > 1) {
+          const prevChap = this.currentChapter - 1;
+          const ccLilas = getCcLilas();
+          const lilaObj = ccLilas.find(l => l.lila === this.currentLila);
+          const prevChObj = lilaObj?.chapters?.find(ch => ch.chapter === prevChap);
+          const lastVerse = prevChObj ? prevChObj.totalVerses : 1;
+          await this.loadCcChapter(lilaKey, prevChap);
+          await this.loadVerseByKey(`cc ${lilaKey} ${prevChap}.${lastVerse}`);
+        } else if (this.currentLila > 1) {
+          const prevLilaNum = this.currentLila - 1;
+          const prevLilaKey = prevLilaNum === 1 ? 'adi' : 'madhya';
+          const ccLilas = getCcLilas();
+          const prevLilaObj = ccLilas.find(l => l.lila === prevLilaNum);
+          const lastChap = prevLilaObj ? prevLilaObj.totalChapters : 1;
+          await this.loadCcChapter(prevLilaKey, lastChap);
+        } else {
+          this.showToast('श्री चैतन्य-चरितामृत का प्रथम पयार!');
+        }
+      }
+    } else if (isISO) {
+      const currentVK = String(this.currentSloka?.verseKey || 'inv').toLowerCase();
+      if (currentVK === 'inv' || currentVK === '0') {
+        this.showToast('श्री ईशोपनिषद् का मंगलाचरण!');
+      } else if (currentVK === '1') {
+        await this.loadIsoMantra('inv');
+      } else {
+        const vNum = parseInt(currentVK, 10) || 2;
+        await this.loadIsoMantra(String(vNum - 1));
+      }
+    } else if (isBG) {
       const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
       if (currentVNum > 1) {
         await this.loadVerseByKey(`bg ${this.currentChapter}.${currentVNum - 1}`);
@@ -1058,7 +1690,7 @@ class VedabaseApp {
     }
   }
 
-  // Directly search any Sanskrit / Hindi word
+  // Directly search any Sanskrit / Bengali word
   searchWordDirectly(sanskritWord) {
     if (!sanskritWord) return;
     const cleanWord = sanskritWord.replace(/[।,;:\-\—\–\(\)\[\]\{\}\"\'\?\!\/\\\|\*\+\=\>\<]/g, ' ').trim();
@@ -1081,19 +1713,31 @@ class VedabaseApp {
   copyFormattedVerse() {
     if (!this.currentSloka) return;
     const s = this.currentSloka;
-    const isBG = this.currentBook === 'BG' || s.book === 'BG' || s.id?.startsWith('bg-');
+    const isCC = this.currentBook === 'CC' || s.book === 'CC' || s.id?.startsWith('cc-');
+    const isISO = !isCC && (this.currentBook === 'ISO' || s.book === 'ISO' || s.id?.startsWith('iso-'));
+    const isBG = !isCC && !isISO && (this.currentBook === 'BG' || s.book === 'BG' || s.id?.startsWith('bg-'));
     const wordMeaningsText = (s.wordToWord || []).map(w => `${w.sanskrit} — ${w.hindi}`).join('; ');
 
-    const titlePrefix = isBG ? `🕉️ *श्रीमद्भगवद्गीता ${s.verseKey} (BG ${s.verseKey})* 🕉️` : `🕉️ *श्रीमद्भागवतम् SB ${s.verseKey}* 🕉️`;
+    let titlePrefix;
+    if (isCC) {
+      const lKey = this.getLilaKey(s.lila || s.canto || 1).toUpperCase();
+      titlePrefix = `🌺 *श्री चैतन्य-चरितामृत (CC ${lKey} ${s.chapter}.${s.verse})* 🌺`;
+    } else if (isISO) {
+      titlePrefix = `🪔 *श्री ईशोपनिषद् (ISO ${s.verseKey === 'inv' ? 'मंगलाचरण' : 'मंत्र ' + s.verseKey})* 🪔`;
+    } else if (isBG) {
+      titlePrefix = `🕉️ *श्रीमद्भगवद्गीता ${s.verseKey} (BG ${s.verseKey})* 🕉️`;
+    } else {
+      titlePrefix = `🕉️ *श्रीमद्भागवतम् SB ${s.verseKey}* 🕉️`;
+    }
 
     const formatted = `${titlePrefix}\n\n` +
-      `📜 *संस्कृत श्लोक:*\n${s.sanskritDevanagari}\n\n` +
+      `📜 *श्लोक / पयार:*\n${s.sanskritDevanagari}\n\n` +
       (wordMeaningsText ? `✨ *शब्दार्थ:*\n${wordMeaningsText}\n\n` : '') +
       `📖 *अनुवाद:*\n${s.hindiTranslation}\n\n` +
       (s.hindiPurport ? `🪔 *तात्पर्य:*\n${s.hindiPurport.substring(0, 400)}...\n\n` : '');
 
     navigator.clipboard.writeText(formatted).then(() => {
-      this.showToast('📋 श्लोक क्लिपबोर्ड में कॉपी हो गया!');
+      this.showToast('📋 पयार/श्लोक क्लिपबोर्ड में कॉपी हो गया!');
     }).catch(() => {
       this.showToast('कॉपी करने में असमर्थ।');
     });
@@ -1107,8 +1751,9 @@ class VedabaseApp {
 
     const trimmed = (query || '').trim();
 
-    // Ensure BG is loaded if search term seems related
     await this.ensureBgLoaded();
+    await this.ensureIsoLoaded();
+    await this.ensureCcLoaded();
 
     const res = window.searchEngine ? window.searchEngine.search(trimmed) : { results: [], timeMs: 0 };
 
@@ -1117,22 +1762,46 @@ class VedabaseApp {
     }
 
     if (!res.results || res.results.length === 0) {
-      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">'${this.escapeHtml(trimmed || '')}' के लिए कोई श्लोक नहीं मिला।</div>`;
+      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">'${this.escapeHtml(trimmed || '')}' के लिए कोई श्लोक/पयार नहीं मिला।</div>`;
       return;
     }
 
     const highlightWord = trimmed;
 
     list.innerHTML = res.results.map(s => {
-      const isBG = s.book === 'BG' || s.id?.startsWith('bg-') || !s.canto;
-      const prefix = isBG ? 'BG' : 'SB';
+      const isCC = s.book === 'CC' || s.id?.startsWith('cc-');
+      const isISO = !isCC && (s.book === 'ISO' || s.id?.startsWith('iso-'));
+      const isBG = !isCC && !isISO && (s.book === 'BG' || s.id?.startsWith('bg-') || !s.canto);
+
+      let prefix = 'SB';
+      let badgeStyle = '';
+      let displayKey = s.verseKey;
+      let targetKey = s.verseKey;
+
+      if (isCC) {
+        const lKey = this.getLilaKey(s.lila || s.canto || 1).toUpperCase();
+        prefix = 'CC';
+        badgeStyle = 'background: rgba(236, 72, 153, 0.2); color: #f472b6;';
+        displayKey = `${lKey} ${s.chapter}.${s.verse}`;
+        targetKey = `cc ${s.verseKey || `${lKey.toLowerCase()}.${s.chapter}.${s.verse}`}`;
+      } else if (isISO) {
+        prefix = 'ISO';
+        badgeStyle = 'background: rgba(16, 185, 129, 0.2); color: #34d399;';
+        displayKey = s.verseKey === 'inv' ? 'मंगलाचरण' : `मंत्र ${s.verseKey}`;
+        targetKey = `iso ${s.verseKey}`;
+      } else if (isBG) {
+        prefix = 'BG';
+        badgeStyle = 'background: rgba(245, 158, 11, 0.2); color: var(--accent-gold);';
+        displayKey = s.verseKey;
+        targetKey = `bg ${s.verseKey}`;
+      }
+
       const sanskritFirstLine = this.cleanSanskritText(s.sanskritDevanagari || '').split('\n')[0];
-      const targetKey = isBG ? `bg ${s.verseKey}` : s.verseKey;
 
       return `
         <div class="search-result-item" onclick="window.app.selectVerseFromSearch('${targetKey}', '${this.escapeHtml(highlightWord)}')">
           <div class="search-res-header">
-            <span class="search-res-key" style="${isBG ? 'background: rgba(245, 158, 11, 0.2); color: var(--accent-gold);' : ''}">${prefix} ${s.verseKey}</span>
+            <span class="search-res-key" style="${badgeStyle}">${prefix} ${displayKey}</span>
             <span style="font-size: 0.8rem; color: var(--accent-gold); font-weight: 600;">${this.escapeHtml(s.category?.chapterTitleHindi || '')}</span>
           </div>
           <div class="search-res-sanskrit">${this.highlightInText(sanskritFirstLine, highlightWord)}</div>
@@ -1255,34 +1924,62 @@ class VedabaseApp {
   renderPresentationSlide() {
     if (!this.currentSloka) return;
     const s = this.currentSloka;
-    const isBG = this.currentBook === 'BG' || s.book === 'BG' || s.id?.startsWith('bg-');
+    const isCC = s.book === 'CC' || s.id?.startsWith('cc-');
+    const isISO = !isCC && (s.book === 'ISO' || s.id?.startsWith('iso-'));
+    const isBG = !isCC && !isISO && (s.book === 'BG' || s.id?.startsWith('bg-'));
 
     const presVerseKey = document.getElementById('presVerseKey');
-    if (presVerseKey) presVerseKey.textContent = isBG ? `BG ${s.verseKey}` : `SB ${s.verseKey}`;
+    if (presVerseKey) {
+      if (isCC) {
+        const lKey = this.getLilaKey(s.lila || s.canto || 1).toUpperCase();
+        presVerseKey.textContent = `CC ${lKey} ${s.chapter}.${s.verse}`;
+      } else if (isISO) {
+        presVerseKey.textContent = `ISO ${s.verseKey === 'inv' ? 'मंगलाचरण' : 'मंत्र ' + s.verseKey}`;
+      } else if (isBG) {
+        presVerseKey.textContent = `BG ${s.verseKey}`;
+      } else {
+        presVerseKey.textContent = `SB ${s.verseKey}`;
+      }
+    }
 
     const presChapterTitle = document.getElementById('presChapterTitle');
     if (presChapterTitle) {
-      if (isBG) {
+      if (isCC) {
+        const ccLilas = getCcLilas();
+        const lilaObj = ccLilas.find(l => l.lila === (s.lila || 1));
+        presChapterTitle.textContent = `श्री चैतन्य-चरितामृत • ${lilaObj?.name || 'आदि-लीला'} • अध्याय ${s.chapter}`;
+      } else if (isISO) {
+        presChapterTitle.textContent = `श्री ईशोपनिषद् • ${s.category?.chapterTitleHindi || 'मंत्र ' + s.verseKey}`;
+      } else if (isBG) {
         presChapterTitle.textContent = `श्रीमद्भगवद्गीता • अध्याय ${s.chapter}`;
       } else {
         presChapterTitle.textContent = s.category?.chapterTitleHindi || `स्कन्ध ${s.canto} • अध्याय ${s.chapter}`;
       }
     }
 
-    let totalV = 1;
-    if (isBG) {
-      const bgChapters = getBgChapters();
-      const chObj = bgChapters.find(ch => ch.chapter === Number(s.chapter));
-      totalV = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
-    } else {
-      const cantos = getCantoStructure();
-      const cantoObj = cantos.find(c => c.canto === this.currentCanto);
-      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
-      totalV = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
-    }
-
     const presCounter = document.getElementById('presCounter');
-    if (presCounter) presCounter.textContent = `श्लोक ${s.verse} / ${totalV}`;
+    if (presCounter) {
+      if (isCC) {
+        const ccLilas = getCcLilas();
+        const lilaObj = ccLilas.find(l => l.lila === (s.lila || 1));
+        const chObj = lilaObj?.chapters?.find(ch => ch.chapter === Number(s.chapter));
+        const totalV = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+        presCounter.textContent = `पयार ${s.verse} / ${totalV}`;
+      } else if (isISO) {
+        presCounter.textContent = s.verseKey === 'inv' ? 'मंगलाचरण / 18' : `मंत्र ${s.verseKey} / 18`;
+      } else if (isBG) {
+        const bgChapters = getBgChapters();
+        const chObj = bgChapters.find(ch => ch.chapter === Number(s.chapter));
+        const totalV = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+        presCounter.textContent = `श्लोक ${s.verse} / ${totalV}`;
+      } else {
+        const cantos = getCantoStructure();
+        const cantoObj = cantos.find(c => c.canto === this.currentCanto);
+        const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
+        const totalV = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+        presCounter.textContent = `श्लोक ${s.verse} / ${totalV}`;
+      }
+    }
 
     const presSanskrit = document.getElementById('presSanskrit');
     if (presSanskrit) {
@@ -1351,22 +2048,33 @@ class VedabaseApp {
   // Open Edit Modal for current verse
   openEditCurrentVerseModal() {
     if (!this.currentSloka) {
-      this.showToast('सम्पादित करने के लिए कोई श्लोक चयनित नहीं है।');
+      this.showToast('सम्पादित करने के लिए कोई श्लोक/पयार चयनित नहीं है।');
       return;
     }
 
     const sloka = this.currentSloka;
-    const isBG = this.currentBook === 'BG' || sloka.book === 'BG' || sloka.id?.startsWith('bg-');
+    const isCC = this.currentBook === 'CC' || sloka.book === 'CC' || sloka.id?.startsWith('cc-');
+    const isISO = !isCC && (this.currentBook === 'ISO' || sloka.book === 'ISO' || sloka.id?.startsWith('iso-'));
+    const isBG = !isCC && !isISO && (this.currentBook === 'BG' || sloka.book === 'BG' || sloka.id?.startsWith('bg-'));
 
     const titleEl = document.getElementById('editModalTitle');
     if (titleEl) {
-      titleEl.textContent = `✏️ श्लोक सम्पादन (${isBG ? 'BG' : 'SB'} ${sloka.verseKey})`;
+      if (isCC) {
+        const lKey = this.getLilaKey(sloka.lila || sloka.canto || 1).toUpperCase();
+        titleEl.textContent = `✏️ श्री चैतन्य-चरितामृत सम्पादन (CC ${lKey} ${sloka.chapter}.${sloka.verse})`;
+      } else if (isISO) {
+        titleEl.textContent = `✏️ श्री ईशोपनिषद् सम्पादन (${sloka.verseKey === 'inv' ? 'मंगलाचरण' : 'मंत्र ' + sloka.verseKey})`;
+      } else if (isBG) {
+        titleEl.textContent = `✏️ श्लोक सम्पादन (BG ${sloka.verseKey})`;
+      } else {
+        titleEl.textContent = `✏️ श्लोक सम्पादन (SB ${sloka.verseKey})`;
+      }
     }
 
     document.getElementById('editVerseKey').value = sloka.verseKey || '';
-    document.getElementById('editCanto').value = isBG ? 0 : (sloka.canto || 1);
+    document.getElementById('editCanto').value = isCC ? -2 : (isISO ? -1 : (isBG ? 0 : (sloka.canto || 1)));
     document.getElementById('editChapter').value = sloka.chapter || 1;
-    document.getElementById('editVerse').value = sloka.verse || 1;
+    document.getElementById('editVerse').value = sloka.verse !== undefined ? sloka.verse : sloka.verseKey;
 
     const cantoChipBox = document.getElementById('editCantoChipBox');
     const cantoBadge = document.getElementById('editCantoBadge');
@@ -1374,11 +2082,11 @@ class VedabaseApp {
     const verseBadge = document.getElementById('editVerseBadge');
 
     if (cantoChipBox) {
-      cantoChipBox.style.display = isBG ? 'none' : 'block';
+      cantoChipBox.style.display = (isBG || isISO || isCC) ? 'none' : 'block';
     }
     if (cantoBadge) cantoBadge.textContent = sloka.canto || 1;
-    if (chapBadge) chapBadge.textContent = sloka.chapter || 1;
-    if (verseBadge) verseBadge.textContent = sloka.verse || 1;
+    if (chapBadge) chapBadge.textContent = isCC ? `लीला ${sloka.lila || 1} • अध्याय ${sloka.chapter || 1}` : (isISO ? 'ईशोपनिषद्' : (sloka.chapter || 1));
+    if (verseBadge) verseBadge.textContent = sloka.verseKey === 'inv' ? 'मंगलाचरण' : sloka.verse;
 
     document.getElementById('editSanskrit').value = sloka.sanskritDevanagari || '';
 
@@ -1404,7 +2112,9 @@ class VedabaseApp {
     const translation = document.getElementById('editTranslation').value.trim();
     const purport = document.getElementById('editPurport').value.trim();
 
-    const isBG = canto === 0 || this.currentBook === 'BG';
+    const isCC = canto === -2 || this.currentBook === 'CC';
+    const isISO = !isCC && (canto === -1 || this.currentBook === 'ISO');
+    const isBG = !isCC && !isISO && (canto === 0 || this.currentBook === 'BG');
 
     const wordToWord = [];
     if (wordsRaw) {
@@ -1420,7 +2130,54 @@ class VedabaseApp {
     }
 
     let sloka;
-    if (isBG) {
+    if (isCC) {
+      const lilaNum = this.currentLila || 1;
+      const lilaKey = this.getLilaKey(lilaNum);
+      const ccLilas = getCcLilas();
+      const lilaObj = ccLilas.find(l => l.lila === lilaNum);
+      const chObj = lilaObj?.chapters?.find(ch => ch.chapter === chapter);
+
+      sloka = {
+        id: `cc-${lilaKey}-${chapter}-${verse}`,
+        book: "CC",
+        lila: lilaNum,
+        canto: lilaNum,
+        chapter,
+        verse: parseInt(verse, 10) || verse,
+        verseKey: `${lilaKey}.${chapter}.${verse}`,
+        sanskritDevanagari: sanskrit,
+        sanskritIAST: this.currentSloka?.sanskritIAST || '',
+        wordToWord,
+        hindiTranslation: translation,
+        hindiPurport: purport,
+        category: {
+          book: "श्री चैतन्य-चरितामृत",
+          cantoTitleHindi: lilaObj?.name || lilaKey,
+          chapterTitleHindi: chObj ? `अध्याय ${chapter} - ${chObj.name}` : `अध्याय ${chapter}`
+        },
+        tags: ["श्री चैतन्य-चरितामृत", lilaObj?.name || lilaKey, `अध्याय ${chapter}`]
+      };
+    } else if (isISO) {
+      const isInv = verseKey === 'inv' || verseKey === '0';
+      sloka = {
+        id: `iso-${verseKey}`,
+        book: "ISO",
+        chapter: 1,
+        verse: isInv ? 0 : parseInt(verseKey, 10),
+        verseKey,
+        sanskritDevanagari: sanskrit,
+        sanskritIAST: this.currentSloka?.sanskritIAST || '',
+        wordToWord,
+        hindiTranslation: translation,
+        hindiPurport: purport,
+        category: {
+          book: "श्री ईशोपनिषद्",
+          cantoTitleHindi: "श्री ईशोपनिषद्",
+          chapterTitleHindi: isInv ? "मंगलाचरण (Invocation)" : `मंत्र ${verseKey}`
+        },
+        tags: ["श्री ईशोपनिषद्", isInv ? "मंगलाचरण" : `मंत्र ${verseKey}`]
+      };
+    } else if (isBG) {
       const bgChapters = getBgChapters();
       const chObj = bgChapters.find(ch => ch.chapter === chapter);
       sloka = {
@@ -1466,7 +2223,7 @@ class VedabaseApp {
       };
     }
 
-    // 1. Send update directly to server API to write into data/canto-X.json or data/bhagavad-gita.json
+    // 1. Send update directly to server API
     let diskSaved = false;
     try {
       const resp = await fetch('/api/save-verse', {
@@ -1485,16 +2242,36 @@ class VedabaseApp {
     // 2. Update in-memory structures
     this.verseMap.set(sloka.verseKey, sloka);
     this.verseMap.set(sloka.id, sloka);
-    if (isBG) {
+
+    if (isCC) {
+      const lilaKey = this.getLilaKey(sloka.lila || sloka.canto || 1);
+      const chKey = `${lilaKey}-${sloka.chapter}`;
+      this.ccMap.set(`${lilaKey}.${sloka.chapter}.${sloka.verse}`, sloka);
+      this.verseMap.set(`cc ${lilaKey} ${sloka.chapter}.${sloka.verse}`, sloka);
+      this.verseMap.set(`cc-${lilaKey}-${sloka.chapter}-${sloka.verse}`, sloka);
+
+      if (!this.ccChapterMap.has(chKey)) {
+        this.ccChapterMap.set(chKey, []);
+      }
+      const chList = this.ccChapterMap.get(chKey);
+      const chIdx = chList.findIndex(s => s.id === sloka.id);
+      if (chIdx >= 0) chList[chIdx] = sloka;
+      else chList.push(sloka);
+
+      const ccIdx = this.ccSlokas.findIndex(s => s.id === sloka.id);
+      if (ccIdx >= 0) this.ccSlokas[ccIdx] = sloka;
+      else this.ccSlokas.push(sloka);
+    } else if (isISO) {
+      const vK = String(sloka.verseKey).toLowerCase();
+      this.isoMap.set(vK, sloka);
+      this.verseMap.set(`iso ${vK}`, sloka);
+      this.verseMap.set(`iso-${vK}`, sloka);
+      const isoIdx = this.isoSlokas.findIndex(s => s.id === sloka.id);
+      if (isoIdx >= 0) this.isoSlokas[isoIdx] = sloka;
+      else this.isoSlokas.push(sloka);
+    } else if (isBG) {
       this.verseMap.set(`bg-${sloka.chapter}-${sloka.verse}`, sloka);
       this.verseMap.set(`bg ${sloka.chapter}.${sloka.verse}`, sloka);
-    }
-
-    const idx = this.allSlokas.findIndex(s => s.id === sloka.id);
-    if (idx >= 0) this.allSlokas[idx] = sloka;
-    else this.allSlokas.push(sloka);
-
-    if (isBG) {
       const chList = this.bgChapterMap.get(chapter);
       if (chList) {
         const chIdx = chList.findIndex(s => s.id === sloka.id);
@@ -1511,25 +2288,71 @@ class VedabaseApp {
       }
     }
 
+    const idx = this.allSlokas.findIndex(s => s.id === sloka.id);
+    if (idx >= 0) this.allSlokas[idx] = sloka;
+    else this.allSlokas.push(sloka);
+
     if (window.searchEngine) window.searchEngine.appendIndex([sloka]);
 
     // 3. Remove localStorage override if disk write was successful
     if (diskSaved) {
       const edits = this.getUserCustomEdits();
-      const saveKey = isBG ? `bg-${chapter}-${verse}` : verseKey;
+      const saveKey = isCC ? `cc-${this.getLilaKey(sloka.lila)}-${chapter}-${verse}` : (isISO ? `iso-${verseKey}` : (isBG ? `bg-${chapter}-${verse}` : verseKey));
       if (edits[saveKey]) {
         delete edits[saveKey];
         localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
       }
       this.updateCustomEditsCountBadge();
-      this.showToast(`💾 श्लोक ${isBG ? 'BG' : 'SB'} ${verseKey} सीधे JSON फ़ाइल में सुरक्षित हो गया!`);
+      const prefix = isCC ? 'CC' : (isISO ? 'ISO' : (isBG ? 'BG' : 'SB'));
+      this.showToast(`💾 ${prefix} ${verseKey} सीधे JSON फ़ाइल में सुरक्षित हो गया!`);
     } else {
       await this.saveUserCustomEdit(sloka);
-      this.showToast(`✅ श्लोक ${isBG ? 'BG' : 'SB'} ${verseKey} सुरक्षित हुआ (Local Storage)`);
+      const prefix = isCC ? 'CC' : (isISO ? 'ISO' : (isBG ? 'BG' : 'SB'));
+      this.showToast(`✅ ${prefix} ${verseKey} सुरक्षित हुआ (Local Storage)`);
     }
 
     this.closeAllModals();
     await this.displaySloka(sloka);
+  }
+
+  // Export Sri Caitanya-caritamrta JSON
+  async exportCcJSON() {
+    this.showToast('⏳ श्री चैतन्य-चरितामृत का JSON तैयार किया जा रहा है...');
+    await this.ensureCcLoaded();
+
+    let verses = this.ccSlokas || [];
+    verses = this.applyUserCustomEdits(verses);
+
+    const blob = new Blob([JSON.stringify(verses, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chaitanya-charitamrita.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    this.showToast(`📥 chaitanya-charitamrita.json (${verses.length} पयार) डाउनलोड हुआ!`);
+  }
+
+  // Export Sri Isopanisad JSON
+  async exportIsoJSON() {
+    this.showToast('⏳ श्री ईशोपनिषद् का JSON तैयार किया जा रहा है...');
+    await this.ensureIsoLoaded();
+
+    let mantras = this.isoSlokas || [];
+    mantras = this.applyUserCustomEdits(mantras);
+
+    const blob = new Blob([JSON.stringify(mantras, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `isopanisad.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    this.showToast(`📥 isopanisad.json (${mantras.length} मंत्र) डाउनलोड हुआ!`);
   }
 
   // Export Bhagavad Gita JSON
@@ -1564,6 +2387,8 @@ class VedabaseApp {
     this.showToast('⏳ सम्पूर्ण बैकअप तैयार किया जा रहा है...');
 
     await this.ensureBgLoaded();
+    await this.ensureIsoLoaded();
+    await this.ensureCcLoaded();
     for (let c = 1; c <= 12; c++) {
       await this.ensureCantoLoaded(c);
     }
@@ -1575,12 +2400,12 @@ class VedabaseApp {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Hindi_Vedabase_Master_Backup_${slokas.length}_Slokas.json`;
+    a.download = `Hindi_Vedabase_Master_Backup_${slokas.length}_Verses.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    this.showToast(`📥 समस्त ${slokas.length} श्लोकों का JSON बैकअप डाउनलोड हुआ!`);
+    this.showToast(`📥 समस्त ${slokas.length} श्लोकों/मंत्रों/पयारों का JSON बैकअप डाउनलोड हुआ!`);
   }
 
   // Export a specific Canto as canto-X.json
@@ -1699,8 +2524,16 @@ class VedabaseApp {
           const res = window.searchEngine ? window.searchEngine.search(query) : { results: [] };
           if (res.results && res.results.length > 0) {
             const first = res.results[0];
-            const isBG = first.book === 'BG' || first.id?.startsWith('bg-');
-            this.selectVerseFromSearch(isBG ? `bg ${first.verseKey}` : first.verseKey, query);
+            const isCC = first.book === 'CC' || first.id?.startsWith('cc-');
+            const isISO = !isCC && (first.book === 'ISO' || first.id?.startsWith('iso-'));
+            const isBG = !isCC && !isISO && (first.book === 'BG' || first.id?.startsWith('bg-'));
+
+            let targetKey = first.verseKey;
+            if (isCC) targetKey = `cc ${first.verseKey}`;
+            else if (isISO) targetKey = `iso ${first.verseKey}`;
+            else if (isBG) targetKey = `bg ${first.verseKey}`;
+
+            this.selectVerseFromSearch(targetKey, query);
           }
         }
       });
@@ -1772,6 +2605,8 @@ class VedabaseApp {
 
     document.getElementById('btnExportJSON')?.addEventListener('click', () => this.exportJSONBackup());
     document.getElementById('btnExportCustomEdits')?.addEventListener('click', () => this.exportCustomEdits());
+    document.getElementById('btnExportCcJSON')?.addEventListener('click', () => this.exportCcJSON());
+    document.getElementById('btnExportIsoJSON')?.addEventListener('click', () => this.exportIsoJSON());
     document.getElementById('btnExportBgJSON')?.addEventListener('click', () => this.exportBgJSON());
     document.getElementById('btnExportCantoJSON')?.addEventListener('click', () => {
       const sel = document.getElementById('exportCantoSelect');
