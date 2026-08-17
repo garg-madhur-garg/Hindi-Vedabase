@@ -98,8 +98,50 @@ while ($listener.IsListening) {
                 }
                 $cantoNum = [int]$slokaData.canto
                 $verseKey = [string]$slokaData.verseKey
+                $isBG = ($slokaData.book -eq "BG") -or ([string]$slokaData.id -like "bg-*") -or ($cantoNum -eq 0)
 
-                if ($cantoNum -ge 1 -and $cantoNum -le 12 -and -not [string]::IsNullOrEmpty($verseKey)) {
+                if ($isBG -and -not [string]::IsNullOrEmpty($verseKey)) {
+                    $bgFilePath = Join-Path $baseDir "data\bhagavad-gita.json"
+                    if (Test-Path $bgFilePath) {
+                        $jsonRaw = [System.IO.File]::ReadAllText($bgFilePath, [System.Text.Encoding]::UTF8)
+                        $bgSlokas = $jsonRaw | ConvertFrom-Json
+
+                        $found = $false
+                        for ($i = 0; $i -lt $bgSlokas.Count; $i++) {
+                            $s = $bgSlokas[$i]
+                            $vKey = if ($s.verseKey) { [string]$s.verseKey } else { "$($s.chapter).$($s.verse)" }
+                            if ($vKey -eq $verseKey -or [string]$s.id -eq [string]$slokaData.id) {
+                                if ($slokaData.sanskritDevanagari -ne $null) { $s.sanskritDevanagari = [string]$slokaData.sanskritDevanagari }
+                                if ($slokaData.sanskritIAST -ne $null) { $s.sanskritIAST = [string]$slokaData.sanskritIAST }
+                                if ($slokaData.wordToWord -ne $null) { $s.wordToWord = $slokaData.wordToWord }
+                                if ($slokaData.hindiTranslation -ne $null) { $s.hindiTranslation = [string]$slokaData.hindiTranslation }
+                                if ($slokaData.hindiPurport -ne $null) { $s.hindiPurport = [string]$slokaData.hindiPurport }
+                                $found = $true
+                                break
+                            }
+                        }
+
+                        if ($found) {
+                            $newJson = $bgSlokas | ConvertTo-Json -Depth 10
+                            [System.IO.File]::WriteAllText($bgFilePath, $newJson, $utf8NoBom)
+                            Write-Host "✅ [SAVED DIRECTLY TO DISK] श्लोक BG $verseKey -> data/bhagavad-gita.json" -ForegroundColor Green
+
+                            $resObj = @{
+                                success = $true
+                                message = "श्लोक BG $verseKey सीधे data/bhagavad-gita.json में सुरक्षित हो गया!"
+                                verseKey = $verseKey
+                                book = "BG"
+                            }
+                            $statusCode = 200
+                        } else {
+                            $resObj = @{ success = $false; message = "श्लोक BG $verseKey फ़ाइल में नहीं मिला।" }
+                            $statusCode = 404
+                        }
+                    } else {
+                        $resObj = @{ success = $false; message = "data/bhagavad-gita.json फ़ाइल नहीं मिली।" }
+                        $statusCode = 404
+                    }
+                } elseif ($cantoNum -ge 1 -and $cantoNum -le 12 -and -not [string]::IsNullOrEmpty($verseKey)) {
                     $cantoFilePath = Join-Path $baseDir "data\canto-$cantoNum.json"
                     if (Test-Path $cantoFilePath) {
                         $jsonRaw = [System.IO.File]::ReadAllText($cantoFilePath, [System.Text.Encoding]::UTF8)
@@ -133,6 +175,7 @@ while ($listener.IsListening) {
                                 message = "श्लोक SB $verseKey सीधे data/canto-$cantoNum.json में सुरक्षित हो गया!"
                                 verseKey = $verseKey
                                 canto = $cantoNum
+                                book = "SB"
                             }
                             $statusCode = 200
                         } else {

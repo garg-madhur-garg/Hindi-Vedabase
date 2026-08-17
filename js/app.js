@@ -1,23 +1,34 @@
 /**
  * Hindi Vedabase - Main Application Controller (app.js)
  * High-performance state management, instant search rendering, presentation mode, sloka editing & backup
- * Fully integrated with Srimad Bhagavatam 12 Cantos & 335 Chapters (English Numbering)
+ * Fully integrated with:
+ *  - Srimad Bhagavad Gita (18 Chapters, 700 Verses)
+ *  - Srimad Bhagavatam (12 Cantos, 335 Chapters, 18,000 Verses)
  */
 
 function getCantoStructure() {
   return window.SB_CANTOS_DATA || [];
 }
 
+function getBgChapters() {
+  return window.BG_CHAPTERS_DATA || [];
+}
+
 class VedabaseApp {
   constructor() {
+    this.currentBook = 'BG'; // 'BG' or 'SB'
     this.currentSloka = null;
-    this.currentCanto = 1;
-    this.currentChapter = 1;
+    this.currentCanto = 1;      // for SB
+    this.currentChapter = 1;    // for BG or SB
     this.chapterSlokas = [];
     this.allSlokas = [];
     this.verseMap = new Map();
-    this.chapterMap = new Map();
+    this.chapterMap = new Map();   // key: "canto-chapter" for SB
+    this.bgChapterMap = new Map(); // key: chapter (number) for BG
     this.loadedCantos = new Set();
+    this.isBgLoaded = false;
+    this.loadingCantos = new Map();
+    this.loadingBg = null;
     this.currentTheme = 'dark';
     this.currentHighlightWord = null;
     this.highlightFadeTimer = null;
@@ -48,10 +59,13 @@ class VedabaseApp {
     sloka.isUserEdited = true;
     sloka.lastEditedAt = new Date().toISOString();
 
-    // 1. Save to permanent localStorage backup (Survives any static file reloads)
+    const isBG = sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')) || !sloka.canto;
+    const key = isBG ? `bg-${sloka.chapter}-${sloka.verse}` : (sloka.verseKey || `${sloka.canto}.${sloka.chapter}.${sloka.verse}`);
+
+    // 1. Save to permanent localStorage backup
     try {
       const edits = this.getUserCustomEdits();
-      edits[sloka.verseKey] = sloka;
+      edits[key] = sloka;
       localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
     } catch (e) {
       console.warn('LocalStorage save warning:', e);
@@ -60,22 +74,33 @@ class VedabaseApp {
     // 2. Update in-memory structures
     this.verseMap.set(sloka.verseKey, sloka);
     this.verseMap.set(sloka.id, sloka);
+    if (isBG) {
+      this.verseMap.set(`bg-${sloka.chapter}-${sloka.verse}`, sloka);
+      this.verseMap.set(`bg ${sloka.chapter}.${sloka.verse}`, sloka);
+    }
 
-    const idx = this.allSlokas.findIndex(s => s.verseKey === sloka.verseKey);
+    const idx = this.allSlokas.findIndex(s => s.id === sloka.id || s.verseKey === sloka.verseKey);
     if (idx >= 0) {
       this.allSlokas[idx] = sloka;
     } else {
       this.allSlokas.push(sloka);
     }
 
-    const chKey = `${sloka.canto}-${sloka.chapter}`;
-    if (this.chapterMap.has(chKey)) {
-      const chList = this.chapterMap.get(chKey);
-      const chIdx = chList.findIndex(s => s.verseKey === sloka.verseKey);
-      if (chIdx >= 0) {
-        chList[chIdx] = sloka;
-      } else {
-        chList.push(sloka);
+    if (isBG) {
+      const chNum = Number(sloka.chapter);
+      if (this.bgChapterMap.has(chNum)) {
+        const chList = this.bgChapterMap.get(chNum);
+        const chIdx = chList.findIndex(s => s.verseKey === sloka.verseKey || s.verse == sloka.verse);
+        if (chIdx >= 0) chList[chIdx] = sloka;
+        else chList.push(sloka);
+      }
+    } else {
+      const chKey = `${sloka.canto}-${sloka.chapter}`;
+      if (this.chapterMap.has(chKey)) {
+        const chList = this.chapterMap.get(chKey);
+        const chIdx = chList.findIndex(s => s.verseKey === sloka.verseKey);
+        if (chIdx >= 0) chList[chIdx] = sloka;
+        else chList.push(sloka);
       }
     }
 
@@ -86,51 +111,85 @@ class VedabaseApp {
     this.updateCustomEditsCountBadge();
   }
 
-  // Revert a single verse back to its authentic original JSON data from data/canto-X.json
+  // Revert a single verse back to its authentic original JSON data
   async revertCurrentVerseToOriginal() {
     if (!this.currentSloka) return;
+    const isBG = this.currentBook === 'BG' || this.currentSloka.book === 'BG' || this.currentSloka.id?.startsWith('bg-');
     const verseKey = this.currentSloka.verseKey;
-    const cantoNum = Number(this.currentSloka.canto);
 
     // Remove from localStorage
     const edits = this.getUserCustomEdits();
-    if (edits[verseKey]) {
+    const editKey = isBG ? `bg-${this.currentSloka.chapter}-${this.currentSloka.verse}` : verseKey;
+    if (edits[editKey] || edits[verseKey]) {
+      delete edits[editKey];
       delete edits[verseKey];
       localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
     }
 
-    // Fetch fresh canto data from JSON file to get original authentic verse
     try {
-      const resp = await fetch(`data/canto-${cantoNum}.json?v=${Date.now()}`);
-      if (resp.ok) {
-        const freshSlokas = await resp.json();
-        const orig = freshSlokas.find(s => (s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`) === verseKey);
-        if (orig) {
-          delete orig.isUserEdited;
-          delete orig.lastEditedAt;
+      if (isBG) {
+        const resp = await fetch(`data/bhagavad-gita.json?v=${Date.now()}`);
+        if (resp.ok) {
+          const freshSlokas = await resp.json();
+          const orig = freshSlokas.find(s => s.verseKey === verseKey || (s.chapter == this.currentSloka.chapter && s.verse == this.currentSloka.verse));
+          if (orig) {
+            delete orig.isUserEdited;
+            delete orig.lastEditedAt;
 
-          this.verseMap.set(verseKey, orig);
-          this.verseMap.set(orig.id, orig);
+            this.verseMap.set(verseKey, orig);
+            this.verseMap.set(orig.id, orig);
+            this.verseMap.set(`bg-${orig.chapter}-${orig.verse}`, orig);
 
-          const idx = this.allSlokas.findIndex(s => s.verseKey === verseKey);
-          if (idx >= 0) this.allSlokas[idx] = orig;
+            const idx = this.allSlokas.findIndex(s => s.id === orig.id);
+            if (idx >= 0) this.allSlokas[idx] = orig;
 
-          const chKey = `${orig.canto}-${orig.chapter}`;
-          if (this.chapterMap.has(chKey)) {
-            const chList = this.chapterMap.get(chKey);
-            const chIdx = chList.findIndex(s => s.verseKey === verseKey);
-            if (chIdx >= 0) chList[chIdx] = orig;
+            const chNum = Number(orig.chapter);
+            if (this.bgChapterMap.has(chNum)) {
+              const chList = this.bgChapterMap.get(chNum);
+              const chIdx = chList.findIndex(s => s.id === orig.id);
+              if (chIdx >= 0) chList[chIdx] = orig;
+            }
+
+            if (window.searchEngine) window.searchEngine.appendIndex([orig]);
+
+            this.updateCustomEditsCountBadge();
+            await this.displaySloka(orig);
+            this.closeAllModals();
+            this.showToast(`✅ श्लोक BG ${verseKey} मूल JSON डेटा में रीसेट हो गया है!`);
+            return;
           }
+        }
+      } else {
+        const cantoNum = Number(this.currentSloka.canto);
+        const resp = await fetch(`data/canto-${cantoNum}.json?v=${Date.now()}`);
+        if (resp.ok) {
+          const freshSlokas = await resp.json();
+          const orig = freshSlokas.find(s => (s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`) === verseKey);
+          if (orig) {
+            delete orig.isUserEdited;
+            delete orig.lastEditedAt;
 
-          if (window.searchEngine) {
-            window.searchEngine.appendIndex([orig]);
+            this.verseMap.set(verseKey, orig);
+            this.verseMap.set(orig.id, orig);
+
+            const idx = this.allSlokas.findIndex(s => s.verseKey === verseKey);
+            if (idx >= 0) this.allSlokas[idx] = orig;
+
+            const chKey = `${orig.canto}-${orig.chapter}`;
+            if (this.chapterMap.has(chKey)) {
+              const chList = this.chapterMap.get(chKey);
+              const chIdx = chList.findIndex(s => s.verseKey === verseKey);
+              if (chIdx >= 0) chList[chIdx] = orig;
+            }
+
+            if (window.searchEngine) window.searchEngine.appendIndex([orig]);
+
+            this.updateCustomEditsCountBadge();
+            await this.displaySloka(orig);
+            this.closeAllModals();
+            this.showToast(`✅ श्लोक SB ${verseKey} मूल JSON डेटा में रीसेट हो गया है!`);
+            return;
           }
-
-          this.updateCustomEditsCountBadge();
-          await this.displaySloka(orig);
-          this.closeAllModals();
-          this.showToast(`✅ श्लोक SB ${verseKey} मूल JSON डेटा में रीसेट हो गया है!`);
-          return;
         }
       }
     } catch (e) {
@@ -155,8 +214,10 @@ class VedabaseApp {
     localStorage.removeItem('vedabase_user_custom_edits');
     this.verseMap.clear();
     this.chapterMap.clear();
+    this.bgChapterMap.clear();
     this.allSlokas = [];
     this.loadedCantos.clear();
+    this.isBgLoaded = false;
 
     if (window.searchEngine) {
       window.searchEngine.clearIndex();
@@ -164,7 +225,8 @@ class VedabaseApp {
 
     this.showToast('⏳ समस्त डेटा JSON फाइलों से पुनः लोड हो रहा है...');
 
-    const curKey = this.currentSloka ? this.currentSloka.verseKey : '1.1.1';
+    await this.ensureBgLoaded();
+    const curKey = this.currentSloka ? this.currentSloka.verseKey : (this.currentBook === 'BG' ? '1.1' : '1.1.1');
     await this.loadVerseByKey(curKey);
     this.updateCustomEditsCountBadge();
     this.closeAllModals();
@@ -181,10 +243,13 @@ class VedabaseApp {
     if (!slokas || slokas.length === 0) return slokas;
     const userEdits = this.getUserCustomEdits();
     return slokas.map(s => {
-      const vKey = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
-      if (userEdits[vKey]) {
-        return { ...userEdits[vKey] };
-      }
+      const isBG = s.book === 'BG' || (s.id && s.id.startsWith('bg-')) || !s.canto;
+      const vKey = s.verseKey || (isBG ? `${s.chapter}.${s.verse}` : `${s.canto}.${s.chapter}.${s.verse}`);
+      const bgKey = isBG ? `bg-${s.chapter}-${s.verse}` : null;
+
+      if (bgKey && userEdits[bgKey]) return { ...userEdits[bgKey] };
+      if (userEdits[vKey]) return { ...userEdits[vKey] };
+      if (s.id && userEdits[s.id]) return { ...userEdits[s.id] };
       return s;
     });
   }
@@ -198,7 +263,7 @@ class VedabaseApp {
     }
   }
 
-  // Export only user custom edits as a JSON array (100% Identical schema with data/canto-*.json)
+  // Export only user custom edits as a JSON array
   exportCustomEdits() {
     const edits = this.getUserCustomEdits();
     const slokas = Object.values(edits);
@@ -207,35 +272,30 @@ class VedabaseApp {
       return;
     }
 
-    // Sort by canto, chapter, verse
-    slokas.sort((a, b) => {
-      if (a.canto !== b.canto) return (a.canto || 0) - (b.canto || 0);
-      if (a.chapter !== b.chapter) return (a.chapter || 0) - (b.chapter || 0);
-      const vA = parseInt(a.verse, 10) || 0;
-      const vB = parseInt(b.verse, 10) || 0;
-      return vA - vB;
+    const cleanEdits = slokas.map(s => {
+      const isBG = s.book === 'BG' || (s.id && s.id.startsWith('bg-')) || !s.canto;
+      return {
+        id: s.id || (isBG ? `bg-${s.chapter}-${s.verse}` : `sb-${s.canto}-${s.chapter}-${s.verse}`),
+        book: isBG ? "BG" : "SB",
+        ...(isBG ? {} : { canto: Number(s.canto) }),
+        chapter: Number(s.chapter),
+        verse: isNaN(Number(s.verse)) ? s.verse : Number(s.verse),
+        verseKey: s.verseKey || (isBG ? `${s.chapter}.${s.verse}` : `${s.canto}.${s.chapter}.${s.verse}`),
+        sanskritDevanagari: s.sanskritDevanagari || '',
+        sanskritIAST: s.sanskritIAST || '',
+        wordToWord: Array.isArray(s.wordToWord) ? s.wordToWord : [],
+        hindiTranslation: s.hindiTranslation || '',
+        hindiPurport: s.hindiPurport || '',
+        category: s.category || {
+          book: isBG ? "श्रीमद्भगवद्गीता" : "श्रीमद्भागवतम्",
+          cantoTitleHindi: isBG ? "श्रीमद्भगवद्गीता यथारूप" : `स्कन्ध ${s.canto}`,
+          chapterTitleHindi: `अध्याय ${s.chapter}`
+        },
+        tags: s.tags || (isBG ? ["श्रीमद्भगवद्गीता", `अध्याय ${s.chapter}`] : [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"]),
+        isUserEdited: true,
+        lastEditedAt: s.lastEditedAt || new Date().toISOString()
+      };
     });
-
-    const cleanEdits = slokas.map(s => ({
-      id: s.id || `sb-${s.canto}-${s.chapter}-${s.verse}`,
-      canto: Number(s.canto),
-      chapter: Number(s.chapter),
-      verse: isNaN(Number(s.verse)) ? s.verse : Number(s.verse),
-      verseKey: s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`,
-      sanskritDevanagari: s.sanskritDevanagari || '',
-      sanskritIAST: s.sanskritIAST || '',
-      wordToWord: Array.isArray(s.wordToWord) ? s.wordToWord : [],
-      hindiTranslation: s.hindiTranslation || '',
-      hindiPurport: s.hindiPurport || '',
-      category: s.category || {
-        book: "श्रीमद्भागवतम्",
-        cantoTitleHindi: `स्कन्ध ${s.canto}`,
-        chapterTitleHindi: `अध्याय ${s.chapter}`
-      },
-      tags: s.tags || [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"],
-      isUserEdited: true,
-      lastEditedAt: s.lastEditedAt || new Date().toISOString()
-    }));
 
     const blob = new Blob([JSON.stringify(cleanEdits, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -249,43 +309,57 @@ class VedabaseApp {
     this.showToast(`📥 ${cleanEdits.length} सम्पादित श्लोक बैकअप डाउनलोड हुआ!`);
   }
 
-  // Build high-speed in-memory lookup maps
-  buildMemoryMap(slokas) {
-    if (!slokas || slokas.length === 0) return;
-    this.verseMap.clear();
-    this.chapterMap.clear();
-    this.allSlokas = [];
-    this.loadedCantos.clear();
-    this.addSlokasToMemory(slokas);
-  }
+  // Ensure Srimad Bhagavad Gita JSON is loaded
+  async ensureBgLoaded() {
+    if (this.isBgLoaded) return true;
+    if (this.loadingBg) return await this.loadingBg;
 
-  // Add a batch/canto of slokas into in-memory maps and list (preserves user edits)
-  addSlokasToMemory(slokas) {
-    if (!slokas || slokas.length === 0) return;
-    const processedSlokas = this.applyUserCustomEdits(slokas);
+    this.loadingBg = (async () => {
+      try {
+        const resp = await fetch('data/bhagavad-gita.json');
+        if (resp.ok) {
+          let slokas = await resp.json();
+          slokas = this.applyUserCustomEdits(slokas);
 
-    const newSlokas = [];
-    for (let i = 0; i < processedSlokas.length; i++) {
-      const s = processedSlokas[i];
-      const key = `${s.canto}.${s.chapter}.${s.verse}`;
-      if (!this.verseMap.has(key)) {
-        this.allSlokas.push(s);
-        newSlokas.push(s);
-        this.verseMap.set(key, s);
-        this.verseMap.set(s.id, s);
+          for (let i = 0; i < slokas.length; i++) {
+            const s = slokas[i];
+            s.book = 'BG';
+            const key = s.verseKey || `${s.chapter}.${s.verse}`;
+            const id = s.id || `bg-${s.chapter}-${s.verse}`;
 
-        const chKey = `${s.canto}-${s.chapter}`;
-        if (!this.chapterMap.has(chKey)) {
-          this.chapterMap.set(chKey, []);
+            this.verseMap.set(key, s);
+            this.verseMap.set(id, s);
+            this.verseMap.set(`bg-${s.chapter}-${s.verse}`, s);
+            this.verseMap.set(`bg.${s.chapter}.${s.verse}`, s);
+            this.verseMap.set(`bg ${s.chapter}.${s.verse}`, s);
+
+            const chNum = Number(s.chapter);
+            if (!this.bgChapterMap.has(chNum)) {
+              this.bgChapterMap.set(chNum, []);
+            }
+            this.bgChapterMap.get(chNum).push(s);
+
+            const existsIdx = this.allSlokas.findIndex(x => x.id === id);
+            if (existsIdx >= 0) this.allSlokas[existsIdx] = s;
+            else this.allSlokas.push(s);
+          }
+
+          if (window.searchEngine) {
+            window.searchEngine.appendIndex(slokas);
+          }
+
+          this.isBgLoaded = true;
+          return true;
         }
-        this.chapterMap.get(chKey).push(s);
-        this.loadedCantos.add(Number(s.canto));
+      } catch (e) {
+        console.warn('Notice: Failed to load bhagavad-gita.json:', e);
       }
-    }
+      return false;
+    })();
 
-    if (window.searchEngine && newSlokas.length > 0) {
-      window.searchEngine.appendIndex(newSlokas);
-    }
+    const result = await this.loadingBg;
+    this.loadingBg = null;
+    return result;
   }
 
   // Ensure a specific canto is loaded directly from its JSON file
@@ -294,7 +368,7 @@ class VedabaseApp {
     if (!cNum || cNum < 1 || cNum > 12) return false;
     if (this.loadedCantos.has(cNum)) return true;
 
-    if (this.loadingCantos && this.loadingCantos.has(cNum)) {
+    if (this.loadingCantos.has(cNum)) {
       return await this.loadingCantos.get(cNum);
     }
 
@@ -303,8 +377,36 @@ class VedabaseApp {
         const resp = await fetch(`data/canto-${cNum}.json`);
         if (resp.ok) {
           let slokas = await resp.json();
-          this.addSlokasToMemory(slokas);
+          slokas = this.applyUserCustomEdits(slokas);
+
+          const newSlokas = [];
+          for (let i = 0; i < slokas.length; i++) {
+            const s = slokas[i];
+            s.book = 'SB';
+            const key = `${s.canto}.${s.chapter}.${s.verse}`;
+            const id = s.id || `sb-${s.canto}-${s.chapter}-${s.verse}`;
+
+            if (!this.verseMap.has(key)) {
+              this.allSlokas.push(s);
+              newSlokas.push(s);
+              this.verseMap.set(key, s);
+              this.verseMap.set(id, s);
+              this.verseMap.set(`sb-${s.canto}-${s.chapter}-${s.verse}`, s);
+              this.verseMap.set(`sb.${s.canto}.${s.chapter}.${s.verse}`, s);
+              this.verseMap.set(`sb ${s.canto}.${s.chapter}.${s.verse}`, s);
+
+              const chKey = `${s.canto}-${s.chapter}`;
+              if (!this.chapterMap.has(chKey)) {
+                this.chapterMap.set(chKey, []);
+              }
+              this.chapterMap.get(chKey).push(s);
+            }
+          }
+
           this.loadedCantos.add(cNum);
+          if (window.searchEngine && newSlokas.length > 0) {
+            window.searchEngine.appendIndex(newSlokas);
+          }
           return true;
         }
       } catch (e) {
@@ -313,14 +415,13 @@ class VedabaseApp {
       return false;
     })();
 
-    if (!this.loadingCantos) this.loadingCantos = new Map();
     this.loadingCantos.set(cNum, loadPromise);
     const result = await loadPromise;
     this.loadingCantos.delete(cNum);
     return result;
   }
 
-  // Preload all remaining Cantos (1 to 12) seamlessly in the background directly from JSON
+  // Preload all Cantos (1 to 12) seamlessly in the background directly from JSON
   async preloadAllCantosInBackground() {
     if (this.isPreloading) return;
     this.isPreloading = true;
@@ -328,54 +429,55 @@ class VedabaseApp {
     for (let c = 1; c <= 12; c++) {
       if (!this.loadedCantos.has(c)) {
         await this.ensureCantoLoaded(c);
-        // Small yield so browser UI remains 100% fluid
         await new Promise(r => setTimeout(r, 60));
       }
     }
 
     this.isPreloading = false;
-    console.log(`All 12 Cantos (${this.allSlokas.length.toLocaleString()} verses) loaded directly from JSON!`);
+    console.log(`All scriptures loaded (${this.allSlokas.length.toLocaleString()} total verses in memory)!`);
   }
 
-  // Fast verse lookup (memory first, dynamic JSON fetch if needed)
+  // Fast verse lookup
   async getSlokaData(verseKey) {
     if (!verseKey) return null;
     const cleanKey = verseKey.trim();
+
     if (this.verseMap.has(cleanKey)) {
       return this.verseMap.get(cleanKey);
     }
-    const parts = cleanKey.split('.');
-    if (parts.length >= 1) {
+
+    // Check BG keys
+    if (cleanKey.toLowerCase().startsWith('bg')) {
+      await this.ensureBgLoaded();
+      if (this.verseMap.has(cleanKey)) return this.verseMap.get(cleanKey);
+    }
+
+    // Check SB keys
+    const parts = cleanKey.replace(/^sb\s*/i, '').split('.');
+    if (parts.length >= 3) {
       const c = parseInt(parts[0], 10);
       if (!isNaN(c) && c >= 1 && c <= 12) {
         await this.ensureCantoLoaded(c);
-        if (this.verseMap.has(cleanKey)) {
-          return this.verseMap.get(cleanKey);
-        }
+        if (this.verseMap.has(cleanKey)) return this.verseMap.get(cleanKey);
+        const sbKey = `${parts[0]}.${parts[1]}.${parts[2]}`;
+        if (this.verseMap.has(sbKey)) return this.verseMap.get(sbKey);
       }
+    } else if (parts.length === 2) {
+      // Could be BG (ch.v)
+      await this.ensureBgLoaded();
+      const bgKey = `${parts[0]}.${parts[1]}`;
+      if (this.verseMap.has(bgKey)) return this.verseMap.get(bgKey);
+      if (this.verseMap.has(`bg-${parts[0]}-${parts[1]}`)) return this.verseMap.get(`bg-${parts[0]}-${parts[1]}`);
     }
+
     return null;
   }
 
-  // Fast chapter verses lookup (direct memory / JSON)
-  async getChapterVerses(canto, chapter) {
-    const cNum = Number(canto);
-    const chNum = Number(chapter);
-    const chKey = `${cNum}-${chNum}`;
-    if (!this.loadedCantos.has(cNum)) {
-      await this.ensureCantoLoaded(cNum);
-    }
-    if (this.chapterMap.has(chKey) && this.chapterMap.get(chKey).length > 0) {
-      return this.chapterMap.get(chKey);
-    }
-    return [];
-  }
-
-  // Initialize Application (Direct JSON Loading - Zero Heavy DB Overhead)
+  // Initialize Application
   async init() {
-    console.log('Initializing Vedabase (Direct JSON Architecture)...');
+    console.log('Initializing Hindi Vedabase (Direct JSON Multi-Scripture Architecture)...');
 
-    // Auto-clean any stale custom edits so all data is strictly loaded from original JSON files
+    // Auto-clean stale localStorage overrides if needed
     if (!localStorage.getItem('vedabase_v3_clean_json_synced')) {
       localStorage.removeItem('vedabase_user_custom_edits');
       localStorage.setItem('vedabase_v3_clean_json_synced', 'true');
@@ -385,56 +487,70 @@ class VedabaseApp {
     this.bindEvents();
     this.renderSidebar();
 
-    // 1. Determine initial verse (from localStorage or default 1.1.1)
-    let initialVerseKey = '1.1.1';
+    // 1. Always load Bhagavad Gita initially
+    await this.ensureBgLoaded();
+
+    // 2. Determine initial verse (from localStorage or default BG 1.1)
+    let initialVerseKey = 'bg 1.1';
     try {
       const savedKey = localStorage.getItem('vedabase_last_verse');
       if (savedKey) initialVerseKey = savedKey;
     } catch (e) {}
 
-    // 2. Load the initial verse directly from JSON and render immediately
+    // 3. Load initial verse
     await this.loadVerseByKey(initialVerseKey);
 
-    // 3. Preload all remaining Cantos (1-12) from JSON in background for instant search across all 18,000 verses
+    // 4. Preload all remaining Cantos (1-12) from JSON in background for instant search across all verses
     setTimeout(() => {
       this.preloadAllCantosInBackground();
     }, 100);
   }
 
-  // Rebuild and update In-Memory Search Engine
-  async reloadAllSlokasAndIndex() {
-    if (window.searchEngine) {
-      window.searchEngine.buildIndex(this.allSlokas);
-    }
-  }
-
-  // Render Sidebar Cantos and all 335 Chapters with authentic Hindi names (English Numbering)
+  // Render Sidebar with both Bhagavad Gita (18 Chapters) & Srimad Bhagavatam (12 Cantos / 335 Chapters)
   renderSidebar() {
-    const container = document.getElementById('cantoListContainer');
-    if (!container) return;
+    // 1. Render Bhagavad Gita Chapters (1 to 18)
+    const bgContainer = document.getElementById('bgChapterListContainer');
+    if (bgContainer) {
+      const bgChapters = getBgChapters();
+      bgContainer.innerHTML = bgChapters.map(ch => `
+        <li>
+          <button class="chapter-btn ${this.currentBook === 'BG' && ch.chapter === this.currentChapter ? 'active' : ''}"
+            id="bg-chap-btn-${ch.chapter}"
+            onclick="window.app.loadBgChapter(${ch.chapter})"
+            title="${ch.name} (${ch.totalVerses} श्लोक)">
+            <div style="font-weight: 600;">अध्याय ${ch.chapter}: ${ch.name}</div>
+            <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} श्लोक</div>
+          </button>
+        </li>
+      `).join('');
+    }
 
-    const cantos = getCantoStructure();
-    container.innerHTML = cantos.map(c => `
-      <li class="canto-item ${c.canto === this.currentCanto ? 'expanded active' : ''}" id="canto-item-${c.canto}">
-        <button class="canto-header-btn" onclick="window.app.toggleCantoAccordion(${c.canto})">
-          <span style="font-weight: 700;">${c.name}</span>
-          <span style="font-size: 0.75rem; opacity: 0.7;">▾</span>
-        </button>
-        <ul class="chapter-sublist" id="chapter-list-${c.canto}">
-          ${(c.chapters || []).map(ch => `
-            <li>
-              <button class="chapter-btn ${c.canto === this.currentCanto && ch.chapter === this.currentChapter ? 'active' : ''}" 
-                id="chap-btn-${c.canto}-${ch.chapter}"
-                onclick="window.app.loadChapter(${c.canto}, ${ch.chapter})"
-                title="${ch.name} (${ch.totalVerses} श्लोक)">
-                <div style="font-weight: 600;">अध्याय ${ch.chapter}: ${ch.name}</div>
-                <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} श्लोक</div>
-              </button>
-            </li>
-          `).join('')}
-        </ul>
-      </li>
-    `).join('');
+    // 2. Render Srimad Bhagavatam Cantos (1 to 12)
+    const sbContainer = document.getElementById('cantoListContainer');
+    if (sbContainer) {
+      const cantos = getCantoStructure();
+      sbContainer.innerHTML = cantos.map(c => `
+        <li class="canto-item ${this.currentBook === 'SB' && c.canto === this.currentCanto ? 'expanded active' : ''}" id="canto-item-${c.canto}">
+          <button class="canto-header-btn" onclick="window.app.toggleCantoAccordion(${c.canto})">
+            <span style="font-weight: 700;">${c.name}</span>
+            <span style="font-size: 0.75rem; opacity: 0.7;">▾</span>
+          </button>
+          <ul class="chapter-sublist" id="chapter-list-${c.canto}">
+            ${(c.chapters || []).map(ch => `
+              <li>
+                <button class="chapter-btn ${this.currentBook === 'SB' && c.canto === this.currentCanto && ch.chapter === this.currentChapter ? 'active' : ''}" 
+                  id="chap-btn-${c.canto}-${ch.chapter}"
+                  onclick="window.app.loadChapter(${c.canto}, ${ch.chapter})"
+                  title="${ch.name} (${ch.totalVerses} श्लोक)">
+                  <div style="font-weight: 600;">अध्याय ${ch.chapter}: ${ch.name}</div>
+                  <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} श्लोक</div>
+                </button>
+              </li>
+            `).join('')}
+          </ul>
+        </li>
+      `).join('');
+    }
   }
 
   // Accordion toggle: Toggles entire scripture open/close
@@ -445,7 +561,7 @@ class VedabaseApp {
     }
   }
 
-  // Accordion toggle: Toggles canto open/close without layout jump
+  // Accordion toggle: Toggles canto open/close
   toggleCantoAccordion(canto) {
     const targetItem = document.getElementById(`canto-item-${canto}`);
     if (targetItem) {
@@ -453,27 +569,70 @@ class VedabaseApp {
     }
   }
 
-  // Helper to sanitize Sanskrit text (remove any embedded titles like ॥ श्रीमद्भागवतम्... ॥)
+  // Helper to sanitize Sanskrit text
   cleanSanskritText(text) {
     if (!text) return '';
     return text
-      .replace(/^॥\s*श्रीमद्भागवतम्[^॥\n]*॥\s*\n?/gi, '')
-      .replace(/॥\s*श्रीमद्भागवतम्[^॥\n]*॥/gi, '')
+      .replace(/^॥\s*(?:श्रीमद्भागवतम्|श्रीमद्भगवद्गीता)[^॥\n]*॥\s*\n?/gi, '')
+      .replace(/॥\s*(?:श्रीमद्भागवतम्|श्रीमद्भगवद्गीता)[^॥\n]*॥/gi, '')
       .trim();
   }
 
-  // Load a Chapter and its first verse
+  // Load Bhagavad Gita Chapter
+  async loadBgChapter(chapter) {
+    const chNum = Number(chapter) || 1;
+    this.currentBook = 'BG';
+    this.currentChapter = chNum;
+
+    await this.ensureBgLoaded();
+
+    const chVerses = this.bgChapterMap.get(chNum) || [];
+    this.chapterSlokas = chVerses;
+
+    if (chVerses.length > 0) {
+      await this.displaySloka(chVerses[0]);
+    } else {
+      const bgChapters = getBgChapters();
+      const chObj = bgChapters.find(ch => ch.chapter === chNum);
+      const chTitle = chObj ? `अध्याय ${chNum} - ${chObj.name}` : `अध्याय ${chNum}`;
+      const totalV = chObj ? chObj.totalVerses : 1;
+
+      const placeholder = {
+        id: `bg-${chNum}-1`,
+        book: "BG",
+        chapter: chNum,
+        verse: 1,
+        verseKey: `${chNum}.1`,
+        sanskritDevanagari: `श्लोक लोड हो रहा है...`,
+        sanskritIAST: '',
+        wordToWord: [],
+        hindiTranslation: `यह श्रीमद्भगवद्गीता, ${chTitle} का श्लोक 1 है। (कुल ${totalV} श्लोक)।`,
+        hindiPurport: ``,
+        category: {
+          book: "श्रीमद्भगवद्गीता",
+          cantoTitleHindi: "श्रीमद्भगवद्गीता यथारूप",
+          chapterTitleHindi: chTitle
+        },
+        tags: ["श्रीमद्भगवद्गीता", `अध्याय ${chNum}`]
+      };
+      await this.displaySloka(placeholder);
+    }
+
+    this.highlightActiveSidebar();
+  }
+
+  // Load Srimad Bhagavatam Chapter
   async loadChapter(canto, chapter) {
     const cNum = Number(canto);
     const chNum = Number(chapter);
+    this.currentBook = 'SB';
     this.currentCanto = cNum;
     this.currentChapter = chNum;
 
-    // Ensure the canto is loaded
     await this.ensureCantoLoaded(cNum);
 
-    // Fetch chapter verses
-    this.chapterSlokas = await this.getChapterVerses(cNum, chNum);
+    const chKey = `${cNum}-${chNum}`;
+    this.chapterSlokas = this.chapterMap.get(chKey) || [];
 
     if (this.chapterSlokas.length > 0) {
       await this.displaySloka(this.chapterSlokas[0]);
@@ -486,6 +645,7 @@ class VedabaseApp {
 
       const placeholderSloka = {
         id: `sb-${canto}-${chapter}-1`,
+        book: "SB",
         canto: canto,
         chapter: chapter,
         verse: 1,
@@ -538,14 +698,45 @@ class VedabaseApp {
     }
   }
 
-  // Load verse by VerseKey (e.g. "1.1.1", "10.14.8" or "12.13.23")
+  // Load verse by VerseKey (e.g. "bg 2.13", "2.13", "1.1.1", "10.14.8")
   async loadVerseByKey(verseKey, highlightWord = null) {
     if (!verseKey) return;
     const cleanKey = verseKey.trim();
     this.currentHighlightWord = (highlightWord && highlightWord.trim().length >= 2) ? highlightWord.trim() : null;
 
-    // Check if target canto needs on-demand load
-    const parts = cleanKey.split('.');
+    // Check if BG key
+    const isBgQuery = cleanKey.toLowerCase().startsWith('bg') ||
+                     (this.currentBook === 'BG' && cleanKey.split('.').length === 2) ||
+                     (!cleanKey.toLowerCase().startsWith('sb') && cleanKey.split('.').length === 2 && parseInt(cleanKey.split('.')[0], 10) > 12);
+
+    if (isBgQuery) {
+      await this.ensureBgLoaded();
+      const cleanNumKey = cleanKey.replace(/^bg[\s.\-:]*/i, '');
+      const sloka = await this.getSlokaData(cleanNumKey) || await this.getSlokaData(`bg-${cleanNumKey.replace('.', '-')}`);
+
+      if (sloka) {
+        this.currentBook = 'BG';
+        this.currentChapter = Number(sloka.chapter);
+        this.chapterSlokas = this.bgChapterMap.get(this.currentChapter) || [];
+        await this.displaySloka(sloka);
+      } else {
+        const parts = cleanNumKey.split(/[.\-:\s]+/);
+        if (parts.length >= 1) {
+          const ch = parseInt(parts[0], 10) || 1;
+          const v = parts[1] || '1';
+          await this.loadBgChapter(ch);
+          const found = this.chapterSlokas.find(s => String(s.verse) === String(v));
+          if (found) await this.displaySloka(found);
+        }
+      }
+      this.highlightActiveSidebar();
+      return;
+    }
+
+    // Otherwise SB query (3 parts: Canto.Chapter.Verse)
+    const cleanSbKey = cleanKey.replace(/^sb[\s.\-:]*/i, '');
+    const parts = cleanSbKey.split(/[.\-:\s]+/);
+
     if (parts.length >= 1) {
       const c = parseInt(parts[0], 10);
       if (!isNaN(c) && c >= 1 && c <= 12) {
@@ -553,53 +744,27 @@ class VedabaseApp {
       }
     }
 
-    const sloka = await this.getSlokaData(cleanKey);
+    const sloka = await this.getSlokaData(cleanSbKey) || await this.getSlokaData(cleanKey);
 
     if (sloka) {
+      this.currentBook = 'SB';
       this.currentCanto = Number(sloka.canto);
       this.currentChapter = Number(sloka.chapter);
-      this.chapterSlokas = await this.getChapterVerses(sloka.canto, sloka.chapter);
+      const chKey = `${sloka.canto}-${sloka.chapter}`;
+      this.chapterSlokas = this.chapterMap.get(chKey) || [];
       await this.displaySloka(sloka);
     } else {
       if (parts.length >= 2) {
         const c = parseInt(parts[0], 10);
         const ch = parseInt(parts[1], 10);
-        const v = parts[2] ? (isNaN(parseInt(parts[2], 10)) ? parts[2] : parseInt(parts[2], 10)) : 1;
+        const v = parts[2] || '1';
 
+        this.currentBook = 'SB';
         this.currentCanto = c;
         this.currentChapter = ch;
-        this.chapterSlokas = await this.getChapterVerses(c, ch);
-
-        const existing = this.chapterSlokas.find(s => s.verse == v);
-        if (existing) {
-          await this.displaySloka(existing);
-        } else {
-          const cantos = getCantoStructure();
-          const cantoObj = cantos.find(co => co.canto === c);
-          const chapterObj = cantoObj?.chapters?.find(cho => cho.chapter === ch);
-          const chapterTitle = chapterObj ? `अध्याय ${ch} - ${chapterObj.name}` : `अध्याय ${ch}`;
-          const totalV = chapterObj ? chapterObj.totalVerses : 1;
-
-          const placeholderSloka = {
-            id: `sb-${c}-${ch}-${v}`,
-            canto: c,
-            chapter: ch,
-            verse: v,
-            verseKey: `${c}.${ch}.${v}`,
-            sanskritDevanagari: `श्लोक लोड हो रहा है...`,
-            sanskritIAST: '',
-            wordToWord: [],
-            hindiTranslation: `यह ${cantoObj?.name || `स्कन्ध ${c}`}, ${chapterTitle} का श्लोक ${v} है। (कुल ${totalV} श्लोक)।`,
-            hindiPurport: ``,
-            category: {
-              book: "श्रीमद्भागवतम्",
-              cantoTitleHindi: cantoObj?.name || `स्कन्ध ${c}`,
-              chapterTitleHindi: chapterTitle
-            },
-            tags: ["श्रीमद्भागवतम्", cantoObj?.name?.split(' - ')[0] || `स्कन्ध ${c}`]
-          };
-          await this.displaySloka(placeholderSloka);
-        }
+        await this.loadChapter(c, ch);
+        const existing = this.chapterSlokas.find(s => String(s.verse) === String(v));
+        if (existing) await this.displaySloka(existing);
       } else {
         this.showToast(`श्लोक '${cleanKey}' नहीं मिला।`);
       }
@@ -608,33 +773,52 @@ class VedabaseApp {
     this.highlightActiveSidebar();
   }
 
-  // Highlight active Canto & Chapter in Sidebar (Accordion Aware)
+  // Highlight active Scripture, Canto & Chapter in Sidebar
   highlightActiveSidebar() {
-    document.querySelectorAll('.canto-item').forEach(el => {
-      if (el.id === `canto-item-${this.currentCanto}`) {
-        el.classList.add('active', 'expanded');
-      } else {
-        el.classList.remove('active', 'expanded');
-      }
-    });
+    const isBG = this.currentBook === 'BG';
 
-    document.querySelectorAll('.chapter-btn').forEach(btn => btn.classList.remove('active'));
-    const activeChapBtn = document.getElementById(`chap-btn-${this.currentCanto}-${this.currentChapter}`);
-    if (activeChapBtn) {
-      activeChapBtn.classList.add('active');
+    const groupBG = document.getElementById('scriptureGroupBG');
+    const groupSB = document.getElementById('scriptureGroupSB');
+
+    if (isBG) {
+      if (groupBG) {
+        groupBG.classList.add('active', 'expanded');
+      }
+      document.querySelectorAll('#bgChapterListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBgBtn = document.getElementById(`bg-chap-btn-${this.currentChapter}`);
+      if (activeBgBtn) activeBgBtn.classList.add('active');
+    } else {
+      if (groupSB) {
+        groupSB.classList.add('active', 'expanded');
+      }
+      document.querySelectorAll('.canto-item').forEach(el => {
+        if (el.id === `canto-item-${this.currentCanto}`) {
+          el.classList.add('active', 'expanded');
+        } else {
+          el.classList.remove('active', 'expanded');
+        }
+      });
+      document.querySelectorAll('#cantoListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
+      const activeChapBtn = document.getElementById(`chap-btn-${this.currentCanto}-${this.currentChapter}`);
+      if (activeChapBtn) activeChapBtn.classList.add('active');
     }
   }
 
-  // Display a Sloka in the main reader area (English Numbering)
+  // Display a Sloka in the main reader area
   async displaySloka(sloka) {
     this.currentSloka = sloka;
+    const isBG = sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')) || !sloka.canto;
+    this.currentBook = isBG ? 'BG' : 'SB';
+
     try {
-      localStorage.setItem('vedabase_last_verse', sloka.verseKey);
+      localStorage.setItem('vedabase_last_verse', isBG ? `bg ${sloka.verseKey}` : sloka.verseKey);
     } catch (e) {}
 
     // 1. Badges & Titles
     const keyBadge = document.getElementById('currentVerseKeyBadge');
-    if (keyBadge) keyBadge.textContent = `SB ${sloka.verseKey}`;
+    if (keyBadge) {
+      keyBadge.textContent = isBG ? `BG ${sloka.verseKey}` : `SB ${sloka.verseKey}`;
+    }
 
     const userEditBadge = document.getElementById('userEditedBadge');
     if (userEditBadge) {
@@ -643,13 +827,19 @@ class VedabaseApp {
 
     const chTitle = document.getElementById('currentChapterName');
     if (chTitle) {
-      chTitle.textContent = sloka.category?.chapterTitleHindi || `अध्याय ${sloka.chapter}`;
+      if (isBG) {
+        const bgChapters = getBgChapters();
+        const chObj = bgChapters.find(ch => ch.chapter === Number(sloka.chapter));
+        chTitle.textContent = chObj ? `अध्याय ${sloka.chapter} - ${chObj.name}` : (sloka.category?.chapterTitleHindi || `अध्याय ${sloka.chapter}`);
+      } else {
+        chTitle.textContent = sloka.category?.chapterTitleHindi || `अध्याय ${sloka.chapter}`;
+      }
     }
 
     // 2. Render Interactive Horizontal Verse Strip (1, 2, 3... N)
     this.renderVerseSelectorStrip();
 
-    // 3. Sanskrit Verse & IAST (Clean pure Sanskrit without embedded chapter headers)
+    // 3. Sanskrit Verse & IAST
     const sanskritEl = document.getElementById('sanskritDevanagari');
     if (sanskritEl) {
       sanskritEl.innerHTML = this.highlightInText(this.cleanSanskritText(sloka.sanskritDevanagari), this.currentHighlightWord) || 'श्लोक उपलब्ध नहीं है';
@@ -721,24 +911,34 @@ class VedabaseApp {
     const scrollContainer = document.getElementById('verseStripScroll');
     if (!scrollContainer || !this.currentSloka) return;
 
-    const cantos = getCantoStructure();
-    const cantoObj = cantos.find(c => c.canto === this.currentCanto);
-    const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
-    const totalVerses = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    const isBG = this.currentBook === 'BG';
+    let totalVerses = 1;
+
+    if (isBG) {
+      const bgChapters = getBgChapters();
+      const chObj = bgChapters.find(ch => ch.chapter === Number(this.currentChapter));
+      totalVerses = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    } else {
+      const cantos = getCantoStructure();
+      const cantoObj = cantos.find(c => c.canto === this.currentCanto);
+      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
+      totalVerses = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    }
 
     const existingMap = new Map();
     this.chapterSlokas.forEach(s => existingMap.set(parseInt(s.verse, 10), s));
 
     const currentVNum = parseInt(this.currentSloka.verse, 10);
-
     const buttons = [];
+
     for (let v = 1; v <= totalVerses; v++) {
       const isCurrent = currentVNum === v;
       const isLoaded = existingMap.has(v);
+      const loadKey = isBG ? `bg ${this.currentChapter}.${v}` : `${this.currentCanto}.${this.currentChapter}.${v}`;
 
       buttons.push(`
         <button class="verse-strip-btn ${isCurrent ? 'active' : ''} ${isLoaded ? 'has-data' : ''}"
-          onclick="window.app.loadVerseByKey('${this.currentCanto}.${this.currentChapter}.${v}')"
+          onclick="window.app.loadVerseByKey('${loadKey}')"
           title="श्लोक ${v} ${isLoaded ? '(डेटा उपलब्ध)' : ''}">
           ${v}
         </button>
@@ -747,22 +947,30 @@ class VedabaseApp {
 
     scrollContainer.innerHTML = buttons.join('');
 
-    // Auto-scroll active verse into view in the strip
     const activeBtn = scrollContainer.querySelector('.verse-strip-btn.active');
     if (activeBtn) {
       activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
   }
 
-  // Update verse navigation counter (e.g. 1 / 23)
+  // Update verse navigation counter (e.g. 1 / 46 or 1 / 23)
   updateNavCounter() {
     const counter = document.getElementById('verseCounterStatus');
     if (!counter) return;
 
-    const cantos = getCantoStructure();
-    const cantoObj = cantos.find(c => c.canto === this.currentCanto);
-    const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
-    const totalV = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    const isBG = this.currentBook === 'BG';
+    let totalV = 1;
+
+    if (isBG) {
+      const bgChapters = getBgChapters();
+      const chObj = bgChapters.find(ch => ch.chapter === Number(this.currentChapter));
+      totalV = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    } else {
+      const cantos = getCantoStructure();
+      const cantoObj = cantos.find(c => c.canto === this.currentCanto);
+      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
+      totalV = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    }
 
     const vNum = parseInt(this.currentSloka?.verse, 10) || 1;
     counter.textContent = `${vNum} / ${totalV}`;
@@ -770,55 +978,87 @@ class VedabaseApp {
 
   // Next Verse
   async nextVerse() {
-    const cantos = getCantoStructure();
-    const cantoObj = cantos.find(c => c.canto === this.currentCanto);
-    const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
-    const maxVerses = chapterObj ? chapterObj.totalVerses : (this.chapterSlokas.length || 1);
+    const isBG = this.currentBook === 'BG';
 
-    const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
+    if (isBG) {
+      const bgChapters = getBgChapters();
+      const chObj = bgChapters.find(ch => ch.chapter === Number(this.currentChapter));
+      const maxVerses = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+      const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
 
-    if (currentVNum < maxVerses) {
-      const nextV = currentVNum + 1;
-      await this.loadVerseByKey(`${this.currentCanto}.${this.currentChapter}.${nextV}`);
-    } else {
-      // Go to next chapter
-      const nextChapter = this.currentChapter + 1;
-      if (cantoObj && nextChapter <= cantoObj.totalChapters) {
-        await this.loadChapter(this.currentCanto, nextChapter);
-      } else if (this.currentCanto < 12) {
-        // Go to next canto
-        await this.loadChapter(this.currentCanto + 1, 1);
+      if (currentVNum < maxVerses) {
+        await this.loadVerseByKey(`bg ${this.currentChapter}.${currentVNum + 1}`);
       } else {
-        this.showToast('श्रीमद्भागवतम् का अन्तिम श्लोक!');
+        if (this.currentChapter < 18) {
+          await this.loadBgChapter(this.currentChapter + 1);
+        } else {
+          this.showToast('श्रीमद्भगवद्गीता का अन्तिम श्लोक!');
+        }
+      }
+    } else {
+      const cantos = getCantoStructure();
+      const cantoObj = cantos.find(c => c.canto === this.currentCanto);
+      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
+      const maxVerses = chapterObj ? chapterObj.totalVerses : (this.chapterSlokas.length || 1);
+      const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
+
+      if (currentVNum < maxVerses) {
+        await this.loadVerseByKey(`${this.currentCanto}.${this.currentChapter}.${currentVNum + 1}`);
+      } else {
+        const nextChapter = this.currentChapter + 1;
+        if (cantoObj && nextChapter <= cantoObj.totalChapters) {
+          await this.loadChapter(this.currentCanto, nextChapter);
+        } else if (this.currentCanto < 12) {
+          await this.loadChapter(this.currentCanto + 1, 1);
+        } else {
+          this.showToast('श्रीमद्भागवतम् का अन्तिम श्लोक!');
+        }
       }
     }
   }
 
   // Previous Verse
   async prevVerse() {
-    const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
+    const isBG = this.currentBook === 'BG';
 
-    if (currentVNum > 1) {
-      const prevV = currentVNum - 1;
-      await this.loadVerseByKey(`${this.currentCanto}.${this.currentChapter}.${prevV}`);
-    } else {
-      // Go to previous chapter
-      if (this.currentChapter > 1) {
-        const prevChapter = this.currentChapter - 1;
-        await this.loadChapter(this.currentCanto, prevChapter);
-      } else if (this.currentCanto > 1) {
-        const prevCanto = this.currentCanto - 1;
-        const cantos = getCantoStructure();
-        const prevCantoObj = cantos.find(c => c.canto === prevCanto);
-        const lastChap = prevCantoObj ? prevCantoObj.totalChapters : 1;
-        await this.loadChapter(prevCanto, lastChap);
+    if (isBG) {
+      const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
+      if (currentVNum > 1) {
+        await this.loadVerseByKey(`bg ${this.currentChapter}.${currentVNum - 1}`);
       } else {
-        this.showToast('श्रीमद्भागवतम् का प्रथम श्लोक!');
+        if (this.currentChapter > 1) {
+          const prevChap = this.currentChapter - 1;
+          const bgChapters = getBgChapters();
+          const prevChObj = bgChapters.find(ch => ch.chapter === prevChap);
+          const lastVerse = prevChObj ? prevChObj.totalVerses : 1;
+          await this.loadBgChapter(prevChap);
+          await this.loadVerseByKey(`bg ${prevChap}.${lastVerse}`);
+        } else {
+          this.showToast('श्रीमद्भगवद्गीता का प्रथम श्लोक!');
+        }
+      }
+    } else {
+      const currentVNum = parseInt(this.currentSloka?.verse, 10) || 1;
+      if (currentVNum > 1) {
+        await this.loadVerseByKey(`${this.currentCanto}.${this.currentChapter}.${currentVNum - 1}`);
+      } else {
+        if (this.currentChapter > 1) {
+          const prevChapter = this.currentChapter - 1;
+          await this.loadChapter(this.currentCanto, prevChapter);
+        } else if (this.currentCanto > 1) {
+          const prevCanto = this.currentCanto - 1;
+          const cantos = getCantoStructure();
+          const prevCantoObj = cantos.find(c => c.canto === prevCanto);
+          const lastChap = prevCantoObj ? prevCantoObj.totalChapters : 1;
+          await this.loadChapter(prevCanto, lastChap);
+        } else {
+          this.showToast('श्रीमद्भागवतम् का प्रथम श्लोक!');
+        }
       }
     }
   }
 
-  // Directly search any Sanskrit / Hindi word in the global Search Dialog Modal
+  // Directly search any Sanskrit / Hindi word
   searchWordDirectly(sanskritWord) {
     if (!sanskritWord) return;
     const cleanWord = sanskritWord.replace(/[।,;:\-\—\–\(\)\[\]\{\}\"\'\?\!\/\\\|\*\+\=\>\<]/g, ' ').trim();
@@ -841,9 +1081,12 @@ class VedabaseApp {
   copyFormattedVerse() {
     if (!this.currentSloka) return;
     const s = this.currentSloka;
+    const isBG = this.currentBook === 'BG' || s.book === 'BG' || s.id?.startsWith('bg-');
     const wordMeaningsText = (s.wordToWord || []).map(w => `${w.sanskrit} — ${w.hindi}`).join('; ');
 
-    const formatted = `🕉️ *श्रीमद्भागवतम् ${s.verseKey}* 🕉️\n\n` +
+    const titlePrefix = isBG ? `🕉️ *श्रीमद्भगवद्गीता ${s.verseKey} (BG ${s.verseKey})* 🕉️` : `🕉️ *श्रीमद्भागवतम् SB ${s.verseKey}* 🕉️`;
+
+    const formatted = `${titlePrefix}\n\n` +
       `📜 *संस्कृत श्लोक:*\n${s.sanskritDevanagari}\n\n` +
       (wordMeaningsText ? `✨ *शब्दार्थ:*\n${wordMeaningsText}\n\n` : '') +
       `📖 *अनुवाद:*\n${s.hindiTranslation}\n\n` +
@@ -864,13 +1107,8 @@ class VedabaseApp {
 
     const trimmed = (query || '').trim();
 
-    // If search query is a verse reference (e.g. 1.2.3 or 10.14.8), ensure that canto is loaded
-    if (window.searchEngine) {
-      const ref = window.searchEngine.parseReferenceQuery(trimmed);
-      if (ref && ref.canto && !this.loadedCantos.has(ref.canto)) {
-        await this.ensureCantoLoaded(ref.canto);
-      }
-    }
+    // Ensure BG is loaded if search term seems related
+    await this.ensureBgLoaded();
 
     const res = window.searchEngine ? window.searchEngine.search(trimmed) : { results: [], timeMs: 0 };
 
@@ -886,11 +1124,15 @@ class VedabaseApp {
     const highlightWord = trimmed;
 
     list.innerHTML = res.results.map(s => {
+      const isBG = s.book === 'BG' || s.id?.startsWith('bg-') || !s.canto;
+      const prefix = isBG ? 'BG' : 'SB';
       const sanskritFirstLine = this.cleanSanskritText(s.sanskritDevanagari || '').split('\n')[0];
+      const targetKey = isBG ? `bg ${s.verseKey}` : s.verseKey;
+
       return `
-        <div class="search-result-item" onclick="window.app.selectVerseFromSearch('${s.verseKey}', '${this.escapeHtml(highlightWord)}')">
+        <div class="search-result-item" onclick="window.app.selectVerseFromSearch('${targetKey}', '${this.escapeHtml(highlightWord)}')">
           <div class="search-res-header">
-            <span class="search-res-key">SB ${s.verseKey}</span>
+            <span class="search-res-key" style="${isBG ? 'background: rgba(245, 158, 11, 0.2); color: var(--accent-gold);' : ''}">${prefix} ${s.verseKey}</span>
             <span style="font-size: 0.8rem; color: var(--accent-gold); font-weight: 600;">${this.escapeHtml(s.category?.chapterTitleHindi || '')}</span>
           </div>
           <div class="search-res-sanskrit">${this.highlightInText(sanskritFirstLine, highlightWord)}</div>
@@ -935,17 +1177,11 @@ class VedabaseApp {
     }
   }
 
-  // Toggle floating control menu in presentation mode
   togglePresMenu() {
     const header = document.getElementById('presHeader');
     if (!header) return;
-
-    const isCurrentlyHidden = header.classList.contains('pres-hidden');
-    if (isCurrentlyHidden) {
-      this.showPresMenu();
-    } else {
-      this.hidePresMenu();
-    }
+    if (header.classList.contains('pres-hidden')) this.showPresMenu();
+    else this.hidePresMenu();
   }
 
   showPresMenu() {
@@ -967,14 +1203,10 @@ class VedabaseApp {
   }
 
   togglePresentationMode() {
-    if (this.isPresentationOpen) {
-      this.closePresentationMode();
-    } else {
-      this.openPresentationMode();
-    }
+    if (this.isPresentationOpen) this.closePresentationMode();
+    else this.openPresentationMode();
   }
 
-  // Toggle individual section visibility in presentation mode
   togglePresSection(sectionName) {
     if (this.presSections.hasOwnProperty(sectionName)) {
       this.presSections[sectionName] = !this.presSections[sectionName];
@@ -1004,7 +1236,6 @@ class VedabaseApp {
     }
   }
 
-  // Adjust Slide Font Scale for Projector View
   adjustPresFontSize(delta) {
     this.presFontScale = Math.max(0.8, Math.min(1.8, (this.presFontScale || 1) + delta));
     const sanskritEl = document.getElementById('presSanskrit');
@@ -1013,41 +1244,45 @@ class VedabaseApp {
     if (transEl) transEl.style.fontSize = `${1.4 * this.presFontScale}rem`;
   }
 
-  // Toggle Browser Fullscreen (F11)
   togglePresFullscreen() {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.warn('Fullscreen notice:', err);
-      });
+      document.documentElement.requestFullscreen().catch(err => console.warn(err));
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-      }
+      if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
     }
   }
 
-  // Render Current Slide in Presentation Mode
   renderPresentationSlide() {
     if (!this.currentSloka) return;
     const s = this.currentSloka;
+    const isBG = this.currentBook === 'BG' || s.book === 'BG' || s.id?.startsWith('bg-');
 
     const presVerseKey = document.getElementById('presVerseKey');
-    if (presVerseKey) presVerseKey.textContent = `SB ${s.verseKey}`;
+    if (presVerseKey) presVerseKey.textContent = isBG ? `BG ${s.verseKey}` : `SB ${s.verseKey}`;
 
     const presChapterTitle = document.getElementById('presChapterTitle');
     if (presChapterTitle) {
-      presChapterTitle.textContent = s.category?.chapterTitleHindi || `स्कन्ध ${s.canto} • अध्याय ${s.chapter}`;
+      if (isBG) {
+        presChapterTitle.textContent = `श्रीमद्भगवद्गीता • अध्याय ${s.chapter}`;
+      } else {
+        presChapterTitle.textContent = s.category?.chapterTitleHindi || `स्कन्ध ${s.canto} • अध्याय ${s.chapter}`;
+      }
     }
 
-    const cantos = getCantoStructure();
-    const cantoObj = cantos.find(c => c.canto === this.currentCanto);
-    const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
-    const totalV = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    let totalV = 1;
+    if (isBG) {
+      const bgChapters = getBgChapters();
+      const chObj = bgChapters.find(ch => ch.chapter === Number(s.chapter));
+      totalV = chObj ? chObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    } else {
+      const cantos = getCantoStructure();
+      const cantoObj = cantos.find(c => c.canto === this.currentCanto);
+      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === this.currentChapter);
+      totalV = chapterObj ? chapterObj.totalVerses : Math.max(this.chapterSlokas.length, 1);
+    }
 
     const presCounter = document.getElementById('presCounter');
-    if (presCounter) {
-      presCounter.textContent = `श्लोक ${s.verse} / ${totalV}`;
-    }
+    if (presCounter) presCounter.textContent = `श्लोक ${s.verse} / ${totalV}`;
 
     const presSanskrit = document.getElementById('presSanskrit');
     if (presSanskrit) {
@@ -1085,18 +1320,14 @@ class VedabaseApp {
       presPurport.innerHTML = s.hindiPurport ? this.highlightInHtml(this.renderParagraphs(s.hindiPurport), this.currentHighlightWord) : '<p style="color: var(--text-muted);">तात्पर्य उपलब्ध नहीं है</p>';
     }
 
-    // Apply visibility of active sections
     this.applyPresSectionVisibility();
-
-    // Trigger auto fade of search highlight
     this.triggerHighlightFadeTimer();
 
-    // Reset slide scroll position to top
     const stage = document.getElementById('presentationStage');
     if (stage) stage.scrollTop = 0;
   }
 
-  // Theme Management (Dark / Light / Sepia)
+  // Theme Management
   setupTheme() {
     const saved = localStorage.getItem('vedabase_theme') || 'dark';
     this.setTheme(saved);
@@ -1108,9 +1339,7 @@ class VedabaseApp {
     localStorage.setItem('vedabase_theme', theme);
 
     const icon = document.getElementById('themeIcon');
-    if (icon) {
-      icon.textContent = '🌓';
-    }
+    if (icon) icon.textContent = '🌓';
   }
 
   toggleNextTheme() {
@@ -1119,7 +1348,7 @@ class VedabaseApp {
     this.setTheme(themes[nextIdx]);
   }
 
-  // Open Edit Modal for the current verse
+  // Open Edit Modal for current verse
   openEditCurrentVerseModal() {
     if (!this.currentSloka) {
       this.showToast('सम्पादित करने के लिए कोई श्लोक चयनित नहीं है।');
@@ -1127,24 +1356,32 @@ class VedabaseApp {
     }
 
     const sloka = this.currentSloka;
+    const isBG = this.currentBook === 'BG' || sloka.book === 'BG' || sloka.id?.startsWith('bg-');
+
     const titleEl = document.getElementById('editModalTitle');
-    if (titleEl) titleEl.textContent = `✏️ श्लोक सम्पादन (SB ${sloka.verseKey})`;
+    if (titleEl) {
+      titleEl.textContent = `✏️ श्लोक सम्पादन (${isBG ? 'BG' : 'SB'} ${sloka.verseKey})`;
+    }
 
     document.getElementById('editVerseKey').value = sloka.verseKey || '';
-    document.getElementById('editCanto').value = sloka.canto || 1;
+    document.getElementById('editCanto').value = isBG ? 0 : (sloka.canto || 1);
     document.getElementById('editChapter').value = sloka.chapter || 1;
     document.getElementById('editVerse').value = sloka.verse || 1;
 
+    const cantoChipBox = document.getElementById('editCantoChipBox');
     const cantoBadge = document.getElementById('editCantoBadge');
     const chapBadge = document.getElementById('editChapterBadge');
     const verseBadge = document.getElementById('editVerseBadge');
+
+    if (cantoChipBox) {
+      cantoChipBox.style.display = isBG ? 'none' : 'block';
+    }
     if (cantoBadge) cantoBadge.textContent = sloka.canto || 1;
     if (chapBadge) chapBadge.textContent = sloka.chapter || 1;
     if (verseBadge) verseBadge.textContent = sloka.verse || 1;
 
     document.getElementById('editSanskrit').value = sloka.sanskritDevanagari || '';
 
-    // Format wordToWord array into editable text lines
     let wordsStr = '';
     if (Array.isArray(sloka.wordToWord) && sloka.wordToWord.length > 0) {
       wordsStr = sloka.wordToWord.map(w => `${w.sanskrit} — ${w.hindi}`).join(';\n');
@@ -1156,7 +1393,7 @@ class VedabaseApp {
     this.openModal('editVerseModal');
   }
 
-  // Save changes from Edit Sloka Modal (Direct Hard Disk JSON Update)
+  // Save changes from Edit Sloka Modal
   async saveEditedVerse() {
     const verseKey = document.getElementById('editVerseKey').value;
     const canto = parseInt(document.getElementById('editCanto').value, 10);
@@ -1167,7 +1404,8 @@ class VedabaseApp {
     const translation = document.getElementById('editTranslation').value.trim();
     const purport = document.getElementById('editPurport').value.trim();
 
-    // Parse words string back to array of {sanskrit, hindi}
+    const isBG = canto === 0 || this.currentBook === 'BG';
+
     const wordToWord = [];
     if (wordsRaw) {
       const parts = wordsRaw.split(/[;\n]+/).map(p => p.trim()).filter(p => p.length > 0);
@@ -1181,30 +1419,54 @@ class VedabaseApp {
       });
     }
 
-    const cantos = getCantoStructure();
-    const cantoObj = cantos.find(c => c.canto === canto);
-    const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === chapter);
+    let sloka;
+    if (isBG) {
+      const bgChapters = getBgChapters();
+      const chObj = bgChapters.find(ch => ch.chapter === chapter);
+      sloka = {
+        id: `bg-${chapter}-${verse}`,
+        book: "BG",
+        chapter,
+        verse,
+        verseKey,
+        sanskritDevanagari: sanskrit,
+        sanskritIAST: this.currentSloka?.sanskritIAST || '',
+        wordToWord,
+        hindiTranslation: translation,
+        hindiPurport: purport,
+        category: {
+          book: "श्रीमद्भगवद्गीता",
+          cantoTitleHindi: "श्रीमद्भगवद्गीता यथारूप",
+          chapterTitleHindi: chObj ? `अध्याय ${chapter} - ${chObj.name}` : `अध्याय ${chapter}`
+        },
+        tags: ["श्रीमद्भगवद्गीता", `अध्याय ${chapter}`]
+      };
+    } else {
+      const cantos = getCantoStructure();
+      const cantoObj = cantos.find(c => c.canto === canto);
+      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === chapter);
+      sloka = {
+        id: `sb-${canto}-${chapter}-${verse}`,
+        book: "SB",
+        canto,
+        chapter,
+        verse,
+        verseKey,
+        sanskritDevanagari: sanskrit,
+        sanskritIAST: this.currentSloka?.sanskritIAST || '',
+        wordToWord,
+        hindiTranslation: translation,
+        hindiPurport: purport,
+        category: {
+          book: "श्रीमद्भागवतम्",
+          cantoTitleHindi: cantoObj?.name || `स्कन्ध ${canto}`,
+          chapterTitleHindi: chapterObj ? `अध्याय ${chapter} - ${chapterObj.name}` : `अध्याय ${chapter}`
+        },
+        tags: this.currentSloka?.tags || [`स्कन्ध ${canto}`, `अध्याय ${chapter}`]
+      };
+    }
 
-    const sloka = {
-      id: `sb-${canto}-${chapter}-${verse}`,
-      canto,
-      chapter,
-      verse,
-      verseKey,
-      sanskritDevanagari: sanskrit,
-      sanskritIAST: this.currentSloka?.sanskritIAST || '',
-      wordToWord,
-      hindiTranslation: translation,
-      hindiPurport: purport,
-      category: {
-        book: "श्रीमद्भागवतम्",
-        cantoTitleHindi: cantoObj?.name || `स्कन्ध ${canto}`,
-        chapterTitleHindi: chapterObj ? `अध्याय ${chapter} - ${chapterObj.name}` : `अध्याय ${chapter}`
-      },
-      tags: this.currentSloka?.tags || [`स्कन्ध ${canto}`, `अध्याय ${chapter}`]
-    };
-
-    // 1. Send update directly to server API to write into data/canto-X.json on disk
+    // 1. Send update directly to server API to write into data/canto-X.json or data/bhagavad-gita.json
     let diskSaved = false;
     try {
       const resp = await fetch('/api/save-verse', {
@@ -1214,136 +1476,123 @@ class VedabaseApp {
       });
       if (resp.ok) {
         const result = await resp.json();
-        if (result.success) {
-          diskSaved = true;
-        }
+        if (result.success) diskSaved = true;
       }
     } catch (e) {
       console.warn('Server direct file-save notice:', e);
     }
 
-    // 2. Update in-memory structures so change is instantly live
+    // 2. Update in-memory structures
     this.verseMap.set(sloka.verseKey, sloka);
     this.verseMap.set(sloka.id, sloka);
-
-    const idx = this.allSlokas.findIndex(s => s.verseKey === sloka.verseKey);
-    if (idx >= 0) {
-      this.allSlokas[idx] = sloka;
-    } else {
-      this.allSlokas.push(sloka);
+    if (isBG) {
+      this.verseMap.set(`bg-${sloka.chapter}-${sloka.verse}`, sloka);
+      this.verseMap.set(`bg ${sloka.chapter}.${sloka.verse}`, sloka);
     }
 
-    const chKey = `${sloka.canto}-${sloka.chapter}`;
-    if (this.chapterMap.has(chKey)) {
+    const idx = this.allSlokas.findIndex(s => s.id === sloka.id);
+    if (idx >= 0) this.allSlokas[idx] = sloka;
+    else this.allSlokas.push(sloka);
+
+    if (isBG) {
+      const chList = this.bgChapterMap.get(chapter);
+      if (chList) {
+        const chIdx = chList.findIndex(s => s.id === sloka.id);
+        if (chIdx >= 0) chList[chIdx] = sloka;
+        else chList.push(sloka);
+      }
+    } else {
+      const chKey = `${sloka.canto}-${sloka.chapter}`;
       const chList = this.chapterMap.get(chKey);
-      const chIdx = chList.findIndex(s => s.verseKey === sloka.verseKey);
-      if (chIdx >= 0) {
-        chList[chIdx] = sloka;
-      } else {
-        chList.push(sloka);
+      if (chList) {
+        const chIdx = chList.findIndex(s => s.id === sloka.id);
+        if (chIdx >= 0) chList[chIdx] = sloka;
+        else chList.push(sloka);
       }
     }
 
-    if (window.searchEngine) {
-      window.searchEngine.appendIndex([sloka]);
-    }
+    if (window.searchEngine) window.searchEngine.appendIndex([sloka]);
 
     // 3. Remove localStorage override if disk write was successful
     if (diskSaved) {
       const edits = this.getUserCustomEdits();
-      if (edits[verseKey]) {
-        delete edits[verseKey];
+      const saveKey = isBG ? `bg-${chapter}-${verse}` : verseKey;
+      if (edits[saveKey]) {
+        delete edits[saveKey];
         localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
       }
       this.updateCustomEditsCountBadge();
-      this.showToast(`💾 श्लोक SB ${verseKey} सीधे data/canto-${canto}.json फ़ाइल में सुरक्षित हो गया!`);
+      this.showToast(`💾 श्लोक ${isBG ? 'BG' : 'SB'} ${verseKey} सीधे JSON फ़ाइल में सुरक्षित हो गया!`);
     } else {
       await this.saveUserCustomEdit(sloka);
-      this.showToast(`✅ श्लोक SB ${verseKey} सुरक्षित हुआ (Local Backup)`);
+      this.showToast(`✅ श्लोक ${isBG ? 'BG' : 'SB'} ${verseKey} सुरक्षित हुआ (Local Storage)`);
     }
 
     this.closeAllModals();
     await this.displaySloka(sloka);
   }
 
-  // Export JSON Backup to Laptop (Includes all slokas in Master JSON format)
-  async exportJSONBackup() {
-    this.showToast('⏳ बैकअप तैयार किया जा रहा है...');
+  // Export Bhagavad Gita JSON
+  async exportBgJSON() {
+    this.showToast('⏳ भगवद्गीता का JSON तैयार किया जा रहा है...');
+    await this.ensureBgLoaded();
 
+    let slokas = this.allSlokas.filter(s => s.book === 'BG' || s.id?.startsWith('bg-'));
+    slokas = this.applyUserCustomEdits(slokas);
+
+    slokas.sort((a, b) => {
+      if (a.chapter !== b.chapter) return (a.chapter || 0) - (b.chapter || 0);
+      const vA = parseInt(a.verse, 10) || 0;
+      const vB = parseInt(b.verse, 10) || 0;
+      return vA - vB;
+    });
+
+    const blob = new Blob([JSON.stringify(slokas, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bhagavad-gita.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    this.showToast(`📥 bhagavad-gita.json (${slokas.length} श्लोक) डाउनलोड हुआ!`);
+  }
+
+  // Export JSON Backup of entire database
+  async exportJSONBackup() {
+    this.showToast('⏳ सम्पूर्ण बैकअप तैयार किया जा रहा है...');
+
+    await this.ensureBgLoaded();
     for (let c = 1; c <= 12; c++) {
       await this.ensureCantoLoaded(c);
     }
 
     let slokas = this.allSlokas || [];
-    if (slokas.length === 0) {
-      this.showToast('डेटाबेस में कोई श्लोक नहीं है।');
-      return;
-    }
-
-    // Apply user custom edits so backup always has latest custom versions
     slokas = this.applyUserCustomEdits(slokas);
 
-    // Sort by canto, chapter, verse
-    slokas.sort((a, b) => {
-      if (a.canto !== b.canto) return (a.canto || 0) - (b.canto || 0);
-      if (a.chapter !== b.chapter) return (a.chapter || 0) - (b.chapter || 0);
-      const vA = parseInt(a.verse, 10) || 0;
-      const vB = parseInt(b.verse, 10) || 0;
-      return vA - vB;
-    });
-
-    const cleanSlokas = slokas.map(s => ({
-      id: s.id || `sb-${s.canto}-${s.chapter}-${s.verse}`,
-      canto: Number(s.canto),
-      chapter: Number(s.chapter),
-      verse: isNaN(Number(s.verse)) ? s.verse : Number(s.verse),
-      verseKey: s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`,
-      sanskritDevanagari: s.sanskritDevanagari || '',
-      sanskritIAST: s.sanskritIAST || '',
-      wordToWord: Array.isArray(s.wordToWord) ? s.wordToWord : [],
-      hindiTranslation: s.hindiTranslation || '',
-      hindiPurport: s.hindiPurport || '',
-      category: s.category || {
-        book: "श्रीमद्भागवतम्",
-        cantoTitleHindi: `स्कन्ध ${s.canto}`,
-        chapterTitleHindi: `अध्याय ${s.chapter}`
-      },
-      tags: s.tags || [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"],
-      ...(s.isUserEdited ? { isUserEdited: true, lastEditedAt: s.lastEditedAt || new Date().toISOString() } : {})
-    }));
-
-    const blob = new Blob([JSON.stringify(cleanSlokas, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(slokas, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Hindi_Vedabase_Master_Backup_${cleanSlokas.length}_Slokas.json`;
+    a.download = `Hindi_Vedabase_Master_Backup_${slokas.length}_Slokas.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    this.showToast(`📥 समस्त ${cleanSlokas.length} श्लोकों का JSON बैकअप डाउनलोड हुआ!`);
+    this.showToast(`📥 समस्त ${slokas.length} श्लोकों का JSON बैकअप डाउनलोड हुआ!`);
   }
 
-  // Export a specific Canto as canto-X.json (100% Identical schema with data/canto-X.json)
+  // Export a specific Canto as canto-X.json
   async exportCantoJSON(cantoNum) {
     const cNum = Number(cantoNum) || this.currentCanto || 1;
     this.showToast(`⏳ स्कन्ध ${cNum} का JSON तैयार किया जा रहा है...`);
 
-    // Ensure canto is loaded in memory
     await this.ensureCantoLoaded(cNum);
 
-    // Get all verses for this canto
-    let slokas = this.allSlokas.filter(s => Number(s.canto) === cNum);
-
-    if (!slokas || slokas.length === 0) {
-      this.showToast(`स्कन्ध ${cNum} में कोई श्लोक नहीं मिला।`);
-      return;
-    }
-
-    // Apply user custom edits
+    let slokas = this.allSlokas.filter(s => s.book === 'SB' && Number(s.canto) === cNum);
     slokas = this.applyUserCustomEdits(slokas);
 
-    // Sort by chapter and verse
     slokas.sort((a, b) => {
       if (a.chapter !== b.chapter) return (a.chapter || 0) - (b.chapter || 0);
       const vA = parseInt(a.verse, 10) || 0;
@@ -1351,27 +1600,7 @@ class VedabaseApp {
       return vA - vB;
     });
 
-    const cleanSlokas = slokas.map(s => ({
-      id: s.id || `sb-${s.canto}-${s.chapter}-${s.verse}`,
-      canto: Number(s.canto),
-      chapter: Number(s.chapter),
-      verse: isNaN(Number(s.verse)) ? s.verse : Number(s.verse),
-      verseKey: s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`,
-      sanskritDevanagari: s.sanskritDevanagari || '',
-      sanskritIAST: s.sanskritIAST || '',
-      wordToWord: Array.isArray(s.wordToWord) ? s.wordToWord : [],
-      hindiTranslation: s.hindiTranslation || '',
-      hindiPurport: s.hindiPurport || '',
-      category: s.category || {
-        book: "श्रीमद्भागवतम्",
-        cantoTitleHindi: `स्कन्ध ${s.canto}`,
-        chapterTitleHindi: `अध्याय ${s.chapter}`
-      },
-      tags: s.tags || [`स्कन्ध ${s.canto}`, `अध्याय ${s.chapter}`, "श्रीमद्भागवतम्"],
-      ...(s.isUserEdited ? { isUserEdited: true, lastEditedAt: s.lastEditedAt || new Date().toISOString() } : {})
-    }));
-
-    const blob = new Blob([JSON.stringify(cleanSlokas, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(slokas, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -1380,199 +1609,10 @@ class VedabaseApp {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    this.showToast(`📥 canto-${cNum}.json (${cleanSlokas.length} श्लोक) डाउनलोड हुआ!`);
+    this.showToast(`📥 canto-${cNum}.json (${slokas.length} श्लोक) डाउनलोड हुआ!`);
   }
 
-  // Normalize JSON data (supports standard backup JSON, master JSON, array of verses, or chapters)
-  normalizeJsonToSlokas(data) {
-    if (!data) return [];
-    const results = [];
-    const cantos = getCantoStructure();
-
-    let rawList = [];
-    if (Array.isArray(data)) {
-      rawList = data;
-    } else if (typeof data === 'object' && data !== null) {
-      if (Array.isArray(data.verses)) {
-        rawList = data.verses;
-      } else if (Array.isArray(data.slokas)) {
-        rawList = data.slokas;
-      } else if (data.verseKey || (data.canto && data.chapter)) {
-        rawList = [data];
-      }
-    }
-
-    const parseChapterObj = (chap) => {
-      const cantoNum = parseInt(chap.canto, 10) || 1;
-      const chapNum = parseInt(chap.chapter, 10) || 1;
-      const cantoObj = cantos.find(c => c.canto === cantoNum);
-      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === chapNum);
-      const chapTitle = chap.chapter_name || (chapterObj ? chapterObj.name : `अध्याय ${chapNum}`);
-
-      (chap.verses || []).forEach(v => {
-        const vNum = parseInt(v.verse_number || v.verse || 1, 10);
-        const verseKey = `${cantoNum}.${chapNum}.${vNum}`;
-        
-        const wordToWord = [];
-        const rawW = v.word_to_word_meaning || v.word_meanings || v.wordToWord;
-        if (typeof rawW === 'string') {
-          const parts = rawW.split(/[;\n]+/).map(p => p.trim()).filter(p => p.length > 0);
-          parts.forEach(part => {
-            const pair = part.split(/[—\-–:]/).map(s => s.trim());
-            if (pair.length >= 2) {
-              wordToWord.push({ sanskrit: pair[0], hindi: pair.slice(1).join(' - ') });
-            } else if (pair.length === 1 && pair[0]) {
-              wordToWord.push({ sanskrit: pair[0], hindi: '' });
-            }
-          });
-        } else if (Array.isArray(rawW)) {
-          rawW.forEach(w => wordToWord.push(w));
-        }
-
-        results.push({
-          id: `sb-${cantoNum}-${chapNum}-${vNum}`,
-          canto: cantoNum,
-          chapter: chapNum,
-          verse: vNum,
-          verseKey,
-          sanskritDevanagari: v.sloka || v.sanskrit || v.sanskritDevanagari || '',
-          sanskritIAST: v.iast || v.sanskritIAST || '',
-          wordToWord,
-          hindiTranslation: v.translation || v.hindiTranslation || '',
-          hindiPurport: v.purport || v.hindiPurport || '',
-          category: {
-            book: "श्रीमद्भागवतम्",
-            cantoTitleHindi: cantoObj?.name || `स्कन्ध ${cantoNum}`,
-            chapterTitleHindi: `अध्याय ${chapNum} - ${chapTitle}`
-          },
-          tags: [`स्कन्ध ${cantoNum}`, `अध्याय ${chapNum}`, "श्रीमद्भागवतम्"]
-        });
-      });
-    };
-
-    rawList.forEach(item => {
-      if (item.verses && Array.isArray(item.verses)) {
-        parseChapterObj(item);
-        return;
-      }
-
-      // If item already has verseKey and standard fields
-      if (item.verseKey && item.sanskritDevanagari !== undefined) {
-        results.push({
-          id: item.id || `sb-${item.canto}-${item.chapter}-${item.verse}`,
-          canto: parseInt(item.canto, 10) || 1,
-          chapter: parseInt(item.chapter, 10) || 1,
-          verse: item.verse,
-          verseKey: item.verseKey,
-          sanskritDevanagari: item.sanskritDevanagari || '',
-          sanskritIAST: item.sanskritIAST || '',
-          wordToWord: Array.isArray(item.wordToWord) ? item.wordToWord : [],
-          hindiTranslation: item.hindiTranslation || '',
-          hindiPurport: item.hindiPurport || '',
-          category: item.category || {
-            book: "श्रीमद्भागवतम्",
-            cantoTitleHindi: `स्कन्ध ${item.canto}`,
-            chapterTitleHindi: `अध्याय ${item.chapter}`
-          },
-          tags: Array.isArray(item.tags) ? item.tags : [`स्कन्ध ${item.canto}`, `अध्याय ${item.chapter}`]
-        });
-        return;
-      }
-
-      let cNum = 1, chNum = 1, vNum = 1;
-      if (item.sloka_number) {
-        const parts = String(item.sloka_number).split('.').map(n => parseInt(n, 10));
-        if (parts.length >= 3) {
-          cNum = parts[0]; chNum = parts[1]; vNum = parts[2];
-        }
-      } else {
-        cNum = parseInt(item.canto, 10) || 1;
-        chNum = parseInt(item.chapter, 10) || 1;
-        vNum = parseInt(item.verse_number || item.verse || 1, 10);
-      }
-
-      const verseKey = `${cNum}.${chNum}.${vNum}`;
-      const cantoObj = cantos.find(c => c.canto === cNum);
-      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === chNum);
-      const chapTitle = chapterObj ? chapterObj.name : `अध्याय ${chNum}`;
-
-      const wordToWord = [];
-      const rawMeanings = item.word_to_word_meaning || item.word_meanings || item.wordToWord;
-      if (typeof rawMeanings === 'string') {
-        const parts = rawMeanings.split(/[;\n]+/).map(p => p.trim()).filter(p => p.length > 0);
-        parts.forEach(part => {
-          const pair = part.split(/[—\-–:]/).map(s => s.trim());
-          if (pair.length >= 2) {
-            wordToWord.push({ sanskrit: pair[0], hindi: pair.slice(1).join(' - ') });
-          } else if (pair.length === 1 && pair[0]) {
-            wordToWord.push({ sanskrit: pair[0], hindi: '' });
-          }
-        });
-      } else if (Array.isArray(rawMeanings)) {
-        rawMeanings.forEach(w => wordToWord.push(w));
-      }
-
-      results.push({
-        id: `sb-${cNum}-${chNum}-${vNum}`,
-        canto: cNum,
-        chapter: chNum,
-        verse: vNum,
-        verseKey,
-        sanskritDevanagari: item.sloka || item.sanskrit || item.sanskritDevanagari || '',
-        sanskritIAST: item.iast || item.sanskritIAST || '',
-        wordToWord,
-        hindiTranslation: item.translation || item.hindiTranslation || '',
-        hindiPurport: item.purport || item.hindiPurport || '',
-        category: {
-          book: "श्रीमद्भागवतम्",
-          cantoTitleHindi: cantoObj?.name || `स्कन्ध ${cNum}`,
-          chapterTitleHindi: `अध्याय ${chNum} - ${chapTitle}`
-        },
-        tags: [`स्कन्ध ${cNum}`, `अध्याय ${chNum}`, "श्रीमद्भागवतम्"]
-      });
-    });
-
-    return results;
-  }
-
-  // Import JSON Backup from Laptop
-  async importJSONBackup(file) {
-    if (!file) return;
-    const progressEl = document.getElementById('importProgressText');
-    if (progressEl) progressEl.textContent = '⏳ फाइल पढ़ी जा रही है...';
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const rawJson = JSON.parse(e.target.result);
-        const slokas = this.normalizeJsonToSlokas(rawJson);
-
-        if (slokas.length > 0) {
-          if (progressEl) progressEl.textContent = `⏳ ${slokas.length} श्लोक आयात हो रहे हैं...`;
-          this.buildMemoryMap(slokas);
-          for (let c = 1; c <= 12; c++) this.loadedCantos.add(c);
-
-          if (window.searchEngine) {
-            window.searchEngine.buildIndex(slokas);
-          }
-
-          if (progressEl) progressEl.textContent = `✅ ${slokas.length} श्लोक सफलतापूर्वक रीस्टोर हुए!`;
-          this.showToast(`✅ ${slokas.length} श्लोक JSON से सफलतापूर्वक रीस्टोर हुए!`);
-          this.closeAllModals();
-          await this.loadVerseByKey(slokas[0].verseKey || '1.1.1');
-        } else {
-          if (progressEl) progressEl.textContent = '❌ कोई श्लोक नहीं मिला।';
-          this.showToast('अमान्य JSON प्रारूप।');
-        }
-      } catch (err) {
-        if (progressEl) progressEl.textContent = '❌ त्रुटि: ' + err.message;
-        this.showToast('JSON पार्स करने में त्रुटि: ' + err.message);
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  // Helper to format prose into clean paragraphs (<p class="para-block">) and quotes
+  // Helper to format prose into clean paragraphs
   renderParagraphs(text) {
     if (!text) return '';
     const rawParagraphs = text.split(/(?:\r?\n\s*){2,}/);
@@ -1583,12 +1623,10 @@ class VedabaseApp {
       if (!p) continue;
 
       const lines = p.split(/\r?\n/);
-      // Check if it's a verse quote block (contains ॥ and <= 6 lines)
       if (p.includes('॥') && lines.length <= 6 && p.length < 400) {
         const cleanedLines = lines.map(l => this.escapeHtml(l.trim())).filter(Boolean).join('<br>');
         htmlBlocks.push(`<div class="verse-quote-block">${cleanedLines}</div>`);
       } else {
-        // Normal paragraph: unwrap single newlines into spaces so text flows edge-to-edge
         const unwrapped = p.replace(/\r?\n+/g, ' ').replace(/\s+/g, ' ').trim();
         htmlBlocks.push(`<p class="para-block">${this.escapeHtml(unwrapped)}</p>`);
       }
@@ -1638,7 +1676,6 @@ class VedabaseApp {
 
   // Bind all event listeners & keyboard shortcuts
   bindEvents() {
-    // Quick Search Button & Shortcuts
     const btnOpenSearch = document.getElementById('btnOpenSearch');
     if (btnOpenSearch) {
       btnOpenSearch.addEventListener('click', () => {
@@ -1653,32 +1690,24 @@ class VedabaseApp {
         this.executeSearch(e.target.value);
       });
 
-      // Enter key selects the single/first result or jumps to exact verse
       modalSearchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
           const query = e.target.value.trim();
           if (!query) return;
 
-          // 1. Direct verse number match (e.g. "1.1.1", "10.2.4")
-          const verseMatch = query.replace(/^SB\s*/i, '').match(/^(\d{1,2})\.(\d{1,3})\.(\d{1,3})$/);
-          if (verseMatch) {
-            const verseKey = `${parseInt(verseMatch[1], 10)}.${parseInt(verseMatch[2], 10)}.${parseInt(verseMatch[3], 10)}`;
-            this.selectVerseFromSearch(verseKey);
-            return;
-          }
-
-          // 2. Select first search result
           const res = window.searchEngine ? window.searchEngine.search(query) : { results: [] };
           if (res.results && res.results.length > 0) {
-            this.selectVerseFromSearch(res.results[0].verseKey, query);
+            const first = res.results[0];
+            const isBG = first.book === 'BG' || first.id?.startsWith('bg-');
+            this.selectVerseFromSearch(isBG ? `bg ${first.verseKey}` : first.verseKey, query);
           }
         }
       });
     }
 
     // Header Actions
-    document.getElementById('logoHome')?.addEventListener('click', () => this.loadVerseByKey('1.1.1'));
+    document.getElementById('logoHome')?.addEventListener('click', () => this.loadVerseByKey('bg 1.1'));
     document.getElementById('btnPresentationMode')?.addEventListener('click', () => this.openPresentationMode());
     document.getElementById('btnOpenManager')?.addEventListener('click', () => this.openModal('managerModal'));
     document.getElementById('btnThemeToggle')?.addEventListener('click', () => this.toggleNextTheme());
@@ -1690,12 +1719,9 @@ class VedabaseApp {
       this.openModal('searchModal');
       this.executeSearch('');
     });
-    
-    // Clicking anywhere on presentation stage closes the open floating menu
+
     document.getElementById('presentationStage')?.addEventListener('click', () => {
-      if (this.isPresentationOpen) {
-        this.hidePresMenu();
-      }
+      if (this.isPresentationOpen) this.hidePresMenu();
     });
 
     document.getElementById('btnPresTheme')?.addEventListener('click', () => this.toggleNextTheme());
@@ -1746,16 +1772,15 @@ class VedabaseApp {
 
     document.getElementById('btnExportJSON')?.addEventListener('click', () => this.exportJSONBackup());
     document.getElementById('btnExportCustomEdits')?.addEventListener('click', () => this.exportCustomEdits());
+    document.getElementById('btnExportBgJSON')?.addEventListener('click', () => this.exportBgJSON());
     document.getElementById('btnExportCantoJSON')?.addEventListener('click', () => {
       const sel = document.getElementById('exportCantoSelect');
       const cNum = sel ? parseInt(sel.value, 10) : (this.currentCanto || 1);
       this.exportCantoJSON(cNum);
     });
-    document.getElementById('importJSONFile')?.addEventListener('change', (e) => this.importJSONBackup(e.target.files[0]));
 
     // Global Keyboard Shortcuts
     window.addEventListener('keydown', (e) => {
-      // 1. Ctrl+K opens search anywhere (both regular mode & presentation mode)
       if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault();
         this.openModal('searchModal');
@@ -1763,7 +1788,6 @@ class VedabaseApp {
         return;
       }
 
-      // 2. Escape closes active modal first; if menu open in presentation, closes menu; else exits presentation
       if (e.key === 'Escape') {
         if (document.querySelector('.modal-overlay.active')) {
           this.closeAllModals();
@@ -1780,14 +1804,12 @@ class VedabaseApp {
         }
       }
 
-      // 3. 'M' key toggles presentation floating menu
       if (this.isPresentationOpen && (e.key === 'm' || e.key === 'M') && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
         e.preventDefault();
         this.togglePresMenu();
         return;
       }
 
-      // 4. Arrow & Space navigation (when not typing in an input or textarea)
       if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
         if (e.key === 'ArrowRight' || (this.isPresentationOpen && e.key === ' ')) {
           e.preventDefault();

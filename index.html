@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>हिन्दी वेदबेस | श्रीमद्भागवतम् - समस्त 12 स्कन्ध (श्रील प्रभुपाद)</title>
-  <meta name="description" content="श्रीमद्भागवतम् समस्त 12 स्कन्ध - 14,090 प्रामाणिक श्लोक, पदच्छेद, शब्दार्थ, हिन्दी अनुवाद एवं श्रील प्रभुपाद तात्पर्य सहित उच्च-गति सर्च योग्य वेदबेस">
+  <title>हिन्दी वेदबेस | श्रीमद्भगवद्गीता एवं श्रीमद्भागवतम् (श्रील प्रभुपाद)</title>
+  <meta name="description" content="श्रीमद्भगवद्गीता (700 श्लोक) एवं श्रीमद्भागवतम् (18,000 श्लोक) - प्रामाणिक श्लोक, पदच्छेद, शब्दार्थ, हिन्दी अनुवाद एवं श्रील प्रभुपाद तात्पर्य सहित उच्च-गति सर्च योग्य वेदबेस">
   
   <!-- Main Stylesheet & PWA Manifest -->
   <link rel="stylesheet" href="css/main.css">
@@ -74,8 +74,27 @@
       </div>
       
       <div class="scripture-collection" id="scriptureCollectionContainer">
-        <!-- Scripture Item: Srimad Bhagavatam (Expandable) -->
-        <div class="scripture-group active expanded" id="scriptureGroupSB">
+        <!-- Scripture Item 1: Srimad Bhagavad Gita (Expandable) -->
+        <div class="scripture-group active expanded" id="scriptureGroupBG">
+          <button class="scripture-header-btn" onclick="window.app.toggleScriptureAccordion('scriptureGroupBG')">
+            <div class="scripture-info">
+              <span class="scripture-icon">🕉️</span>
+              <div class="scripture-titles">
+                <span class="scripture-name">श्रीमद्भगवद्गीता</span>
+                <span class="scripture-badge">18 अध्याय • 700 श्लोक</span>
+              </div>
+            </div>
+            <span class="scripture-arrow">▾</span>
+          </button>
+          
+          <!-- Chapters 1 to 18 List -->
+          <ul class="canto-list" id="bgChapterListContainer">
+            <!-- Generated dynamically via app.js -->
+          </ul>
+        </div>
+
+        <!-- Scripture Item 2: Srimad Bhagavatam (Expandable) -->
+        <div class="scripture-group" id="scriptureGroupSB">
           <button class="scripture-header-btn" onclick="window.app.toggleScriptureAccordion('scriptureGroupSB')">
             <div class="scripture-info">
               <span class="scripture-icon">📖</span>
@@ -268,7 +287,20 @@
             </div>
           </div>
 
-          <!-- Card 2: Download Specific Canto JSON (canto-1.json to canto-12.json) -->
+          <!-- Card 2: Download Bhagavad Gita JSON (bhagavad-gita.json) -->
+          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+              <span>🕉️</span> <span>श्रीमद्भगवद्गीता JSON डाउनलोड करें (Bhagavad Gita Export)</span>
+            </h3>
+            <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
+              भगवद्गीता के समस्त 18 अध्यायों एवं 700 श्लोकों का सम्पूर्ण <code>bhagavad-gita.json</code> डाउनलोड करें जिसे <code>data/</code> फोल्डर में सीधे रखा जा सकता है।
+            </p>
+            <button type="button" class="btn-action btn-presentation" id="btnExportBgJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+              📥 सम्पूर्ण भगवद्गीता JSON डाउनलोड करें (.json)
+            </button>
+          </div>
+
+          <!-- Card 3: Download Specific Canto JSON (canto-1.json to canto-12.json) -->
           <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
             <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>📖</span> <span>स्कन्ध अनुसार JSON डाउनलोड करें (Canto-wise Export)</span>
@@ -297,13 +329,13 @@
             </div>
           </div>
 
-          <!-- Card 3: Download Complete Database Backup -->
+          <!-- Card 4: Download Complete Database Backup -->
           <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
             <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
-              <span>💾</span> <span>पूरा 14,090 श्लोक डेटाबेस बैकअप</span>
+              <span>💾</span> <span>सम्पूर्ण वेदबेस डेटाबेस बैकअप (Master Backup)</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.55;">
-              वर्तमान में ऐप में मौजूद सभी श्लोकों का एक एकल JSON बैकअप फाइल डाउनलोड करें ताकि आपका समस्त डेटा आपके कंप्यूटर पर सदैव सुरक्षित रहे।
+              श्रीमद्भगवद्गीता एवं श्रीमद्भागवतम् के समस्त श्लोकों का एक एकल JSON बैकअप फाइल डाउनलोड करें।
             </p>
             <button type="button" class="btn-action btn-primary" id="btnExportJSON" style="font-size: 0.95rem; padding: 0.65rem 1.35rem;">
               📥 सम्पूर्ण डेटाबेस बैकअप डाउनलोड करें (.json)
@@ -342,7 +374,7 @@
           
           <!-- Verse Location Chips Bar -->
           <div class="edit-meta-chips" style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
-            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+            <div class="edit-chip" id="editCantoChipBox" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
               <span>📖 स्कन्ध:</span>
               <span id="editCantoBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">1</span>
             </div>
@@ -499,8 +531,9 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JavaScript Modules (Direct JSON Architecture) -->
-  <script src="js/sb-chapters-data.js?v=3.2"></script>
-  <script src="js/search.js?v=3.2"></script>
-  <script src="js/app.js?v=3.2"></script>
+  <script src="js/bg-chapters-data.js?v=3.3"></script>
+  <script src="js/sb-chapters-data.js?v=3.3"></script>
+  <script src="js/search.js?v=3.3"></script>
+  <script src="js/app.js?v=3.3"></script>
 </body>
 </html>
