@@ -1232,6 +1232,7 @@ input, textarea, select {
 
 /* Presentation Slide Stage */
 .presentation-stage {
+  --pres-font-scale: 1;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1272,8 +1273,8 @@ input, textarea, select {
   background: linear-gradient(135deg, var(--accent-saffron), var(--accent-gold));
   color: #ffffff;
   font-weight: 800;
-  font-size: 1.55rem;
-  padding: 0.45rem 1.45rem;
+  font-size: calc(1.55rem * var(--pres-font-scale, 1));
+  padding: calc(0.45rem * var(--pres-font-scale, 1)) calc(1.45rem * var(--pres-font-scale, 1));
   border-radius: 9999px;
   box-shadow: 0 6px 22px rgba(249, 115, 22, 0.42), 0 0 15px rgba(245, 158, 11, 0.25);
   letter-spacing: 0.04em;
@@ -1367,7 +1368,7 @@ input, textarea, select {
 }
 
 .pres-slide-title {
-  font-size: 1.2rem;
+  font-size: calc(1.2rem * var(--pres-font-scale, 1));
   font-weight: 600;
   color: var(--text-primary);
   display: flex;
@@ -1377,6 +1378,7 @@ input, textarea, select {
   gap: 0.45rem;
   line-height: 1.4;
   text-align: center;
+  transition: font-size 0.2s ease;
 }
 
 .pres-slide-title .pres-title-book {
@@ -1414,7 +1416,7 @@ input, textarea, select {
   background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.65), rgba(249, 115, 22, 0.5), transparent);
   border-radius: 9999px;
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
-  margin-top: 0.15rem;
+  margin: 0.15rem auto 0 auto;
 }
 
 /* Light Theme */
@@ -1550,7 +1552,7 @@ input, textarea, select {
 
 .pres-sanskrit-text {
   font-family: var(--font-sanskrit);
-  font-size: 2.35rem;
+  font-size: calc(2.35rem * var(--pres-font-scale, 1));
   line-height: 2.2;
   color: var(--accent-gold-light);
   font-weight: 700;
@@ -1580,10 +1582,11 @@ input, textarea, select {
 }
 
 .pres-words-title {
-  font-size: 0.95rem;
+  font-size: calc(1.05rem * var(--pres-font-scale, 1));
   font-weight: 700;
   color: var(--accent-gold);
   margin-bottom: 0.85rem;
+  transition: font-size 0.2s ease;
 }
 
 .pres-words-grid {
@@ -1594,6 +1597,19 @@ input, textarea, select {
   gap: 0.55rem;
   width: 100%;
   text-align: left;
+}
+
+.pres-words-grid .word-chip {
+  font-size: calc(1rem * var(--pres-font-scale, 1));
+  transition: font-size 0.2s ease, padding 0.2s ease;
+}
+
+.pres-words-grid .chip-sanskrit {
+  font-size: calc(1.15rem * var(--pres-font-scale, 1));
+}
+
+.pres-words-grid .chip-hindi {
+  font-size: calc(1.05rem * var(--pres-font-scale, 1));
 }
 
 .pres-translation-box {
@@ -1609,16 +1625,17 @@ input, textarea, select {
 }
 
 .pres-translation-label {
-  font-size: 1rem;
+  font-size: calc(1.1rem * var(--pres-font-scale, 1));
   font-weight: 700;
   color: var(--accent-gold);
   margin-bottom: 0.65rem;
   text-align: left;
+  transition: font-size 0.2s ease;
 }
 
 .pres-translation-text {
   font-family: var(--font-devanagari);
-  font-size: 1.4rem;
+  font-size: calc(1.45rem * var(--pres-font-scale, 1));
   line-height: 2.0;
   color: var(--text-primary);
   font-weight: 500;
@@ -1638,16 +1655,17 @@ input, textarea, select {
 }
 
 .pres-purport-label {
-  font-size: 1rem;
+  font-size: calc(1.1rem * var(--pres-font-scale, 1));
   font-weight: 700;
   color: var(--accent-gold);
   margin-bottom: 0.65rem;
   text-align: left;
+  transition: font-size 0.2s ease;
 }
 
 .pres-purport-text {
   font-family: var(--font-devanagari);
-  font-size: 1.25rem;
+  font-size: calc(1.3rem * var(--pres-font-scale, 1));
   line-height: 1.95;
   color: var(--text-primary);
 }

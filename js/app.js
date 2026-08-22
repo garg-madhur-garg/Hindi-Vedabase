@@ -54,7 +54,7 @@ class VedabaseApp {
     this.highlightFadeTimer = null;
     this.isPreloading = false;
     this.isPresentationOpen = false;
-    this.presFontScale = 1;
+    this.presFontScale = parseFloat(localStorage.getItem('vedabase_pres_font_scale')) || 1;
     this.isPresDetailsVisible = localStorage.getItem('vedabase_pres_show_details') !== 'false';
     this.presSections = {
       sanskrit: true,
@@ -1830,6 +1830,7 @@ class VedabaseApp {
     }
     this.applyPresSectionVisibility();
     this.applyPresSlideDetailsVisibility();
+    this.applyPresFontSize();
     this.renderPresentationSlide();
     this.hidePresMenu();
     this.showToast('📽️ प्रेजेंटेशन मोड सक्रिय (नियंत्रण मेनू हेतु ☰ या M दबाएँ)');
@@ -1939,11 +1940,46 @@ class VedabaseApp {
   }
 
   adjustPresFontSize(delta) {
-    this.presFontScale = Math.max(0.8, Math.min(1.8, (this.presFontScale || 1) + delta));
+    this.presFontScale = Math.max(0.65, Math.min(2.5, Math.round(((this.presFontScale || 1) + delta) * 100) / 100));
+    try {
+      localStorage.setItem('vedabase_pres_font_scale', String(this.presFontScale));
+    } catch (e) {}
+    this.applyPresFontSize();
+    this.showToast(`🔍 फॉन्ट आकार: ${Math.round(this.presFontScale * 100)}%`);
+  }
+
+  applyPresFontSize() {
+    const scale = this.presFontScale || 1;
+    const stage = document.getElementById('presentationStage');
+    const overlay = document.getElementById('presentationOverlay');
+    if (stage) stage.style.setProperty('--pres-font-scale', scale);
+    if (overlay) overlay.style.setProperty('--pres-font-scale', scale);
+
     const sanskritEl = document.getElementById('presSanskrit');
     const transEl = document.getElementById('presTranslation');
-    if (sanskritEl) sanskritEl.style.fontSize = `${2.35 * this.presFontScale}rem`;
-    if (transEl) transEl.style.fontSize = `${1.4 * this.presFontScale}rem`;
+    const purportEl = document.getElementById('presPurport');
+    const slideBadge = document.getElementById('presSlideBadge');
+    const slideTitle = document.getElementById('presSlideTitle');
+    const wordsTitle = document.querySelector('.pres-words-title');
+    const transLabel = document.querySelector('.pres-translation-label');
+    const purportLabel = document.querySelector('.pres-purport-label');
+
+    if (sanskritEl) sanskritEl.style.fontSize = `${2.35 * scale}rem`;
+    if (transEl) transEl.style.fontSize = `${1.45 * scale}rem`;
+    if (purportEl) purportEl.style.fontSize = `${1.3 * scale}rem`;
+    if (slideBadge) {
+      slideBadge.style.fontSize = `${1.55 * scale}rem`;
+      slideBadge.style.padding = `${0.45 * scale}rem ${1.45 * scale}rem`;
+    }
+    if (slideTitle) slideTitle.style.fontSize = `${1.2 * scale}rem`;
+    if (wordsTitle) wordsTitle.style.fontSize = `${1.05 * scale}rem`;
+    if (transLabel) transLabel.style.fontSize = `${1.1 * scale}rem`;
+    if (purportLabel) purportLabel.style.fontSize = `${1.1 * scale}rem`;
+
+    const wordChips = document.querySelectorAll('#presWordsGrid .word-chip');
+    wordChips.forEach(chip => {
+      chip.style.fontSize = `${1.05 * scale}rem`;
+    });
   }
 
   togglePresFullscreen() {
@@ -2095,6 +2131,7 @@ class VedabaseApp {
 
     this.applyPresSectionVisibility();
     this.applyPresSlideDetailsVisibility();
+    this.applyPresFontSize();
     this.triggerHighlightFadeTimer();
 
     const stage = document.getElementById('presentationStage');
