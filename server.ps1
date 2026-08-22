@@ -1,9 +1,11 @@
-# Lightweight, Zero-Dependency Local Web Server for Windows
+﻿# Lightweight, Zero-Dependency Local Web Server for Windows
 # Uses built-in .NET HttpListener - 100% Offline, Zero Downloads Needed
 # Supports Direct Disk JSON File Saving (/api/save-verse)
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
+try { chcp 65001 >$null } catch {}
 
 $baseDir = $PSScriptRoot
 if (-not $baseDir -or -not (Test-Path $baseDir)) {

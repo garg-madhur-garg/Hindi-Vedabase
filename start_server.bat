@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 title Hindi Vedabase Server - हिन्दी वेदबेस सर्वर
 echo ===================================================
 echo    🕉️ हिन्दी वेदबेस (Hindi Vedabase) सर्वर

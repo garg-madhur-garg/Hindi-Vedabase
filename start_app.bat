@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 title Hindi Vedabase - हिन्दी वेदबेस
 echo ===================================================
 echo    🕉️ हिन्दी वेदबेस (Hindi Vedabase) - 18,000 श्लोक
