@@ -331,7 +331,7 @@
               <span>🕉️</span> <span>श्रीमद्भगवद्गीता JSON डाउनलोड करें (Bhagavad Gita Export)</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
-              भगवद्गीता के समस्त 18 अध्यायों एवं 700 श्लोकों का सम्पूर्ण <code>bhagavad-gita.json</code> डाउनलोड करें जिसे <code>data/</code> फोल्डर में सीधे रखा जा सकता है।
+              भगवद्गीता के समस्त 18 अध्यायों एवं 700 श्लोकों का सम्पूर्ण <code>bhagavad-gita.json</code> डाउनलोड करें जिसे <code>data/bhagavad-gita/</code> फोल्डर में सीधे रखा जा सकता है।
             </p>
             <button type="button" class="btn-action btn-presentation" id="btnExportBgJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
               📥 सम्पूर्ण भगवद्गीता JSON डाउनलोड करें (.json)
@@ -344,7 +344,7 @@
               <span>🪔</span> <span>श्री ईशोपनिषद् JSON डाउनलोड करें (Sri Isopanisad Export)</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
-              श्री ईशोपनिषद् के मंगलाचरण और 18 मंत्रों का सम्पूर्ण <code>isopanisad.json</code> डाउनलोड करें जिसे <code>data/</code> फोल्डर में सीधे रखा जा सकता है।
+              श्री ईशोपनिषद् के मंगलाचरण और 18 मंत्रों का सम्पूर्ण <code>isopanisad.json</code> डाउनलोड करें जिसे <code>data/isopanisad/</code> फोल्डर में सीधे रखा जा सकता है।
             </p>
             <button type="button" class="btn-action btn-presentation" id="btnExportIsoJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
               📥 सम्पूर्ण श्री ईशोपनिषद् JSON डाउनलोड करें (.json)
@@ -357,20 +357,20 @@
               <span>🌺</span> <span>श्री चैतन्य-चरितामृत JSON डाउनलोड करें (Caitanya-caritamrta Export)</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
-              श्री चैतन्य-चरितामृत (आदि, मध्य एवं अन्त्य-लीला) के पयारों का सम्पूर्ण <code>chaitanya-charitamrita.json</code> डाउनलोड करें।
+              श्री चैतन्य-चरितामृत (आदि, मध्य एवं अन्त्य-लीला) के पयारों का सम्पूर्ण <code>chaitanya-charitamrita.json</code> डाउनलोड करें जिसे <code>data/chaitanya-charitamrita/</code> फोल्डर में सीधे रखा जा सकता है।
             </p>
             <button type="button" class="btn-action btn-presentation" id="btnExportCcJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
               📥 सम्पूर्ण चैतन्य-चरितामृत JSON डाउनलोड करें (.json)
             </button>
           </div>
 
-          <!-- Card 3: Download Specific Canto JSON (canto-1.json to canto-12.json) -->
+          <!-- Card 5: Download Specific Canto JSON (canto-1.json to canto-12.json) -->
           <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
             <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>📖</span> <span>स्कन्ध अनुसार JSON डाउनलोड करें (Canto-wise Export)</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
-              जिस स्कन्ध में आपने सम्पादन किया है, केवल उसका <code>canto-X.json</code> डाउनलोड करके <code>data/</code> फोल्डर में सीधे रिप्लेस (Replace) कर सकते हैं।
+              जिस स्कन्ध में आपने सम्पादन किया है, केवल उसका <code>canto-X.json</code> डाउनलोड करके <code>data/srimad-bhagavatam/</code> फोल्डर में सीधे रिप्लेस (Replace) कर सकते हैं।
             </p>
             <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
               <select id="exportCantoSelect" style="background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.55rem 0.85rem; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer;">
@@ -619,11 +619,11 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JavaScript Modules (Direct JSON Architecture) -->
-  <script src="js/bg-chapters-data.js?v=3.11"></script>
-  <script src="js/iso-chapters-data.js?v=3.11"></script>
-  <script src="js/cc-chapters-data.js?v=3.11"></script>
-  <script src="js/sb-chapters-data.js?v=3.11"></script>
-  <script src="js/search.js?v=3.11"></script>
-  <script src="js/app.js?v=3.11"></script>
+  <script src="js/bg-chapters-data.js?v=3.12"></script>
+  <script src="js/iso-chapters-data.js?v=3.12"></script>
+  <script src="js/cc-chapters-data.js?v=3.12"></script>
+  <script src="js/sb-chapters-data.js?v=3.12"></script>
+  <script src="js/search.js?v=3.12"></script>
+  <script src="js/app.js?v=3.12"></script>
 </body>
 </html>

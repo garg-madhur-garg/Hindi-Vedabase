@@ -4,7 +4,7 @@
   "totalChapters": 18,
   "totalVerses": 700,
   "author": "श्रील ए.सी. भक्तिवेदान्त स्वामी प्रभुपाद",
-  "file": "data/bhagavad-gita.json",
+  "file": "data/bhagavad-gita/bhagavad-gita.json",
   "chapters": [
     {
       "chapter": 1,

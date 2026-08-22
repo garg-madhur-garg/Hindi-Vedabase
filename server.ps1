@@ -105,7 +105,7 @@ while ($listener.IsListening) {
                 $isBG = -not $isCC -and -not $isISO -and (($slokaData.book -eq "BG") -or ([string]$slokaData.id -like "bg-*") -or ($cantoNum -eq 0))
 
                 if ($isCC -and -not [string]::IsNullOrEmpty($verseKey)) {
-                    $ccFilePath = Join-Path $baseDir "data\chaitanya-charitamrita.json"
+                    $ccFilePath = Join-Path $baseDir "data\chaitanya-charitamrita\chaitanya-charitamrita.json"
                     if (Test-Path $ccFilePath) {
                         $jsonRaw = [System.IO.File]::ReadAllText($ccFilePath, [System.Text.Encoding]::UTF8)
                         $ccVerses = $jsonRaw | ConvertFrom-Json
@@ -128,11 +128,11 @@ while ($listener.IsListening) {
                         if ($found) {
                             $newJson = $ccVerses | ConvertTo-Json -Depth 10
                             [System.IO.File]::WriteAllText($ccFilePath, $newJson, $utf8NoBom)
-                            Write-Host "✅ [SAVED DIRECTLY TO DISK] पयार CC $verseKey -> data/chaitanya-charitamrita.json" -ForegroundColor Green
+                            Write-Host "✅ [SAVED DIRECTLY TO DISK] पयार CC $verseKey -> data/chaitanya-charitamrita/chaitanya-charitamrita.json" -ForegroundColor Green
 
                             $resObj = @{
                                 success = $true
-                                message = "पयार CC $verseKey सीधे data/chaitanya-charitamrita.json में सुरक्षित हो गया!"
+                                message = "पयार CC $verseKey सीधे data/chaitanya-charitamrita/chaitanya-charitamrita.json में सुरक्षित हो गया!"
                                 verseKey = $verseKey
                                 book = "CC"
                             }
@@ -142,11 +142,11 @@ while ($listener.IsListening) {
                             $statusCode = 404
                         }
                     } else {
-                        $resObj = @{ success = $false; message = "data/chaitanya-charitamrita.json फ़ाइल नहीं मिली।" }
+                        $resObj = @{ success = $false; message = "data/chaitanya-charitamrita/chaitanya-charitamrita.json फ़ाइल नहीं मिली।" }
                         $statusCode = 404
                     }
                 } elseif ($isISO -and -not [string]::IsNullOrEmpty($verseKey)) {
-                    $isoFilePath = Join-Path $baseDir "data\isopanisad.json"
+                    $isoFilePath = Join-Path $baseDir "data\isopanisad\isopanisad.json"
                     if (Test-Path $isoFilePath) {
                         $jsonRaw = [System.IO.File]::ReadAllText($isoFilePath, [System.Text.Encoding]::UTF8)
                         $isoMantras = $jsonRaw | ConvertFrom-Json
@@ -169,11 +169,11 @@ while ($listener.IsListening) {
                         if ($found) {
                             $newJson = $isoMantras | ConvertTo-Json -Depth 10
                             [System.IO.File]::WriteAllText($isoFilePath, $newJson, $utf8NoBom)
-                            Write-Host "✅ [SAVED DIRECTLY TO DISK] मंत्र ISO $verseKey -> data/isopanisad.json" -ForegroundColor Green
+                            Write-Host "✅ [SAVED DIRECTLY TO DISK] मंत्र ISO $verseKey -> data/isopanisad/isopanisad.json" -ForegroundColor Green
 
                             $resObj = @{
                                 success = $true
-                                message = "मंत्र ISO $verseKey सीधे data/isopanisad.json में सुरक्षित हो गया!"
+                                message = "मंत्र ISO $verseKey सीधे data/isopanisad/isopanisad.json में सुरक्षित हो गया!"
                                 verseKey = $verseKey
                                 book = "ISO"
                             }
@@ -183,11 +183,11 @@ while ($listener.IsListening) {
                             $statusCode = 404
                         }
                     } else {
-                        $resObj = @{ success = $false; message = "data/isopanisad.json फ़ाइल नहीं मिली।" }
+                        $resObj = @{ success = $false; message = "data/isopanisad/isopanisad.json फ़ाइल नहीं मिली।" }
                         $statusCode = 404
                     }
                 } elseif ($isBG -and -not [string]::IsNullOrEmpty($verseKey)) {
-                    $bgFilePath = Join-Path $baseDir "data\bhagavad-gita.json"
+                    $bgFilePath = Join-Path $baseDir "data\bhagavad-gita\bhagavad-gita.json"
                     if (Test-Path $bgFilePath) {
                         $jsonRaw = [System.IO.File]::ReadAllText($bgFilePath, [System.Text.Encoding]::UTF8)
                         $bgSlokas = $jsonRaw | ConvertFrom-Json
@@ -210,11 +210,11 @@ while ($listener.IsListening) {
                         if ($found) {
                             $newJson = $bgSlokas | ConvertTo-Json -Depth 10
                             [System.IO.File]::WriteAllText($bgFilePath, $newJson, $utf8NoBom)
-                            Write-Host "✅ [SAVED DIRECTLY TO DISK] श्लोक BG $verseKey -> data/bhagavad-gita.json" -ForegroundColor Green
+                            Write-Host "✅ [SAVED DIRECTLY TO DISK] श्लोक BG $verseKey -> data/bhagavad-gita/bhagavad-gita.json" -ForegroundColor Green
 
                             $resObj = @{
                                 success = $true
-                                message = "श्लोक BG $verseKey सीधे data/bhagavad-gita.json में सुरक्षित हो गया!"
+                                message = "श्लोक BG $verseKey सीधे data/bhagavad-gita/bhagavad-gita.json में सुरक्षित हो गया!"
                                 verseKey = $verseKey
                                 book = "BG"
                             }
@@ -224,11 +224,11 @@ while ($listener.IsListening) {
                             $statusCode = 404
                         }
                     } else {
-                        $resObj = @{ success = $false; message = "data/bhagavad-gita.json फ़ाइल नहीं मिली।" }
+                        $resObj = @{ success = $false; message = "data/bhagavad-gita/bhagavad-gita.json फ़ाइल नहीं मिली।" }
                         $statusCode = 404
                     }
                 } elseif ($cantoNum -ge 1 -and $cantoNum -le 12 -and -not [string]::IsNullOrEmpty($verseKey)) {
-                    $cantoFilePath = Join-Path $baseDir "data\canto-$cantoNum.json"
+                    $cantoFilePath = Join-Path $baseDir "data\srimad-bhagavatam\canto-$cantoNum.json"
                     if (Test-Path $cantoFilePath) {
                         $jsonRaw = [System.IO.File]::ReadAllText($cantoFilePath, [System.Text.Encoding]::UTF8)
                         $cantoSlokas = $jsonRaw | ConvertFrom-Json
@@ -254,11 +254,11 @@ while ($listener.IsListening) {
                             $newJson = $cantoSlokas | ConvertTo-Json -Depth 10
                             [System.IO.File]::WriteAllText($cantoFilePath, $newJson, $utf8NoBom)
 
-                            Write-Host "✅ [SAVED DIRECTLY TO DISK] श्लोक SB $verseKey -> data/canto-$cantoNum.json" -ForegroundColor Green
+                            Write-Host "✅ [SAVED DIRECTLY TO DISK] श्लोक SB $verseKey -> data/srimad-bhagavatam/canto-$cantoNum.json" -ForegroundColor Green
 
                             $resObj = @{
                                 success = $true
-                                message = "श्लोक SB $verseKey सीधे data/canto-$cantoNum.json में सुरक्षित हो गया!"
+                                message = "श्लोक SB $verseKey सीधे data/srimad-bhagavatam/canto-$cantoNum.json में सुरक्षित हो गया!"
                                 verseKey = $verseKey
                                 canto = $cantoNum
                                 book = "SB"
@@ -269,7 +269,7 @@ while ($listener.IsListening) {
                             $statusCode = 404
                         }
                     } else {
-                        $resObj = @{ success = $false; message = "data/canto-$cantoNum.json फ़ाइल नहीं मिली।" }
+                        $resObj = @{ success = $false; message = "data/srimad-bhagavatam/canto-$cantoNum.json फ़ाइल नहीं मिली।" }
                         $statusCode = 404
                     }
                 }

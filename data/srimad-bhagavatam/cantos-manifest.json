@@ -1,74 +1,74 @@
-﻿[
+[
     {
         "canto":  1,
         "name":  "स्कन्ध 1 - सृष्टि (Creation)",
         "totalVerses":  808,
-        "file":  "data/canto-1.json"
+        "file":  "data/srimad-bhagavatam/canto-1.json"
     },
     {
         "canto":  2,
         "name":  "स्कन्ध 2 - ब्रह्माण्ड का विस्तार (Cosmic Manifestation)",
         "totalVerses":  393,
-        "file":  "data/canto-2.json"
+        "file":  "data/srimad-bhagavatam/canto-2.json"
     },
     {
         "canto":  3,
         "name":  "स्कन्ध 3 - प्रकृति की स्थिति (The Status Quo)",
         "totalVerses":  1416,
-        "file":  "data/canto-3.json"
+        "file":  "data/srimad-bhagavatam/canto-3.json"
     },
     {
         "canto":  4,
         "name":  "स्कन्ध 4 - द्वितीय सृष्टि (The Creation of Fourth Order)",
         "totalVerses":  1445,
-        "file":  "data/canto-4.json"
+        "file":  "data/srimad-bhagavatam/canto-4.json"
     },
     {
         "canto":  5,
         "name":  "स्कन्ध 5 - ब्रह्माण्ड की स्थिति (The Creative Impetus)",
         "totalVerses":  668,
-        "file":  "data/canto-5.json"
+        "file":  "data/srimad-bhagavatam/canto-5.json"
     },
     {
         "canto":  6,
         "name":  "स्कन्ध 6 - निर्धारित कर्तव्य (Prescribed Duties for Mankind)",
         "totalVerses":  851,
-        "file":  "data/canto-6.json"
+        "file":  "data/srimad-bhagavatam/canto-6.json"
     },
     {
         "canto":  7,
         "name":  "स्कन्ध 7 - भगवान् का विज्ञान (The Science of God)",
         "totalVerses":  750,
-        "file":  "data/canto-7.json"
+        "file":  "data/srimad-bhagavatam/canto-7.json"
     },
     {
         "canto":  8,
         "name":  "स्कन्ध 8 - ब्रह्माण्ड का संवरण (Withdrawal of Cosmic Creations)",
         "totalVerses":  931,
-        "file":  "data/canto-8.json"
+        "file":  "data/srimad-bhagavatam/canto-8.json"
     },
     {
         "canto":  9,
         "name":  "स्कन्ध 9 - मुक्ति (Liberation)",
         "totalVerses":  960,
-        "file":  "data/canto-9.json"
+        "file":  "data/srimad-bhagavatam/canto-9.json"
     },
     {
         "canto":  10,
-        "name":  "स्कन्ध 10 - परम आश्रय (The Summum Bonum - Krishna\u0027s Pastimes)",
+        "name":  "स्कन्ध 10 - परम आश्रय (The Summum Bonum - Krishna\\u0027s Pastimes)",
         "totalVerses":  3936,
-        "file":  "data/canto-10.json"
+        "file":  "data/srimad-bhagavatam/canto-10.json"
     },
     {
         "canto":  11,
         "name":  "स्कन्ध 11 - सामान्य इतिहास (General History)",
         "totalVerses":  1367,
-        "file":  "data/canto-11.json"
+        "file":  "data/srimad-bhagavatam/canto-11.json"
     },
     {
         "canto":  12,
         "name":  "स्कन्ध 12 - कलियुग के लक्षण (The Age of Deterioration)",
         "totalVerses":  565,
-        "file":  "data/canto-12.json"
+        "file":  "data/srimad-bhagavatam/canto-12.json"
     }
 ]
