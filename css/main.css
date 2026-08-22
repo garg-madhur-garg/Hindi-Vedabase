@@ -1246,6 +1246,301 @@ input, textarea, select {
   box-sizing: border-box;
 }
 
+/* Presentation Slide Top Header Line (श्लोक संख्या एवं ग्रन्थ सन्दर्भ) */
+.pres-slide-header {
+  width: 100%;
+  max-width: 1150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.25rem 1rem 0.25rem 1rem;
+  user-select: none;
+  animation: presFadeIn 0.3s ease-out;
+}
+
+.pres-slide-badge-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto;
+}
+
+.pres-slide-badge {
+  background: linear-gradient(135deg, var(--accent-saffron), var(--accent-gold));
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.55rem;
+  padding: 0.45rem 1.45rem;
+  border-radius: 9999px;
+  box-shadow: 0 6px 22px rgba(249, 115, 22, 0.42), 0 0 15px rgba(245, 158, 11, 0.25);
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  text-shadow: 0 1.5px 3px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.pres-slide-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 28px rgba(249, 115, 22, 0.55), 0 0 20px rgba(245, 158, 11, 0.4);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Subtle Semi-Transparent Up/Down Arrow Toggle Button (Positioned cleanly without offsetting badge center) */
+.pres-slide-toggle-btn {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: var(--accent-gold);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: all 0.2s ease;
+  user-select: none;
+  flex-shrink: 0;
+  box-shadow: none;
+  padding: 0;
+  line-height: 1;
+}
+
+.pres-slide-toggle-btn:hover {
+  opacity: 1;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-light);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.35);
+}
+
+.pres-slide-toggle-btn.details-hidden {
+  opacity: 0.3;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-muted);
+}
+
+.pres-slide-toggle-btn.details-hidden:hover {
+  opacity: 1;
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-50%) scale(1.15);
+}
+
+/* Collapsible Details Container */
+.pres-slide-details-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  max-height: 250px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, transform 0.3s ease, margin 0.3s ease;
+  transform: translateY(0);
+}
+
+.pres-slide-details-container.hidden {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none;
+  transform: translateY(-6px);
+}
+
+.pres-slide-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.pres-slide-title .pres-title-book {
+  color: var(--accent-gold);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.pres-slide-title .pres-title-canto,
+.pres-slide-title .pres-title-lila {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.pres-slide-title .pres-title-chap {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.pres-slide-title .pres-title-verse {
+  color: var(--accent-gold-light);
+  font-weight: 800;
+}
+
+.pres-slide-title .pres-title-sep {
+  color: var(--accent-gold);
+  opacity: 0.55;
+  font-size: 0.85rem;
+}
+
+.pres-slide-divider {
+  width: 100%;
+  max-width: 580px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.65), rgba(249, 115, 22, 0.5), transparent);
+  border-radius: 9999px;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+  margin-top: 0.15rem;
+}
+
+/* Light Theme */
+[data-theme="light"] .pres-slide-toggle-btn {
+  background: transparent;
+  border-color: rgba(217, 119, 6, 0.25);
+  color: #b45309;
+  opacity: 0.35;
+  box-shadow: none;
+}
+
+[data-theme="light"] .pres-slide-toggle-btn:hover {
+  opacity: 1;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #d97706;
+  color: #92400e;
+  box-shadow: 0 0 8px rgba(217, 119, 6, 0.25);
+}
+
+[data-theme="light"] .pres-slide-toggle-btn.details-hidden {
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #94a3b8;
+}
+
+[data-theme="light"] .pres-slide-title .pres-title-book {
+  color: #b45309;
+}
+
+[data-theme="light"] .pres-slide-title .pres-title-canto,
+[data-theme="light"] .pres-slide-title .pres-title-lila {
+  color: #0f172a;
+}
+
+[data-theme="light"] .pres-slide-title .pres-title-chap {
+  color: #334155;
+}
+
+[data-theme="light"] .pres-slide-title .pres-title-verse {
+  color: #b45309;
+}
+
+[data-theme="light"] .pres-slide-title .pres-title-sep {
+  color: #d97706;
+  opacity: 0.65;
+}
+
+[data-theme="light"] .pres-slide-divider {
+  background: linear-gradient(90deg, transparent, rgba(217, 119, 6, 0.5), rgba(245, 158, 11, 0.35), transparent);
+  box-shadow: 0 0 8px rgba(217, 119, 6, 0.2);
+}
+
+/* Sepia Theme */
+[data-theme="sepia"] .pres-slide-toggle-btn {
+  background: transparent;
+  border-color: rgba(180, 83, 9, 0.25);
+  color: #92400e;
+  opacity: 0.35;
+  box-shadow: none;
+}
+
+[data-theme="sepia"] .pres-slide-toggle-btn:hover {
+  opacity: 1;
+  background: rgba(217, 119, 6, 0.12);
+  border-color: #d97706;
+  color: #78350f;
+  box-shadow: 0 0 8px rgba(180, 83, 9, 0.25);
+}
+
+[data-theme="sepia"] .pres-slide-toggle-btn.details-hidden {
+  border-color: rgba(180, 83, 9, 0.15);
+  color: #a16207;
+}
+
+[data-theme="sepia"] .pres-slide-title .pres-title-book {
+  color: #92400e;
+}
+
+[data-theme="sepia"] .pres-slide-title .pres-title-canto,
+[data-theme="sepia"] .pres-slide-title .pres-title-lila {
+  color: #451a03;
+}
+
+[data-theme="sepia"] .pres-slide-title .pres-title-chap {
+  color: #78350f;
+}
+
+[data-theme="sepia"] .pres-slide-title .pres-title-verse {
+  color: #92400e;
+}
+
+[data-theme="sepia"] .pres-slide-title .pres-title-sep {
+  color: #b45309;
+  opacity: 0.65;
+}
+
+[data-theme="sepia"] .pres-slide-divider {
+  background: linear-gradient(90deg, transparent, rgba(180, 83, 9, 0.5), rgba(217, 119, 6, 0.35), transparent);
+  box-shadow: 0 0 8px rgba(180, 83, 9, 0.15);
+}
+
+@keyframes presFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .pres-slide-badge {
+    font-size: 1.25rem;
+    padding: 0.35rem 1.05rem;
+  }
+  .pres-slide-toggle-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+  .pres-slide-title {
+    font-size: 1.05rem;
+  }
+}
+
 .pres-sanskrit-box {
   width: 100%;
   max-width: 1150px;

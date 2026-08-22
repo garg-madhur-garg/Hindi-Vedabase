@@ -55,6 +55,7 @@ class VedabaseApp {
     this.isPreloading = false;
     this.isPresentationOpen = false;
     this.presFontScale = 1;
+    this.isPresDetailsVisible = localStorage.getItem('vedabase_pres_show_details') !== 'false';
     this.presSections = {
       sanskrit: true,
       words: true,
@@ -1828,6 +1829,7 @@ class VedabaseApp {
       document.body.style.overflow = 'hidden';
     }
     this.applyPresSectionVisibility();
+    this.applyPresSlideDetailsVisibility();
     this.renderPresentationSlide();
     this.hidePresMenu();
     this.showToast('📽️ प्रेजेंटेशन मोड सक्रिय (नियंत्रण मेनू हेतु ☰ या M दबाएँ)');
@@ -1874,6 +1876,37 @@ class VedabaseApp {
   togglePresentationMode() {
     if (this.isPresentationOpen) this.closePresentationMode();
     else this.openPresentationMode();
+  }
+
+  togglePresSlideDetails() {
+    this.isPresDetailsVisible = !this.isPresDetailsVisible;
+    try {
+      localStorage.setItem('vedabase_pres_show_details', this.isPresDetailsVisible ? 'true' : 'false');
+    } catch (e) {}
+    this.applyPresSlideDetailsVisibility();
+  }
+
+  applyPresSlideDetailsVisibility() {
+    const container = document.getElementById('presSlideDetailsContainer');
+    const toggleBtn = document.getElementById('btnTogglePresDetails');
+    const toggleIcon = document.getElementById('presDetailsToggleIcon');
+    const headerChip = document.getElementById('togglePresHeaderDetails');
+
+    if (container) {
+      container.classList.toggle('hidden', !this.isPresDetailsVisible);
+    }
+    if (toggleBtn) {
+      toggleBtn.classList.toggle('details-hidden', !this.isPresDetailsVisible);
+      toggleBtn.title = this.isPresDetailsVisible 
+        ? 'ग्रन्थ एवं अध्याय विवरण छुपाएँ (Hide Details)' 
+        : 'ग्रन्थ एवं अध्याय विवरण दिखाएँ (Show Details)';
+    }
+    if (toggleIcon) {
+      toggleIcon.textContent = this.isPresDetailsVisible ? '▴' : '▾';
+    }
+    if (headerChip) {
+      headerChip.classList.toggle('active', this.isPresDetailsVisible);
+    }
   }
 
   togglePresSection(sectionName) {
@@ -1981,6 +2014,49 @@ class VedabaseApp {
       }
     }
 
+    // Update Slide Top Header Line (Prominently displayed at top of projector/presentation slide)
+    const presSlideBadge = document.getElementById('presSlideBadge');
+    const presSlideTitle = document.getElementById('presSlideTitle');
+    let badgeText = '';
+    let titleHtml = '';
+
+    if (isCC) {
+      const lKey = this.getLilaKey(s.lila || s.canto || 1).toUpperCase();
+      const ccLilas = getCcLilas();
+      const lilaObj = ccLilas.find(l => l.lila === (s.lila || 1));
+      const chObj = lilaObj?.chapters?.find(ch => ch.chapter === Number(s.chapter));
+      const lilaName = lilaObj?.name || 'आदि-लीला';
+      const chName = chObj?.name ? ` (${chObj.name})` : '';
+
+      badgeText = `CC ${lKey} ${s.chapter}.${s.verse}`;
+      titleHtml = `<span class="pres-title-book">श्री चैतन्य-चरितामृत</span> <span class="pres-title-sep">•</span> <span class="pres-title-lila">${lilaName}</span> <span class="pres-title-sep">•</span> <span class="pres-title-chap">अध्याय ${s.chapter}${chName}</span> <span class="pres-title-sep">•</span> <span class="pres-title-verse">पयार ${s.verse}</span>`;
+    } else if (isISO) {
+      const isInv = s.verseKey === 'inv' || s.verseKey === '0';
+      badgeText = isInv ? 'ISO मंगलाचरण' : `ISO ${s.verseKey}`;
+      const chTitle = s.category?.chapterTitleHindi || '';
+      const chPart = chTitle ? ` <span class="pres-title-sep">•</span> <span class="pres-title-chap">${chTitle}</span>` : '';
+
+      titleHtml = `<span class="pres-title-book">श्री ईशोपनिषद्</span> <span class="pres-title-sep">•</span> <span class="pres-title-verse">${isInv ? 'मंगलाचरण (Invocation)' : 'मंत्र ' + s.verseKey}</span>${chPart}`;
+    } else if (isBG) {
+      const bgChapters = getBgChapters();
+      const chObj = bgChapters.find(ch => ch.chapter === Number(s.chapter));
+      const chName = chObj?.name ? ` (${chObj.name})` : '';
+
+      badgeText = `BG ${s.verseKey}`;
+      titleHtml = `<span class="pres-title-book">श्रीमद्भगवद्गीता</span> <span class="pres-title-sep">•</span> <span class="pres-title-chap">अध्याय ${s.chapter}${chName}</span> <span class="pres-title-sep">•</span> <span class="pres-title-verse">श्लोक ${s.verse}</span>`;
+    } else {
+      const cantos = getCantoStructure();
+      const cantoObj = cantos.find(c => c.canto === (s.canto || this.currentCanto));
+      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === Number(s.chapter));
+      const chName = chapterObj?.name ? ` (${chapterObj.name})` : (s.category?.chapterTitleHindi ? ` (${s.category.chapterTitleHindi})` : '');
+
+      badgeText = `SB ${s.verseKey}`;
+      titleHtml = `<span class="pres-title-book">श्रीमद्भागवतम्</span> <span class="pres-title-sep">•</span> <span class="pres-title-canto">स्कन्ध ${s.canto}</span> <span class="pres-title-sep">•</span> <span class="pres-title-chap">अध्याय ${s.chapter}${chName}</span> <span class="pres-title-sep">•</span> <span class="pres-title-verse">श्लोक ${s.verse}</span>`;
+    }
+
+    if (presSlideBadge) presSlideBadge.textContent = badgeText;
+    if (presSlideTitle) presSlideTitle.innerHTML = titleHtml;
+
     const presSanskrit = document.getElementById('presSanskrit');
     if (presSanskrit) {
       presSanskrit.innerHTML = this.highlightInText(this.cleanSanskritText(s.sanskritDevanagari), this.currentHighlightWord) || 'श्लोक उपलब्ध नहीं है';
@@ -2018,6 +2094,7 @@ class VedabaseApp {
     }
 
     this.applyPresSectionVisibility();
+    this.applyPresSlideDetailsVisibility();
     this.triggerHighlightFadeTimer();
 
     const stage = document.getElementById('presentationStage');
@@ -2561,6 +2638,15 @@ class VedabaseApp {
     document.getElementById('btnPresFullscreen')?.addEventListener('click', () => this.togglePresFullscreen());
     document.getElementById('btnPresFontDec')?.addEventListener('click', () => this.adjustPresFontSize(-0.1));
     document.getElementById('btnPresFontInc')?.addEventListener('click', () => this.adjustPresFontSize(0.1));
+    document.getElementById('btnTogglePresDetails')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.togglePresSlideDetails();
+    });
+    document.getElementById('presSlideBadge')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.togglePresSlideDetails();
+    });
+    document.getElementById('togglePresHeaderDetails')?.addEventListener('click', () => this.togglePresSlideDetails());
     document.getElementById('togglePresSanskrit')?.addEventListener('click', () => this.togglePresSection('sanskrit'));
     document.getElementById('togglePresWords')?.addEventListener('click', () => this.togglePresSection('words'));
     document.getElementById('togglePresTranslation')?.addEventListener('click', () => this.togglePresSection('translation'));

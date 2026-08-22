@@ -527,8 +527,12 @@
           <!-- In-Presentation Quick Search Icon Button -->
           <button class="pres-icon-btn" id="btnPresSearch" title="श्लोक संख्या या शब्द खोजें (Ctrl + K)">🔍</button>
 
-          <!-- Compact Multi-Toggle Chips (श्लोक, शब्दार्थ, अनुवाद, तात्पर्य) -->
+          <!-- Compact Multi-Toggle Chips (विवरण, श्लोक, शब्दार्थ, अनुवाद, तात्पर्य) -->
           <div class="pres-toggle-group" title="चुनें कि स्क्रीन पर क्या-क्या देखना है">
+            <button type="button" class="pres-toggle-chip active" id="togglePresHeaderDetails" data-section="headerDetails" title="शीर्षक ग्रन्थ विवरण दिखाएँ / छुपाएँ">
+              <span class="chip-dot">●</span>
+              <span>विवरण</span>
+            </button>
             <button type="button" class="pres-toggle-chip active" id="togglePresSanskrit" data-section="sanskrit" title="श्लोक दिखाएँ / छुपाएँ">
               <span class="chip-dot">●</span>
               <span>श्लोक</span>
@@ -563,6 +567,31 @@
       <!-- Presentation Slide Stage (Scrolls naturally from top, no internal scrollbars) -->
       <div class="presentation-stage" id="presentationStage">
         
+        <!-- Presentation Slide Top Header Line (श्लोक संख्या एवं ग्रन्थ सन्दर्भ) -->
+        <div class="pres-slide-header" id="presSlideHeader">
+          <div class="pres-slide-badge-row">
+            <span class="pres-slide-badge" id="presSlideBadge" title="श्लोक संख्या (क्लिक करके विवरण छुपाएँ/दिखाएँ)">SB 1.1.1</span>
+            <button type="button" class="pres-slide-toggle-btn" id="btnTogglePresDetails" title="ग्रन्थ एवं अध्याय विवरण छुपाएँ / दिखाएँ">
+              <span id="presDetailsToggleIcon">▴</span>
+            </button>
+          </div>
+
+          <div class="pres-slide-details-container" id="presSlideDetailsContainer">
+            <div class="pres-slide-title" id="presSlideTitle">
+              <span class="pres-title-book">श्रीमद्भागवतम्</span>
+              <span class="pres-title-sep">•</span>
+              <span class="pres-title-canto">स्कन्ध 1</span>
+              <span class="pres-title-sep">•</span>
+              <span class="pres-title-chap">अध्याय 1</span>
+              <span class="pres-title-sep">•</span>
+              <span class="pres-title-verse">श्लोक 1</span>
+            </div>
+          </div>
+
+          <!-- Decorative divider stays always visible -->
+          <div class="pres-slide-divider"></div>
+        </div>
+
         <!-- Sanskrit Verse Display (Large Majestic Font) -->
         <div class="pres-sanskrit-box" id="presSanskritBox">
           <div class="pres-sanskrit-text" id="presSanskrit"></div>
@@ -595,11 +624,11 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JavaScript Modules (Direct JSON Architecture) -->
-  <script src="js/bg-chapters-data.js?v=3.5"></script>
-  <script src="js/iso-chapters-data.js?v=3.5"></script>
-  <script src="js/cc-chapters-data.js?v=3.5"></script>
-  <script src="js/sb-chapters-data.js?v=3.5"></script>
-  <script src="js/search.js?v=3.5"></script>
-  <script src="js/app.js?v=3.5"></script>
+  <script src="js/bg-chapters-data.js?v=3.9"></script>
+  <script src="js/iso-chapters-data.js?v=3.9"></script>
+  <script src="js/cc-chapters-data.js?v=3.9"></script>
+  <script src="js/sb-chapters-data.js?v=3.9"></script>
+  <script src="js/search.js?v=3.9"></script>
+  <script src="js/app.js?v=3.9"></script>
 </body>
 </html>
