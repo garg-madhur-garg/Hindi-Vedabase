@@ -181,10 +181,6 @@
         <div class="sloka-header">
           <div class="verse-badge-group">
             <span class="verse-key-badge" id="currentVerseKeyBadge">SB 1.1.1</span>
-            <span class="badge-user-edited" id="userEditedBadge" style="display: none;" title="यह श्लोक सम्पादित है">
-              <span>✏️ सम्पादित (Custom Edited)</span>
-              <button type="button" id="btnBadgeRevert" style="background: none; border: none; cursor: pointer; color: inherit; font-size: 0.9rem; margin-left: 0.25rem; display: inline-flex; align-items: center; padding: 0;" title="मूल JSON डेटा पर रीसेट करें (Revert to Original JSON)">↩️</button>
-            </span>
             <span class="chapter-title-text" id="currentChapterName">अध्याय 1 - शौनकादि ऋषियों के प्रश्न</span>
           </div>
 
@@ -501,8 +497,8 @@
         <form id="editVerseForm">
           <input type="hidden" id="editVerseKey" />
           
-          <!-- Verse Location Chips Bar -->
-          <div class="edit-meta-chips" style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+          <!-- Verse Location Chips Bar (For SB, BG, ISO, CC) -->
+          <div class="edit-meta-chips" id="editSlokaChips" style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
             <div class="edit-chip" id="editCantoChipBox" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
               <span>📖 स्कन्ध:</span>
               <span id="editCantoBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">1</span>
@@ -515,21 +511,64 @@
               <span>🔢 श्लोक:</span>
               <span id="editVerseBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">1</span>
             </div>
-            <input type="hidden" id="editCanto" />
-            <input type="hidden" id="editChapter" />
-            <input type="hidden" id="editVerse" />
           </div>
 
-          <!-- Sanskrit Field -->
+          <!-- Song Location Chips Bar (For Vaishnava Songs) -->
+          <div class="edit-meta-chips" id="editSongChips" style="display: none; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+              <span>🎵 गीत संख्या:</span>
+              <span id="editSongNumBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">#1</span>
+            </div>
+            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+              <span>✍️ रचयिता:</span>
+              <span id="editSongAuthorBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">-</span>
+            </div>
+            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+              <span>📚 ग्रन्थ / स्रोत:</span>
+              <span id="editSongBookBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">-</span>
+            </div>
+          </div>
+
+          <!-- Vaishnava Song Metadata Editable Fields (Title, Author, Book) -->
+          <div id="editVsMetaFields" style="display: none; margin-bottom: 1rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+              <div class="form-group">
+                <label class="form-label" for="editVsTitle" style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
+                  <span>🏷️ भजन शीर्षक (Song Title):</span>
+                </label>
+                <input type="text" id="editVsTitle" class="form-input" style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="editVsAuthor" style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
+                  <span>✍️ रचयिता / कवि (Author):</span>
+                </label>
+                <input type="text" id="editVsAuthor" class="form-input" style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="editVsBook" style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
+                  <span>📚 स्रोत ग्रन्थ (Source Book):</span>
+                </label>
+                <input type="text" id="editVsBook" class="form-input" style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" id="editCanto" />
+          <input type="hidden" id="editChapter" />
+          <input type="hidden" id="editVerse" />
+          <input type="hidden" id="editSongNumber" />
+          <input type="hidden" id="editSongId" />
+
+          <!-- Sanskrit / Song Lyrics Field -->
           <div class="form-group" style="margin-bottom: 1rem;">
-            <label class="form-label" for="editSanskrit" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
+            <label class="form-label" for="editSanskrit" id="editSanskritLabel" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>📜 मूल संस्कृत श्लोक (Sanskrit Devanagari):</span>
             </label>
-            <textarea id="editSanskrit" class="form-textarea edit-textarea sanskrit-field" rows="4" style="width: 100%; font-family: var(--font-sanskrit);" placeholder="संस्कृत श्लोक यहाँ लिखें..."></textarea>
+            <textarea id="editSanskrit" class="form-textarea edit-textarea sanskrit-field" rows="6" style="width: 100%; font-family: var(--font-sanskrit);" placeholder="संस्कृत श्लोक / मूल भजन पद यहाँ लिखें..."></textarea>
           </div>
 
           <!-- Word-to-Word Field -->
-          <div class="form-group" style="margin-bottom: 1rem;">
+          <div class="form-group" id="editWordToWordGroup" style="margin-bottom: 1rem;">
             <label class="form-label" for="editWordToWord" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>✨ पदच्छेद एवं शब्दार्थ (Word-to-Word Meanings):</span>
             </label>
@@ -539,18 +578,18 @@
 
           <!-- Translation Field -->
           <div class="form-group" style="margin-bottom: 1rem;">
-            <label class="form-label" for="editTranslation" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
+            <label class="form-label" for="editTranslation" id="editTranslationLabel" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>📖 हिन्दी अनुवाद (Translation):</span>
             </label>
-            <textarea id="editTranslation" class="form-textarea edit-textarea" rows="3" style="width: 100%;" placeholder="श्रील प्रभुपाद जी का हिन्दी अनुवाद..."></textarea>
+            <textarea id="editTranslation" class="form-textarea edit-textarea" rows="5" style="width: 100%;" placeholder="हिन्दी अनुवाद यहाँ लिखें..."></textarea>
           </div>
 
-          <!-- Purport Field -->
+          <!-- Purport / English Translation Field -->
           <div class="form-group" style="margin-bottom: 1rem;">
-            <label class="form-label" for="editPurport" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
+            <label class="form-label" for="editPurport" id="editPurportLabel" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>🪔 श्रील प्रभुपाद तात्पर्य (Purport):</span>
             </label>
-            <textarea id="editPurport" class="form-textarea edit-textarea" rows="6" style="width: 100%;" placeholder="श्रील प्रभुपाद जी का विस्तृत तात्पर्य..."></textarea>
+            <textarea id="editPurport" class="form-textarea edit-textarea" rows="6" style="width: 100%;" placeholder="विस्तृत तात्पर्य या अंग्रेजी अनुवाद..."></textarea>
           </div>
 
           <!-- Footer Action Buttons -->
@@ -704,15 +743,15 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JavaScript Modules (Direct JSON Architecture) -->
-  <script src="js/bg-chapters-data.js?v=3.55"></script>
-  <script src="js/iso-chapters-data.js?v=3.55"></script>
-  <script src="js/cc-chapters-data.js?v=3.55"></script>
-  <script src="js/sb-chapters-data.js?v=3.55"></script>
-  <script src="js/vs-chapters-data.js?v=3.55"></script>
-  <script src="js/transliterate.js?v=3.55"></script>
-  <script src="js/vs-hindi-raw.js?v=3.55"></script>
-  <script src="js/vs-translations-hindi.js?v=3.55"></script>
-  <script src="js/search.js?v=3.55"></script>
-  <script src="js/app.js?v=3.55"></script>
+  <script src="js/bg-chapters-data.js?v=3.66"></script>
+  <script src="js/iso-chapters-data.js?v=3.66"></script>
+  <script src="js/cc-chapters-data.js?v=3.66"></script>
+  <script src="js/sb-chapters-data.js?v=3.66"></script>
+  <script src="js/vs-chapters-data.js?v=3.66"></script>
+  <script src="js/transliterate.js?v=3.66"></script>
+  <script src="js/vs-hindi-raw.js?v=3.66"></script>
+  <script src="js/vs-translations-hindi.js?v=3.66"></script>
+  <script src="js/search.js?v=3.66"></script>
+  <script src="js/app.js?v=3.66"></script>
 </body>
 </html>

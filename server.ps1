@@ -1,4 +1,4 @@
-﻿# Lightweight, Zero-Dependency Local Web Server for Windows
+# Lightweight, Zero-Dependency Local Web Server for Windows
 # Uses built-in .NET HttpListener - 100% Offline, Zero Downloads Needed
 # Supports Direct Disk JSON File Saving (/api/save-verse)
 
@@ -100,11 +100,60 @@ while ($listener.IsListening) {
                 }
                 $cantoNum = [int]$slokaData.canto
                 $verseKey = [string]$slokaData.verseKey
-                $isCC = ($slokaData.book -eq "CC") -or ([string]$slokaData.id -like "cc-*") -or ($cantoNum -eq -2)
-                $isISO = -not $isCC -and (($slokaData.book -eq "ISO") -or ([string]$slokaData.id -like "iso-*") -or ($cantoNum -eq -1))
-                $isBG = -not $isCC -and -not $isISO -and (($slokaData.book -eq "BG") -or ([string]$slokaData.id -like "bg-*") -or ($cantoNum -eq 0))
+                $isVS = ($slokaData.scripture -eq "VS") -or ($slokaData.book -eq "VS") -or ([string]$slokaData.id -like "vs-*") -or ($slokaData.songNumber -ne $null) -or ($cantoNum -eq -3)
+                $isCC = -not $isVS -and (($slokaData.book -eq "CC") -or ([string]$slokaData.id -like "cc-*") -or ($cantoNum -eq -2))
+                $isISO = -not $isVS -and -not $isCC -and (($slokaData.book -eq "ISO") -or ([string]$slokaData.id -like "iso-*") -or ($cantoNum -eq -1))
+                $isBG = -not $isVS -and -not $isCC -and -not $isISO -and (($slokaData.book -eq "BG") -or ([string]$slokaData.id -like "bg-*") -or ($cantoNum -eq 0 -and -not [string]::IsNullOrEmpty($verseKey)))
 
-                if ($isCC -and -not [string]::IsNullOrEmpty($verseKey)) {
+                if ($isVS) {
+                    $vsFilePath = Join-Path $baseDir "data\vaishnava-songs\vaishnava-songs.json"
+                    if (Test-Path $vsFilePath) {
+                        $jsonRaw = [System.IO.File]::ReadAllText($vsFilePath, [System.Text.Encoding]::UTF8)
+                        $vsSongs = $jsonRaw | ConvertFrom-Json
+
+                        $found = $false
+                        $sNumTarget = if ($slokaData.songNumber) { [int]$slokaData.songNumber } else { 0 }
+                        $sIdTarget = [string]$slokaData.id
+
+                        for ($i = 0; $i -lt $vsSongs.Count; $i++) {
+                            $s = $vsSongs[$i]
+                            $sId = [string]$s.id
+                            $sNum = [int]$s.songNumber
+                            if ($sId -eq $sIdTarget -or ($sNumTarget -gt 0 -and $sNum -eq $sNumTarget)) {
+                                if ($slokaData.title -ne $null) { $s.title = [string]$slokaData.title }
+                                if ($slokaData.author -ne $null) { $s.author = [string]$slokaData.author }
+                                if ($slokaData.authorHindi -ne $null) { $s.authorHindi = [string]$slokaData.authorHindi }
+                                if ($slokaData.book -ne $null -and $slokaData.book -ne "VS") { $s.book = [string]$slokaData.book }
+                                if ($slokaData.body -ne $null) { $s.body = [string]$slokaData.body }
+                                if ($slokaData.firstLine -ne $null) { $s.firstLine = [string]$slokaData.firstLine }
+                                if ($slokaData.hindiTranslation -ne $null) { $s.hindiTranslation = [string]$slokaData.hindiTranslation }
+                                if ($slokaData.hindiPurport -ne $null) { $s.hindiPurport = [string]$slokaData.hindiPurport }
+                                $found = $true
+                                break
+                            }
+                        }
+
+                        if ($found) {
+                            $newJson = $vsSongs | ConvertTo-Json -Depth 10
+                            [System.IO.File]::WriteAllText($vsFilePath, $newJson, $utf8NoBom)
+                            Write-Host "✅ [SAVED DIRECTLY TO DISK] वैष्णव गीत #$($slokaData.songNumber) ($($slokaData.title)) -> data/vaishnava-songs/vaishnava-songs.json" -ForegroundColor Green
+
+                            $resObj = @{
+                                success = $true
+                                message = "वैष्णव गीत #$($slokaData.songNumber) सीधे data/vaishnava-songs/vaishnava-songs.json में सुरक्षित हो गया!"
+                                songNumber = $slokaData.songNumber
+                                book = "VS"
+                            }
+                            $statusCode = 200
+                        } else {
+                            $resObj = @{ success = $false; message = "वैष्णव गीत #$($slokaData.songNumber) फ़ाइल में नहीं मिला।" }
+                            $statusCode = 404
+                        }
+                    } else {
+                        $resObj = @{ success = $false; message = "data/vaishnava-songs/vaishnava-songs.json फ़ाइल नहीं मिली।" }
+                        $statusCode = 404
+                    }
+                } elseif ($isCC -and -not [string]::IsNullOrEmpty($verseKey)) {
                     $ccFilePath = Join-Path $baseDir "data\chaitanya-charitamrita\chaitanya-charitamrita.json"
                     if (Test-Path $ccFilePath) {
                         $jsonRaw = [System.IO.File]::ReadAllText($ccFilePath, [System.Text.Encoding]::UTF8)
