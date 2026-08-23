@@ -1030,11 +1030,232 @@ input, textarea, select {
   color: #78350f;
 }
 
-[data-theme="sepia"] .pres-hamburger-trigger:hover,
-[data-theme="sepia"] .pres-hamburger-trigger.active {
+/* ==========================================================================
+   Vaishnava Songs Dedicated Mini Language Trigger & Popover in Projection Mode
+   (Compact 40px circle button next to hamburger + floating dropdown menu)
+   ========================================================================== */
+
+.pres-vs-lang-trigger {
+  position: fixed;
+  top: 64px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  display: none !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 100025;
+  opacity: 0.4;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  user-select: none;
+}
+
+.pres-lang-btn-text {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.presentation-overlay.active .pres-vs-lang-trigger {
+  display: flex !important;
+}
+
+.pres-vs-lang-trigger:hover,
+.pres-vs-lang-trigger.active {
+  opacity: 1;
+  background: rgba(245, 158, 11, 0.25);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-light);
+  transform: scale(1.08);
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
+}
+
+[data-theme="light"] .pres-vs-lang-trigger {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #334155;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .pres-vs-lang-trigger:hover,
+[data-theme="light"] .pres-vs-lang-trigger.active {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #b45309;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+}
+
+[data-theme="sepia"] .pres-vs-lang-trigger {
+  background: rgba(244, 235, 213, 0.7);
+  border-color: rgba(180, 83, 9, 0.25);
+  color: #78350f;
+}
+
+[data-theme="sepia"] .pres-vs-lang-trigger:hover,
+[data-theme="sepia"] .pres-vs-lang-trigger.active {
   background: #fdf6e7;
   border-color: #d97706;
-  color: #92400e;
+  color: #78350f;
+}
+
+/* Mini Floating Popover Menu */
+.pres-vs-popover {
+  position: fixed;
+  top: 112px;
+  right: 20px;
+  width: 250px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 16px;
+  padding: 0.85rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 158, 11, 0.15);
+  z-index: 100030;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+[data-theme="light"] .pres-vs-popover {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(217, 119, 6, 0.3);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15), 0 0 20px rgba(217, 119, 6, 0.1);
+}
+
+[data-theme="sepia"] .pres-vs-popover {
+  background: rgba(253, 246, 231, 0.96);
+  border-color: rgba(180, 83, 9, 0.3);
+}
+
+.pres-popover-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+[data-theme="light"] .pres-popover-title {
+  color: #b45309;
+}
+
+.pres-popover-row {
+  display: flex;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.pres-popover-row .pres-vs-script-btn {
+  flex: 1;
+  text-align: center;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.84rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .pres-popover-row .pres-vs-script-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.pres-popover-row .pres-vs-script-btn.active {
+  background: var(--accent-gold);
+  color: #0f172a;
+  border-color: var(--accent-gold);
+  font-weight: 700;
+}
+
+[data-theme="light"] .pres-popover-row .pres-vs-script-btn.active {
+  background: #d97706;
+  color: #ffffff;
+  border-color: #d97706;
+}
+
+.pres-popover-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0.15rem 0;
+}
+
+[data-theme="light"] .pres-popover-divider {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.pres-popover-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.pres-popover-action-btn:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--accent-gold);
+}
+
+.pres-popover-action-btn.active {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #4ade80;
+}
+
+[data-theme="light"] .pres-popover-action-btn {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+
+[data-theme="light"] .pres-popover-action-btn:hover {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+[data-theme="light"] .pres-popover-action-btn.active {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #15803d;
 }
 
 /* Presentation Floating Glass Pill Header */
@@ -1569,6 +1790,126 @@ input, textarea, select {
 [data-theme="sepia"] .pres-sanskrit-text {
   color: #92400e;
   text-shadow: none;
+}
+
+/* Hide separate outer presentation boxes & header toggle chips for Vaishnava Songs */
+.presentation-overlay.is-vs #presWordsBox,
+.presentation-overlay.is-vs #presTranslationBox,
+.presentation-overlay.is-vs #presPurportBox,
+.presentation-overlay.is-vs #togglePresWords,
+.presentation-overlay.is-vs #togglePresTranslation,
+.presentation-overlay.is-vs #togglePresPurport {
+  display: none !important;
+}
+
+.pres-vs-slide-container {
+  width: 100%;
+  max-width: 1050px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.25rem;
+  padding: 0.5rem 1rem 3.5rem 1rem;
+  margin: 0 auto;
+}
+
+.pres-vs-stanza-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.85rem;
+  padding: 1.5rem 1.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.pres-vs-stanza-block:hover {
+  background: rgba(245, 158, 11, 0.04);
+  border-color: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .pres-vs-stanza-block {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.07);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .pres-vs-stanza-block:hover {
+  border-color: rgba(217, 119, 6, 0.3);
+  box-shadow: 0 6px 24px rgba(217, 119, 6, 0.08);
+}
+
+[data-theme="sepia"] .pres-vs-stanza-block {
+  background: #fdf6e7;
+  border-color: rgba(180, 83, 9, 0.15);
+}
+
+.pres-vs-stanza-num {
+  font-size: calc(1.05rem * var(--pres-font-scale, 1));
+  font-weight: 700;
+  color: var(--accent-gold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+[data-theme="light"] .pres-vs-stanza-num {
+  color: #b45309;
+}
+
+.pres-vs-stanza-lyrics {
+  font-family: var(--font-sanskrit, serif);
+  font-size: calc(2.15rem * var(--pres-font-scale, 1));
+  line-height: 1.85;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.01em;
+}
+
+[data-theme="light"] .pres-vs-stanza-lyrics {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+[data-theme="sepia"] .pres-vs-stanza-lyrics {
+  color: #451a03;
+  text-shadow: none;
+}
+
+.pres-vs-stanza-trans {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.6rem;
+  max-width: 900px;
+  font-size: calc(1.35rem * var(--pres-font-scale, 1));
+  line-height: 1.7;
+  color: var(--accent-gold-light);
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  background: rgba(245, 158, 11, 0.06);
+  border-left: 3px solid var(--accent-gold);
+  border-radius: 8px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+[data-theme="light"] .pres-vs-stanza-trans {
+  color: #78350f;
+  background: #fef3c7;
+  border-left-color: #d97706;
+}
+
+[data-theme="sepia"] .pres-vs-stanza-trans {
+  color: #78350f;
+  background: #fbf0d9;
+  border-left-color: #b45309;
 }
 
 /* Word to Word Meanings in Presentation */
@@ -2237,12 +2578,12 @@ input, textarea, select {
   white-space: normal !important;
 }
 
-/* Master Control Toolbar */
+/* Master Control Toolbar & Script Switcher */
 .vs-global-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 0.4rem;
   padding: 0.2rem 0.25rem 0.45rem 0.25rem;
   margin-bottom: 0.25rem;
@@ -2253,6 +2594,59 @@ input, textarea, select {
   border-bottom-color: rgba(0, 0, 0, 0.1);
 }
 
+.vs-script-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 2px;
+  gap: 2px;
+}
+
+[data-theme="light"] .vs-script-toggle-group {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.vs-script-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.vs-script-btn:hover {
+  color: var(--text-primary);
+}
+
+.vs-script-btn.active {
+  background: var(--accent-gold);
+  color: #0f172a;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .vs-script-btn.active {
+  background: #d97706;
+  color: #ffffff;
+}
+
+.vs-global-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .vs-master-btn {
   display: inline-flex;
   align-items: center;
@@ -2260,20 +2654,36 @@ input, textarea, select {
   background: rgba(15, 23, 42, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--text-secondary);
-  font-size: 0.76rem;
+  font-size: 0.775rem;
   font-weight: 600;
-  padding: 0.18rem 0.55rem;
+  padding: 0.18rem 0.6rem;
   border-radius: 999px;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
 }
 
-.vs-master-btn:hover,
+.vs-master-btn .chip-dot {
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.vs-master-btn:hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--text-primary);
+}
+
 .vs-master-btn.active {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(245, 158, 11, 0.18);
   border-color: var(--accent-gold);
-  color: var(--accent-gold-light);
+  color: var(--accent-gold);
+  font-weight: 700;
+}
+
+.vs-master-btn.active .chip-dot {
+  color: #22c55e;
 }
 
 [data-theme="light"] .vs-master-btn {
@@ -2282,11 +2692,19 @@ input, textarea, select {
   color: #475569;
 }
 
-[data-theme="light"] .vs-master-btn:hover,
+[data-theme="light"] .vs-master-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
 [data-theme="light"] .vs-master-btn.active {
   background: #fef3c7;
   border-color: #f59e0b;
   color: #b45309;
+}
+
+[data-theme="light"] .vs-master-btn.active .chip-dot {
+  color: #16a34a;
 }
 
 /* Ultra-Compact Stanza Unit */
@@ -2456,34 +2874,19 @@ input, textarea, select {
 
 /* Translation Drawer */
 .vs-stanza-trans-drawer {
-  margin-top: 0.45rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(56, 189, 248, 0.06);
-  border-left: 3px solid #38bdf8;
-  border-radius: var(--radius-sm);
+  width: 100%;
+  margin-top: 0.5rem;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
   animation: vsDrawerSlideDown 0.2s ease-out;
 }
 
-[data-theme="light"] .vs-stanza-trans-drawer {
-  background: #f0f9ff;
-  border-left-color: #0284c7;
-}
-
-.vs-trans-inline-text {
-  font-size: 0.98rem;
-  line-height: 1.62;
-  color: var(--text-primary);
-}
-
-.vs-trans-label {
-  font-weight: 700;
-  font-size: 0.78rem;
-  color: #38bdf8;
-  margin-right: 0.35rem;
-}
-
-[data-theme="light"] .vs-trans-label {
-  color: #0284c7;
+[data-theme="light"] .vs-stanza-trans-drawer,
+[data-theme="sepia"] .vs-stanza-trans-drawer {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
 }
 
 /* Purport Collapsible Box */
@@ -2534,6 +2937,337 @@ input, textarea, select {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ==========================================================================
+   Vaishnava Songs Reader Mode - Majestic Presentation-Matched Style
+   ========================================================================== */
+
+.vs-song-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0.5rem 0 3rem 0;
+}
+
+.vs-global-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.45rem 0.85rem;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .vs-global-bar {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="sepia"] .vs-global-bar {
+  background: #fdf6e7;
+  border-color: rgba(180, 83, 9, 0.2);
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.06);
+}
+
+.vs-script-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  padding: 3px;
+  gap: 3px;
+}
+
+[data-theme="light"] .vs-script-toggle-group {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+[data-theme="sepia"] .vs-script-toggle-group {
+  background: #f4ebd5;
+  border-color: rgba(180, 83, 9, 0.2);
+}
+
+.vs-script-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.vs-script-btn:hover {
+  color: var(--text-primary);
+}
+
+.vs-script-btn.active {
+  background: var(--accent-gold);
+  color: #0f172a;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="light"] .vs-script-btn.active {
+  background: #d97706;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
+}
+
+[data-theme="sepia"] .vs-script-btn.active {
+  background: #b45309;
+  color: #ffffff;
+}
+
+.vs-global-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vs-master-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vs-master-btn:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-light);
+}
+
+.vs-master-btn.active {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #4ade80;
+}
+
+[data-theme="light"] .vs-master-btn {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+[data-theme="light"] .vs-master-btn:hover {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #b45309;
+}
+
+[data-theme="light"] .vs-master-btn.active {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #15803d;
+}
+
+[data-theme="sepia"] .vs-master-btn {
+  background: #fdf6e7;
+  border-color: rgba(180, 83, 9, 0.25);
+  color: #78350f;
+}
+
+[data-theme="sepia"] .vs-master-btn:hover {
+  background: #fef3c7;
+  border-color: #d97706;
+}
+
+[data-theme="sepia"] .vs-master-btn.active {
+  background: #dcfce7;
+  border-color: #15803d;
+  color: #15803d;
+}
+
+/* Stanza Unit Card (Matching Projection Mode Frosted Aesthetic) */
+.vs-stanza-unit {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 1.6rem 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.vs-stanza-unit:hover {
+  background: rgba(245, 158, 11, 0.03);
+  border-color: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+[data-theme="light"] .vs-stanza-unit {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.07);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .vs-stanza-unit:hover {
+  border-color: rgba(217, 119, 6, 0.3);
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.08);
+  transform: translateY(-2px);
+}
+
+[data-theme="sepia"] .vs-stanza-unit {
+  background: #fdf6e7;
+  border-color: rgba(180, 83, 9, 0.15);
+  box-shadow: 0 4px 20px rgba(180, 83, 9, 0.04);
+}
+
+[data-theme="sepia"] .vs-stanza-unit:hover {
+  border-color: rgba(180, 83, 9, 0.35);
+  box-shadow: 0 8px 24px rgba(180, 83, 9, 0.08);
+  transform: translateY(-2px);
+}
+
+.vs-stanza-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.vs-stanza-badge {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  padding: 0;
+  border: none;
+  opacity: 0.9;
+}
+
+[data-theme="light"] .vs-stanza-badge {
+  color: #b45309;
+}
+
+[data-theme="sepia"] .vs-stanza-badge {
+  color: #92400e;
+}
+
+.vs-stanza-lyrics {
+  width: 100%;
+  font-family: var(--font-sanskrit, serif);
+  font-size: 1.45rem;
+  line-height: 1.85;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+[data-theme="light"] .vs-stanza-lyrics {
+  color: #0f172a;
+}
+
+[data-theme="sepia"] .vs-stanza-lyrics {
+  color: #451a03;
+}
+
+/* Stanza Translation Box (Matching Projection Mode Amber Card) */
+.vs-stanza-trans-drawer {
+  width: 100%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.vs-stanza-trans-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1.25rem;
+  background: rgba(245, 158, 11, 0.06);
+  border-left: 3px solid var(--accent-gold);
+  border-radius: 12px;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--accent-gold-light);
+  font-weight: 500;
+  text-align: left;
+}
+
+[data-theme="light"] .vs-stanza-trans-box {
+  background: #fef3c7;
+  border-left-color: #d97706;
+  color: #78350f;
+}
+
+[data-theme="sepia"] .vs-stanza-trans-box {
+  background: #fbf0d9;
+  border-left-color: #b45309;
+  color: #78350f;
+}
+
+.vs-trans-book-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.vs-trans-text-wrap {
+  flex: 1;
+}
+
+.vs-stanza-words-drawer {
+  width: 100%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.vs-words-inline-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+[data-theme="light"] .vs-words-inline-list {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="sepia"] .vs-words-inline-list {
+  background: #fbf0d9;
+  border-color: rgba(180, 83, 9, 0.2);
 }
 
 /* ==========================================================================

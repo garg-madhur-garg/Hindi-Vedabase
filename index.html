@@ -577,6 +577,26 @@
         <span class="hamburger-icon" id="presMenuIcon">☰</span>
       </button>
 
+      <!-- Vaishnava Songs Dedicated Translation & Script Trigger (Positioned directly under Hamburger) -->
+      <button class="pres-vs-lang-trigger" id="btnPresVsLangToggle" onclick="window.app.togglePresVsLangPopover()" title="अनुवाद एवं लिपि मेनू (Translation & Script)">
+        <span class="pres-lang-btn-text">अ/A</span>
+      </button>
+
+      <!-- Vaishnava Songs Dedicated Mini Popover Menu (Toggled via Translation button) -->
+      <div class="pres-vs-popover" id="presVsLangPopover" style="display: none;">
+        <div class="pres-popover-title">🌐 लिपि / भाषा (Script)</div>
+        <div class="pres-popover-row">
+          <button type="button" class="pres-vs-script-btn active" id="presVsScriptDeva" onclick="window.app.setVsScriptMode('devanagari')" title="देवनागरी (हिन्दी) लिपि">🕉️ हिन्दी</button>
+          <button type="button" class="pres-vs-script-btn" id="presVsScriptIast" onclick="window.app.setVsScriptMode('iast')" title="English / IAST Roman">🔤 Eng</button>
+        </div>
+        <div class="pres-popover-divider"></div>
+        <div class="pres-popover-title">📖 अनुवाद (Translation)</div>
+        <button type="button" class="pres-popover-action-btn" id="presVsTransBtn" onclick="window.app.toggleAllVsTranslations(this)" title="सभी अनुवाद दिखाएँ / छुपाएँ">
+          <span class="chip-dot" id="presVsTransDot">●</span>
+          <span id="presVsTransBtnLabel">अनुवाद दिखाएँ / छुपाएँ</span>
+        </button>
+      </div>
+
       <!-- Presentation Floating Control Bar (Toggles on Hamburger Click) -->
       <div class="pres-header pres-hidden" id="presHeader">
         <div class="pres-header-center">
@@ -684,12 +704,15 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JavaScript Modules (Direct JSON Architecture) -->
-  <script src="js/bg-chapters-data.js?v=3.13"></script>
-  <script src="js/iso-chapters-data.js?v=3.13"></script>
-  <script src="js/cc-chapters-data.js?v=3.13"></script>
-  <script src="js/sb-chapters-data.js?v=3.13"></script>
-  <script src="js/vs-chapters-data.js?v=3.13"></script>
-  <script src="js/search.js?v=3.13"></script>
-  <script src="js/app.js?v=3.13"></script>
+  <script src="js/bg-chapters-data.js?v=3.55"></script>
+  <script src="js/iso-chapters-data.js?v=3.55"></script>
+  <script src="js/cc-chapters-data.js?v=3.55"></script>
+  <script src="js/sb-chapters-data.js?v=3.55"></script>
+  <script src="js/vs-chapters-data.js?v=3.55"></script>
+  <script src="js/transliterate.js?v=3.55"></script>
+  <script src="js/vs-hindi-raw.js?v=3.55"></script>
+  <script src="js/vs-translations-hindi.js?v=3.55"></script>
+  <script src="js/search.js?v=3.55"></script>
+  <script src="js/app.js?v=3.55"></script>
 </body>
 </html>

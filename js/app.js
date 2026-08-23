@@ -57,6 +57,7 @@ class VedabaseApp {
     this.loadingVs = null;
     this.currentVsFilterType = 'all';
     this.currentVsFilterVal = '';
+    this.vsScriptMode = localStorage.getItem('vedabase_vs_script') || 'devanagari';
     this.currentTheme = 'dark';
     this.currentHighlightWord = null;
     this.highlightFadeTimer = null;
@@ -600,7 +601,7 @@ class VedabaseApp {
 
     // Split lyrics into stanzas
     const normLyrics = rawLyrics.replace(/\r\n/g, '\n');
-    const stanzas = [];
+    let stanzas = [];
 
     if (normLyrics.match(/(?:^|\n)\s*\(?\d+\)?\s*(?:\n|$)/)) {
       const parts = normLyrics.split(/(?:^|\n)\s*\(?(\d+)\)?\s*(?:\n|$)/);
@@ -618,11 +619,27 @@ class VedabaseApp {
       const paras = normLyrics.split(/\n\s*\n+/);
       paras.forEach((p, idx) => {
         const pt = p.trim();
-        if (pt) {
+        if (pt && pt !== '\\') {
           stanzas.push({ num: String(idx + 1), text: pt });
         }
       });
     }
+
+    // Auto-populate from transliterations dataset if stanzas are empty or backslash
+    let validStanzas = stanzas.filter(s => s && s.text && s.text.trim() && s.text.trim() !== '\\');
+    if (validStanzas.length === 0) {
+      const hindiMeta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
+        ? (window.VsTranslationsHindi.getHindiMetadata(song.id) || window.VsTranslationsHindi.getHindiMetadata(song.songNumber) || window.VsTranslationsHindi.getHindiMetadata(song.verseKey))
+        : null;
+      if (hindiMeta && Array.isArray(hindiMeta.transliterations) && hindiMeta.transliterations.length > 0) {
+        validStanzas = hindiMeta.transliterations.map((t, idx) => ({
+          num: String(idx + 1),
+          text: t
+        }));
+      }
+    }
+    stanzas = validStanzas;
+    song.stanzas = validStanzas;
 
     // Split translations into numbered items map
     const normTrans = rawTranslation.replace(/\r\n/g, '\n');
@@ -663,48 +680,78 @@ class VedabaseApp {
     const hasAnyWords = wordList.length > 0;
     const hasPurport = Boolean(rawPurport && rawPurport.trim());
 
-    // Build Ultra-Compact Stanzas Flow with 3 Arrow Toggles (Slokas only by default)
+    // Build Ultra-Compact Stanzas Flow with Script Switcher (Devanagari by default)
     const flowHtml = `
       <div class="vs-song-flow">
-        <!-- Master Control Toolbar -->
+        <!-- Master Control Toolbar with Script Switcher -->
         <div class="vs-global-bar">
-          <button type="button" class="vs-master-btn" id="vsMasterTransBtn" onclick="window.app.toggleAllVsTranslations(this)">
-            <span>📖 सभी अनुवाद</span>
-            <span class="vs-arrow-icon" id="vsMasterTransArrow">▾</span>
-          </button>
-          ${hasAnyWords ? `
-            <button type="button" class="vs-master-btn" id="vsMasterWordsBtn" onclick="window.app.toggleAllVsWords(this)">
-              <span>✨ सभी शब्दार्थ</span>
-              <span class="vs-arrow-icon" id="vsMasterWordsArrow">▾</span>
+          <div class="vs-script-toggle-group">
+            <button type="button" class="vs-script-btn ${this.vsScriptMode === 'devanagari' ? 'active' : ''}" data-script="devanagari" onclick="window.app.setVsScriptMode('devanagari')" title="देवनागरी (हिन्दी) लिपि में देखें">
+              🕉️ हिन्दी (देवनागरी)
             </button>
-          ` : ''}
-          ${hasPurport ? `
-            <button type="button" class="vs-master-btn" id="vsMasterPurportBtn" onclick="window.app.toggleVsPurportDirect()">
-              <span>🪔 तात्पर्य</span>
-              <span class="vs-arrow-icon" id="vsMasterPurportArrow">▾</span>
+            <button type="button" class="vs-script-btn ${this.vsScriptMode === 'iast' ? 'active' : ''}" data-script="iast" onclick="window.app.setVsScriptMode('iast')" title="English / IAST Roman script">
+              🔤 English (IAST)
             </button>
-          ` : ''}
+          </div>
+
+          <div class="vs-global-actions">
+            <button type="button" class="vs-master-btn" id="vsMasterTransBtn" onclick="window.app.toggleAllVsTranslations(this)" title="सभी अनुवाद दिखाएँ / छुपाएँ">
+              <span class="chip-dot">●</span>
+              <span>अनुवाद</span>
+            </button>
+            ${hasAnyWords ? `
+              <button type="button" class="vs-master-btn" id="vsMasterWordsBtn" onclick="window.app.toggleAllVsWords(this)" title="सभी शब्दार्थ दिखाएँ / छुपाएँ">
+                <span class="chip-dot">●</span>
+                <span>शब्दार्थ</span>
+              </button>
+            ` : ''}
+            ${hasPurport ? `
+              <button type="button" class="vs-master-btn" id="vsMasterPurportBtn" onclick="window.app.toggleVsPurportDirect()" title="तात्पर्य दिखाएँ / छुपाएँ">
+                <span class="chip-dot">●</span>
+                <span>तात्पर्य</span>
+              </button>
+            ` : ''}
+          </div>
         </div>
 
         <!-- Stanzas Flow (Clean, compact slokas) -->
         ${stanzas.map((st, idx) => {
-          const transText = transMap.get(st.num) || (transList[idx]?.text) || '';
-          const hasTrans = Boolean(transText && transText.trim());
+          const transEn = transMap.get(st.num) || (transList[idx]?.text) || '';
+          const hasTransEn = Boolean(transEn && transEn.trim());
+
+          const meta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
+            ? (window.VsTranslationsHindi.getHindiMetadata(song) || window.VsTranslationsHindi.getHindiMetadata(song.id) || window.VsTranslationsHindi.getHindiMetadata(song.songNumber) || window.VsTranslationsHindi.getHindiMetadata(song.verseKey) || window.VsTranslationsHindi.getHindiMetadata(song.title))
+            : null;
+
+          const transHi = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiTranslation)
+            ? (window.VsTranslationsHindi.getHindiTranslation(song, idx) || window.VsTranslationsHindi.getHindiTranslation(song.id, idx) || window.VsTranslationsHindi.getHindiTranslation(song.songNumber, idx) || window.VsTranslationsHindi.getHindiTranslation(song.verseKey, idx) || window.VsTranslationsHindi.getHindiTranslation(song.title, idx))
+            : null;
+          const hasTransHi = Boolean(transHi && transHi.trim());
 
           // Match words to stanza if any
           const stanzaWords = wordList.filter(w => st.text.toLowerCase().includes(w.sanskrit.toLowerCase()));
           const effectiveWords = (stanzaWords.length > 0) ? stanzaWords : (idx === 0 && wordList.length > 0 ? wordList : []);
           const hasWords = effectiveWords.length > 0;
 
-          const lyricsHtml = this.escapeHtml(st.text).replace(/\n/g, '<br>');
+          const iastHtml = this.escapeHtml(st.text).replace(/\n/g, '<br>');
+          const authenticDeva = meta?.transliterations?.[idx];
+          const devaText = authenticDeva || ((window.IastTransliteration && window.IastTransliteration.toDevanagari)
+            ? window.IastTransliteration.toDevanagari(st.text)
+            : st.text);
+          const devaHtml = this.escapeHtml(devaText).replace(/\n/g, '<br>');
+
+          const hasAnyTrans = hasTransHi || hasTransEn;
 
           return `
             <div class="vs-stanza-unit" id="vs-stanza-${st.num}">
               <div class="vs-stanza-header-row">
-                <span class="vs-stanza-badge">पद ${st.num}</span>
+                <span class="vs-stanza-badge">— ${st.num} —</span>
               </div>
 
-              <div class="vs-stanza-lyrics">${lyricsHtml}</div>
+              <div class="vs-stanza-lyrics">
+                <div class="vs-lyrics-deva" style="display: ${this.vsScriptMode === 'devanagari' ? 'block' : 'none'};">${devaHtml}</div>
+                <div class="vs-lyrics-iast" style="display: ${this.vsScriptMode === 'iast' ? 'block' : 'none'};">${iastHtml}</div>
+              </div>
 
               ${hasWords ? `
                 <div class="vs-stanza-words-drawer" id="drawer-vs-words-${st.num}" style="display: none;">
@@ -720,11 +767,18 @@ class VedabaseApp {
                 </div>
               ` : ''}
 
-              ${hasTrans ? `
-                <div class="vs-stanza-trans-drawer" id="drawer-vs-trans-${st.num}" style="display: none;">
-                  <div class="vs-trans-inline-text">
-                    <span class="vs-trans-label">अनुवाद:</span>
-                    ${this.escapeHtml(transText).replace(/\n/g, '<br>')}
+              ${hasAnyTrans ? `
+                <div class="vs-stanza-trans-drawer" id="drawer-vs-trans-${st.num}" data-has-hi="${hasTransHi ? '1' : '0'}" data-has-en="${hasTransEn ? '1' : '0'}" style="display: none;">
+                  <div class="vs-stanza-trans-box">
+                    <span class="vs-trans-book-icon">📖</span>
+                    <div class="vs-trans-text-wrap">
+                      <span class="vs-trans-hindi" style="display: ${this.vsScriptMode === 'devanagari' ? 'inline' : 'none'};">
+                        ${hasTransHi ? this.escapeHtml(transHi).replace(/\n/g, '<br>') : '<span style="color: var(--text-muted); font-style: italic;">(इस पद का हिन्दी अनुवाद उपलब्ध नहीं है)</span>'}
+                      </span>
+                      <span class="vs-trans-en" style="display: ${this.vsScriptMode === 'iast' ? 'inline' : 'none'};">
+                        ${hasTransEn ? this.escapeHtml(transEn).replace(/\n/g, '<br>') : '<span style="color: var(--text-muted); font-style: italic;">(English translation not available)</span>'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ` : ''}
@@ -764,31 +818,116 @@ class VedabaseApp {
     return song;
   }
 
-  // Toggle all translations in the Vaishnava song
-  toggleAllVsTranslations(masterBtn) {
-    const drawers = document.querySelectorAll('.vs-stanza-trans-drawer');
-    if (drawers.length === 0) return;
+  // Set Vaishnava Song Script Mode (Devanagari vs English IAST)
+  setVsScriptMode(mode) {
+    this.vsScriptMode = mode;
+    localStorage.setItem('vedabase_vs_script', mode);
 
-    let anyOpen = false;
-    drawers.forEach(d => {
-      if (d.style.display !== 'none') anyOpen = true;
+    document.querySelectorAll('.vs-lyrics-deva').forEach(el => {
+      el.style.display = (mode === 'devanagari') ? 'block' : 'none';
+    });
+    document.querySelectorAll('.vs-lyrics-iast').forEach(el => {
+      el.style.display = (mode === 'iast') ? 'block' : 'none';
     });
 
+    document.querySelectorAll('.vs-stanza-trans-drawer').forEach(d => {
+      const hiEl = d.querySelector('.vs-trans-hindi');
+      const enEl = d.querySelector('.vs-trans-en');
+      if (hiEl) hiEl.style.display = (mode === 'devanagari') ? 'inline' : 'none';
+      if (enEl) enEl.style.display = (mode === 'iast') ? 'inline' : 'none';
+    });
+
+    document.querySelectorAll('.vs-script-btn').forEach(btn => {
+      if ((mode === 'devanagari' && btn.dataset.script === 'devanagari') || (mode === 'iast' && btn.dataset.script === 'iast')) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    const presDeva = document.getElementById('presVsScriptDeva');
+    const presIast = document.getElementById('presVsScriptIast');
+    if (presDeva) presDeva.classList.toggle('active', mode === 'devanagari');
+    if (presIast) presIast.classList.toggle('active', mode === 'iast');
+
+    if (this.isPresentationOpen && this.currentBook === 'VS') {
+      this.renderPresentationSlide(true);
+    }
+  }
+
+  // Toggle Mini Popover Menu for Vaishnava Songs Script & Translation in Presentation Mode
+  togglePresVsLangPopover() {
+    const pop = document.getElementById('presVsLangPopover');
+    const btn = document.getElementById('btnPresVsLangToggle');
+    if (!pop) return;
+
+    const isHidden = pop.style.display === 'none' || !pop.style.display;
+    pop.style.display = isHidden ? 'flex' : 'none';
+    if (btn) btn.classList.toggle('active', isHidden);
+
+    if (isHidden) {
+      const closeHandler = (e) => {
+        if (!pop.contains(e.target) && !btn?.contains(e.target)) {
+          pop.style.display = 'none';
+          if (btn) btn.classList.remove('active');
+          document.removeEventListener('click', closeHandler);
+        }
+      };
+      setTimeout(() => {
+        document.addEventListener('click', closeHandler);
+      }, 50);
+    }
+  }
+
+  // Toggle all translations in the Vaishnava song
+  toggleAllVsTranslations(masterBtn) {
+    if (this.isPresentationOpen && this.currentBook === 'VS') {
+      const s = this.currentSloka;
+      const isDeva = (this.vsScriptMode !== 'iast');
+      const hasAnyHi = s?.stanzas?.some((_, idx) => Boolean(window.VsTranslationsHindi?.getHindiTranslation(s, idx)));
+      const hasAnyEn = Boolean(s?.translations && s.translations.length > 0);
+
+      if (isDeva && !hasAnyHi && !hasAnyEn) {
+        this.showToast('ℹ️ इस भजन का अनुवाद उपलब्ध नहीं है');
+        return;
+      }
+      if (!isDeva && !hasAnyEn && !hasAnyHi) {
+        this.showToast('ℹ️ Translation is not available for this song');
+        return;
+      }
+
+      this.presVsShowTrans = !this.presVsShowTrans;
+      this.renderPresentationSlide(true);
+      return;
+    }
+
+    const drawers = document.querySelectorAll('.vs-stanza-trans-drawer');
+    if (drawers.length === 0) {
+      this.showToast('ℹ️ इस भजन का अनुवाद उपलब्ध नहीं है');
+      return;
+    }
+
+    const matchingDrawers = Array.from(drawers).filter(d => {
+      return (this.vsScriptMode === 'devanagari') ? (d.dataset.hasHi === '1' || d.dataset.hasEn === '1') : (d.dataset.hasEn === '1' || d.dataset.hasHi === '1');
+    });
+
+    if (matchingDrawers.length === 0) {
+      this.showToast('ℹ️ इस भजन का अनुवाद उपलब्ध नहीं है');
+      return;
+    }
+
+    let anyOpen = matchingDrawers.some(d => d.style.display !== 'none');
     const newDisplay = anyOpen ? 'none' : 'block';
-    const newArrow = anyOpen ? '▾' : '▴';
     const newActive = !anyOpen;
 
-    drawers.forEach(d => {
+    matchingDrawers.forEach(d => {
       d.style.display = newDisplay;
     });
 
-    const mArrow = document.getElementById('vsMasterTransArrow') || masterBtn?.querySelector('.vs-arrow-icon');
-    if (mArrow) mArrow.textContent = newArrow;
-    const mBtn = document.getElementById('vsMasterTransBtn') || masterBtn;
-    if (mBtn) {
-      if (newActive) mBtn.classList.add('active');
-      else mBtn.classList.remove('active');
-    }
+    const mBtn = document.getElementById('vsMasterTransBtn');
+    if (mBtn) mBtn.classList.toggle('active', newActive);
+    const presBtn = document.getElementById('presVsTransBtn');
+    if (presBtn) presBtn.classList.toggle('active', newActive);
   }
 
   // Toggle all word-to-word meanings in the Vaishnava song
@@ -802,47 +941,39 @@ class VedabaseApp {
     });
 
     const newDisplay = anyOpen ? 'none' : 'block';
-    const newArrow = anyOpen ? '▾' : '▴';
     const newActive = !anyOpen;
 
     drawers.forEach(d => {
       d.style.display = newDisplay;
     });
 
-    const mArrow = document.getElementById('vsMasterWordsArrow') || masterBtn?.querySelector('.vs-arrow-icon');
-    if (mArrow) mArrow.textContent = newArrow;
-    const mBtn = document.getElementById('vsMasterWordsBtn') || masterBtn;
-    if (mBtn) {
-      if (newActive) mBtn.classList.add('active');
-      else mBtn.classList.remove('active');
-    }
+    const mBtn = document.getElementById('vsMasterWordsBtn');
+    if (mBtn) mBtn.classList.toggle('active', newActive);
+    const presBtn = document.getElementById('presVsWordsBtn');
+    if (presBtn) presBtn.classList.toggle('active', newActive);
   }
 
   // Toggle 3rd arrow for Song Purport
   toggleVsPurport() {
     const drawer = document.getElementById('vsPurportMainDrawer');
     const arrow = document.getElementById('vsPurportMainArrow');
-    const masterArrow = document.getElementById('vsMasterPurportArrow');
     if (!drawer) return;
 
     const isHidden = drawer.style.display === 'none' || !drawer.style.display;
-    if (isHidden) {
-      drawer.style.display = 'block';
-      if (arrow) arrow.textContent = '▴';
-      if (masterArrow) masterArrow.textContent = '▴';
-    } else {
-      drawer.style.display = 'none';
-      if (arrow) arrow.textContent = '▾';
-      if (masterArrow) masterArrow.textContent = '▾';
-    }
+    drawer.style.display = isHidden ? 'block' : 'none';
+    if (arrow) arrow.textContent = isHidden ? '▴' : '▾';
+
+    const mBtn = document.getElementById('vsMasterPurportBtn');
+    if (mBtn) mBtn.classList.toggle('active', isHidden);
+    const presBtn = document.getElementById('presVsPurportBtn');
+    if (presBtn) presBtn.classList.toggle('active', isHidden);
   }
 
   // Direct toggle purport from top master button
   toggleVsPurportDirect() {
     const unit = document.getElementById('vsSongPurportUnit');
-    if (!unit) return;
     this.toggleVsPurport();
-    unit.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (unit) unit.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   // Ensure Vaishnava Songs JSON is loaded
@@ -858,15 +989,21 @@ class VedabaseApp {
           songs = this.applyUserCustomEdits(songs);
           this.vsSlokas = songs;
 
+          // Clear maps to prevent ANY duplicate entries
+          this.vsMap.clear();
+          this.vsAuthorMap.clear();
+          this.vsBookMap.clear();
+
           for (let i = 0; i < songs.length; i++) {
             const s = songs[i];
-            s.book = 'VS';
+            const originalSongbook = s.book || 'Vaishnava Songs';
+            s.songbook = originalSongbook;
+            s.book = originalSongbook; // Preserve real songbook
+            s.scripture = 'VS';
             const num = s.songNumber || (i + 1);
             const id = s.id || `vs-${num}`;
             s.id = id;
             s.verseKey = `VS ${num}`;
-
-            this.parseSongBody(s);
 
             this.vsMap.set(id, s);
             this.vsMap.set(String(num), s);
@@ -886,7 +1023,7 @@ class VedabaseApp {
             if (!this.vsAuthorMap.has(auth)) this.vsAuthorMap.set(auth, []);
             this.vsAuthorMap.get(auth).push(s);
 
-            const bk = s.book || 'Vaishnava Songs';
+            const bk = originalSongbook;
             if (!this.vsBookMap.has(bk)) this.vsBookMap.set(bk, []);
             this.vsBookMap.get(bk).push(s);
 
@@ -897,6 +1034,11 @@ class VedabaseApp {
 
           if (window.searchEngine) {
             window.searchEngine.appendIndex(songs);
+          }
+
+          // Initialize local authentic 343+ Hindi songs translations dataset
+          if (window.VsTranslationsHindi && window.VsTranslationsHindi.init) {
+            window.VsTranslationsHindi.init();
           }
 
           this.isVsLoaded = true;
@@ -990,20 +1132,24 @@ class VedabaseApp {
             const key = `${s.canto}.${s.chapter}.${s.verse}`;
             const id = s.id || `sb-${s.canto}-${s.chapter}-${s.verse}`;
 
-            if (!this.verseMap.has(key)) {
+            this.verseMap.set(key, s);
+            this.verseMap.set(id, s);
+            this.verseMap.set(`sb-${s.canto}-${s.chapter}-${s.verse}`, s);
+            this.verseMap.set(`sb.${s.canto}.${s.chapter}.${s.verse}`, s);
+            this.verseMap.set(`sb ${s.canto}.${s.chapter}.${s.verse}`, s);
+
+            const chKey = `${s.canto}-${s.chapter}`;
+            if (!this.chapterMap.has(chKey)) {
+              this.chapterMap.set(chKey, []);
+            }
+            this.chapterMap.get(chKey).push(s);
+
+            const existsIdx = this.allSlokas.findIndex(x => x.id === id);
+            if (existsIdx >= 0) {
+              this.allSlokas[existsIdx] = s;
+            } else {
               this.allSlokas.push(s);
               newSlokas.push(s);
-              this.verseMap.set(key, s);
-              this.verseMap.set(id, s);
-              this.verseMap.set(`sb-${s.canto}-${s.chapter}-${s.verse}`, s);
-              this.verseMap.set(`sb.${s.canto}.${s.chapter}.${s.verse}`, s);
-              this.verseMap.set(`sb ${s.canto}.${s.chapter}.${s.verse}`, s);
-
-              const chKey = `${s.canto}-${s.chapter}`;
-              if (!this.chapterMap.has(chKey)) {
-                this.chapterMap.set(chKey, []);
-              }
-              this.chapterMap.get(chKey).push(s);
             }
           }
 
@@ -1111,26 +1257,33 @@ class VedabaseApp {
     this.setupAudioPlayer();
     this.renderSidebar();
 
-    // 1. Load Bhagavad Gita, Sri Isopanisad, Sri Caitanya-caritamrta & Vaishnava Songs initially
-    await this.ensureBgLoaded();
-    await this.ensureIsoLoaded();
-    await this.ensureCcLoaded();
-    await this.ensureVsLoaded();
-
-    // 2. Determine initial verse
+    // 1. Determine initial verse
     let initialVerseKey = 'bg 1.1';
     try {
       const savedKey = localStorage.getItem('vedabase_last_verse');
       if (savedKey) initialVerseKey = savedKey;
     } catch (e) {}
 
-    // 3. Load initial verse
-    await this.loadVerseByKey(initialVerseKey);
+    // 2. Load the requested initial verse immediately (instant startup < 30ms)
+    try {
+      await this.loadVerseByKey(initialVerseKey);
+    } catch (e) {
+      console.warn('Initial verse load error, falling back to bg 1.1:', e);
+      await this.loadVerseByKey('bg 1.1');
+    }
 
-    // 4. Preload all Cantos (1-12) from JSON in background
-    setTimeout(() => {
-      this.preloadAllCantosInBackground();
-    }, 100);
+    // 3. Preload all other scriptures and cantos in background without blocking UI
+    setTimeout(async () => {
+      try {
+        if (!this.isBgLoaded) await this.ensureBgLoaded();
+        if (!this.isIsoLoaded) await this.ensureIsoLoaded();
+        if (!this.isCcLoaded) await this.ensureCcLoaded();
+        if (!this.isVsLoaded) await this.ensureVsLoaded();
+        this.preloadAllCantosInBackground();
+      } catch (e) {
+        console.warn('Background preload:', e);
+      }
+    }, 50);
   }
 
   // Render Sidebar with BG, ISO, CC & SB
@@ -1231,7 +1384,15 @@ class VedabaseApp {
   toggleScriptureAccordion(scriptureId) {
     const target = document.getElementById(scriptureId);
     if (target) {
+      const isOpening = !target.classList.contains('expanded');
       target.classList.toggle('expanded');
+      
+      if (scriptureId === 'scriptureGroupVS' && isOpening) {
+        this.renderVsSidebar();
+        if (this.currentBook !== 'VS') {
+          this.loadVsSong(this.currentSloka?.songNumber || 1);
+        }
+      }
     }
   }
 
@@ -1252,127 +1413,62 @@ class VedabaseApp {
   }
 
   // Toggle Vaishnava Songs subgroup
-  toggleVsSubgroup(subgroupId) {
-    const target = document.getElementById(`vs-subgroup-${subgroupId}`);
-    const sublist = document.getElementById(`vs-sublist-${subgroupId}`);
-    if (target) target.classList.toggle('expanded');
-    if (sublist) {
-      sublist.style.display = (sublist.style.display === 'none' || !sublist.style.display) ? 'block' : (target.classList.contains('expanded') ? 'block' : 'none');
-    }
+  // Fast filter for Vaishnava Songs sidebar list
+  filterVsSidebar(query) {
+    const listEl = document.getElementById('vsAllSongsList');
+    if (!listEl) return;
+    const q = (query || '').toLowerCase().trim();
+    const items = listEl.querySelectorAll('li');
+    items.forEach(li => {
+      if (!q) {
+        li.style.display = '';
+        return;
+      }
+      const text = (li.textContent || '').toLowerCase();
+      li.style.display = text.includes(q) ? '' : 'none';
+    });
   }
 
-  // Render Vaishnava Songs Sidebar
+  // Render Vaishnava Songs Sidebar: Direct list of all songs from 1 to end
   renderVsSidebar() {
     const vsContainer = document.getElementById('vsSongListContainer');
     if (!vsContainer) return;
 
-    const manifest = window.VS_MANIFEST || {};
-    const dailyPrayers = manifest.dailyPrayers || [
-      { id: 'vs-210', songNumber: 210, titleHindi: 'श्री श्री गुरु-अष्टक (मंगला आरती)', authorHindi: 'श्रील विश्वनाथ चक्रवर्ती ठाकुर', icon: '🪔' },
-      { id: 'vs-159', songNumber: 159, titleHindi: 'नरसिंह आरती व प्रार्थना', authorHindi: 'श्रील व्यासदेव', icon: '🦁' },
-      { id: 'vs-160', songNumber: 160, titleHindi: 'तुलसी आरती व प्रणाम', authorHindi: 'कृष्ण दास', icon: '🌿' },
-      { id: 'vs-161', songNumber: 161, titleHindi: 'तुलसी महारानी वंदना', authorHindi: 'चन्द्रशेखर कवि', icon: '🍃' },
-      { id: 'vs-94', songNumber: 94, titleHindi: 'गौर आरती (भोग/संध्या आरती)', authorHindi: 'श्रील भक्तिविनोद ठाकुर', icon: '✨' },
-      { id: 'vs-158', songNumber: 158, titleHindi: 'दामोदराष्टकम्', authorHindi: 'सत्यव्रत मुनि', icon: '🪔' },
-      { id: 'vs-45', songNumber: 45, titleHindi: 'शिक्षाष्टकम्', authorHindi: 'श्री चैतन्य महाप्रभु', icon: '📜' },
-      { id: 'vs-92', songNumber: 92, titleHindi: 'ब्रह्म-संहिता (गोविन्दम् आदि-पुरुषम्)', authorHindi: 'भगवान् ब्रह्मा', icon: '🦚' },
-      { id: 'vs-102', songNumber: 102, titleHindi: 'जय राधा माधव', authorHindi: 'श्रील भक्तिविनोद ठाकुर', icon: '🌸' },
-      { id: 'vs-136', songNumber: 136, titleHindi: 'षड्-गोस्वाम्यष्टकम्', authorHindi: 'श्रील श्रीनिवास आचार्य', icon: '🙏' },
-      { id: 'vs-116', songNumber: 116, titleHindi: 'जगन्नाथाष्टकम्', authorHindi: 'श्रील आदि शंकराचार्य', icon: '👁️' },
-      { id: 'vs-262', songNumber: 262, titleHindi: 'विभावरी शेष (प्रातःकालीन कीर्तन)', authorHindi: 'श्रील भक्तिविनोद ठाकुर', icon: '🌅' },
-      { id: 'vs-67', songNumber: 67, titleHindi: 'गौराङ्गेर दुटि पद', authorHindi: 'श्रील नरोत्तम दास ठाकुर', icon: '👣' },
-      { id: 'vs-182', songNumber: 182, titleHindi: 'ओहे वैष्णव ठाकुर', authorHindi: 'श्रील भक्तिविनोद ठाकुर', icon: '💐' },
-      { id: 'vs-29', songNumber: 29, titleHindi: 'भोग आरती (भज भकत-वत्सल)', authorHindi: 'श्रील भक्तिविनोद ठाकुर', icon: '🥣' }
-    ];
+    const songsIndex = window.VS_SONGS_INDEX || [];
+    const totalCount = songsIndex.length || 2257;
 
-    const authors = manifest.authors ? manifest.authors.slice(0, 12) : [
-      { name: 'Bhaktivinoda Thakura', nameHindi: 'श्रील भक्तिविनोद ठाकुर', songCount: 76 },
-      { name: 'Narottama Dasa Thakura', nameHindi: 'श्रील नरोत्तम दास ठाकुर', songCount: 26 },
-      { name: 'A.C. Bhaktivedanta Swami', nameHindi: 'श्रील ए.सी. भक्तिवेदान्त स्वामी प्रभुपाद', songCount: 13 },
-      { name: 'Locana Dasa Thakura', nameHindi: 'श्रील लोचन दास ठाकुर', songCount: 7 },
-      { name: 'Govinda Dasa Kaviraja', nameHindi: 'श्रील गोविन्द दास कविराज', songCount: 2 },
-      { name: 'Krsnadasa Kaviraja Goswami', nameHindi: 'श्रील कृष्णदास कविराज गोस्वामी', songCount: 4 },
-      { name: 'Jayadeva Goswami', nameHindi: 'श्रील जयदेव गोस्वामी', songCount: 3 },
-      { name: 'Rupa Goswami', nameHindi: 'श्रील रूप गोस्वामी', songCount: 5 },
-      { name: 'Visvanatha Cakravarti Thakura', nameHindi: 'श्रील विश्वनाथ चक्रवर्ती ठाकुर', songCount: 4 },
-      { name: 'Various Acharyas', nameHindi: 'अन्य विविध वैष्णव आचार्य', songCount: 2031 }
-    ];
-
-    const songbooks = manifest.songbooks || [
-      { name: 'Saranagati', songCount: 16 },
-      { name: 'Gitavali', songCount: 15 },
-      { name: 'Prarthana', songCount: 11 },
-      { name: 'Kalyana Kalpataru', songCount: 11 },
-      { name: 'Gitamala', songCount: 2 },
-      { name: 'Songs of Vaishnava Acaryas', songCount: 69 },
-      { name: 'More Songs of the Vaisnava Acaryas', songCount: 41 },
-      { name: 'Vaishnava Songs', songCount: 2065 }
-    ];
+    const songsHtml = songsIndex.map(s => {
+      const isCur = this.currentBook === 'VS' && (this.currentSloka?.songNumber === s.num || this.currentSloka?.id === s.id);
+      return `
+        <li data-song-num="${s.num}">
+          <button class="chapter-btn ${isCur ? 'active' : ''}"
+            id="vs-song-btn-${s.num}"
+            onclick="window.app.loadVsSong(${s.num})"
+            title="${this.escapeHtml(s.title)} (${this.escapeHtml(s.authorHi || s.author || '')})">
+            <div style="font-weight: 600; font-size: 0.825rem; line-height: 1.35;">
+              <span style="color: var(--accent-gold); font-weight: 700; margin-right: 0.35rem;">#${s.num}</span>
+              <span>${this.escapeHtml(s.title)}</span>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; display: flex; justify-content: space-between;">
+              <span>${this.escapeHtml(s.authorHi || s.author || '')}</span>
+              <span style="opacity: 0.8;">${this.escapeHtml(s.book || 'Vaishnava Songs')}</span>
+            </div>
+          </button>
+        </li>
+      `;
+    }).join('');
 
     vsContainer.innerHTML = `
-      <!-- Sub-section 1: Daily Temple Prayers -->
-      <li class="canto-item expanded active" id="vs-subgroup-daily">
-        <button class="canto-header-btn" onclick="window.app.toggleVsSubgroup('daily')">
-          <span style="font-weight: 700; color: var(--accent-gold);">⭐ नित्य मन्दिर आरतियाँ (15)</span>
-          <span style="font-size: 0.75rem; opacity: 0.7;">▾</span>
-        </button>
-        <ul class="chapter-sublist" id="vs-sublist-daily" style="display: block;">
-          ${dailyPrayers.map((dp, idx) => {
-            const isCur = this.currentBook === 'VS' && this.currentVsFilterType === 'daily' && this.currentVsDailyIndex === idx;
-            return `
-              <li>
-                <button class="chapter-btn ${isCur ? 'active' : ''}"
-                  id="vs-daily-btn-${idx}"
-                  onclick="window.app.loadVsDailyPrayer(${idx})"
-                  title="${dp.titleHindi || dp.title}">
-                  <div style="font-weight: 600;">${dp.icon || '🪔'} ${dp.titleHindi || dp.title}</div>
-                  <div style="font-size: 0.725rem; color: var(--text-muted);">${dp.authorHindi || dp.author || ''} • #${dp.songNumber || ''}</div>
-                </button>
-              </li>
-            `;
-          }).join('')}
-        </ul>
-      </li>
-
-      <!-- Sub-section 2: Acharya Authors -->
-      <li class="canto-item" id="vs-subgroup-authors">
-        <button class="canto-header-btn" onclick="window.app.toggleVsSubgroup('authors')">
-          <span style="font-weight: 700;">👤 रचयिता आचार्य (Authors)</span>
-          <span style="font-size: 0.75rem; opacity: 0.7;">▾</span>
-        </button>
-        <ul class="chapter-sublist" id="vs-sublist-authors" style="display: none;">
-          ${authors.map(a => `
-            <li>
-              <button class="chapter-btn ${this.currentBook === 'VS' && this.currentVsFilterType === 'author' && this.currentVsFilterVal === a.name ? 'active' : ''}"
-                onclick="window.app.loadVsByAuthor('${this.escapeHtml(a.name)}')"
-                title="${a.nameHindi || a.name} (${a.songCount} भजन)">
-                <div style="font-weight: 600;">${a.nameHindi || a.name}</div>
-                <div style="font-size: 0.725rem; color: var(--accent-gold);">${a.songCount} भजन</div>
-              </button>
-            </li>
-          `).join('')}
-        </ul>
-      </li>
-
-      <!-- Sub-section 3: Songbooks -->
-      <li class="canto-item" id="vs-subgroup-books">
-        <button class="canto-header-btn" onclick="window.app.toggleVsSubgroup('books')">
-          <span style="font-weight: 700;">📚 गीत ग्रन्थ (Songbooks)</span>
-          <span style="font-size: 0.75rem; opacity: 0.7;">▾</span>
-        </button>
-        <ul class="chapter-sublist" id="vs-sublist-books" style="display: none;">
-          ${songbooks.map(b => `
-            <li>
-              <button class="chapter-btn ${this.currentBook === 'VS' && this.currentVsFilterType === 'book' && this.currentVsFilterVal === b.name ? 'active' : ''}"
-                onclick="window.app.loadVsByBook('${this.escapeHtml(b.name)}')"
-                title="${b.name} (${b.songCount} भजन)">
-                <div style="font-weight: 600;">${b.name}</div>
-                <div style="font-size: 0.725rem; color: var(--accent-gold);">${b.songCount} भजन</div>
-              </button>
-            </li>
-          `).join('')}
-        </ul>
-      </li>
+      <div style="padding: 0.4rem 0.25rem 0.6rem; position: sticky; top: 0; background: var(--bg-sidebar, #fff); z-index: 5;">
+        <input type="text" id="vsSidebarSearchInput"
+          placeholder="🔍 भजन नाम या संख्या खोजें (1 - ${totalCount})..."
+          oninput="window.app.filterVsSidebar(this.value)"
+          class="form-control"
+          style="font-size: 0.8rem; padding: 0.45rem 0.65rem; border-radius: 6px; width: 100%; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-color); box-sizing: border-box;">
+      </div>
+      <ul class="chapter-sublist" id="vsAllSongsList" style="display: block; padding-right: 0.25rem;">
+        ${songsHtml}
+      </ul>
     `;
   }
 
@@ -1425,31 +1521,90 @@ class VedabaseApp {
     }
   }
 
-  // Load songs by Author
-  async loadVsByAuthor(authorName) {
+  // Load Author by manifest index
+  async loadVsAuthorIndex(idx) {
     await this.ensureVsLoaded();
-    const songs = this.vsAuthorMap.get(authorName) || this.vsSlokas.filter(s => s.author === authorName);
+    const manifest = window.VS_MANIFEST || {};
+    const authors = manifest.authors || [];
+    const a = authors[idx];
+    if (a) {
+      await this.loadVsByAuthor(a.name, a.nameHindi);
+    }
+  }
+
+  // Load Songbook by manifest index
+  async loadVsBookIndex(idx) {
+    await this.ensureVsLoaded();
+    const manifest = window.VS_MANIFEST || {};
+    const songbooks = manifest.songbooks || [];
+    const b = songbooks[idx];
+    if (b) {
+      await this.loadVsByBook(b.name);
+    }
+  }
+
+  // Load songs by Author
+  async loadVsByAuthor(authorName, authorHindi) {
+    await this.ensureVsLoaded();
+    let songs = [];
+    if (authorName && this.vsAuthorMap.has(authorName)) {
+      songs = this.vsAuthorMap.get(authorName);
+    }
+    if (!songs || songs.length === 0) {
+      const qLower = String(authorName || '').toLowerCase().trim();
+      const hLower = String(authorHindi || '').trim();
+      songs = this.vsSlokas.filter(s => {
+        const sAuth = String(s.author || '').toLowerCase().trim();
+        const sAuthHi = String(s.authorHindi || '').trim();
+        return (qLower && sAuth === qLower) ||
+               (hLower && sAuthHi === hLower) ||
+               (qLower && sAuth.includes(qLower)) ||
+               (hLower && sAuthHi.includes(hLower)) ||
+               (qLower && qLower.includes(sAuth)) ||
+               (hLower && hLower.includes(sAuthHi));
+      });
+    }
+
     if (songs && songs.length > 0) {
       this.currentBook = 'VS';
       this.currentVsFilterType = 'author';
-      this.currentVsFilterVal = authorName;
+      this.currentVsFilterVal = authorName || songs[0].author;
       this.chapterSlokas = songs;
+      songs[0].parsed = false;
       await this.displaySloka(songs[0]);
       this.highlightActiveSidebar();
+    } else {
+      this.showToast(`'${authorHindi || authorName}' के भजन उपलब्ध नहीं हैं।`);
     }
   }
 
   // Load songs by Songbook
   async loadVsByBook(bookName) {
     await this.ensureVsLoaded();
-    const songs = this.vsBookMap.get(bookName) || this.vsSlokas.filter(s => s.book === bookName);
+    let songs = [];
+    if (bookName && this.vsBookMap.has(bookName)) {
+      songs = this.vsBookMap.get(bookName);
+    }
+    if (!songs || songs.length === 0) {
+      const qLower = String(bookName || '').toLowerCase().trim();
+      songs = this.vsSlokas.filter(s => {
+        const sBook = String(s.songbook || s.book || s.rawBook || '').toLowerCase().trim();
+        return (qLower && sBook === qLower) ||
+               (qLower && sBook.includes(qLower)) ||
+               (qLower && qLower.includes(sBook));
+      });
+    }
+
     if (songs && songs.length > 0) {
       this.currentBook = 'VS';
       this.currentVsFilterType = 'book';
-      this.currentVsFilterVal = bookName;
+      this.currentVsFilterVal = bookName || songs[0].book;
       this.chapterSlokas = songs;
+      songs[0].parsed = false;
       await this.displaySloka(songs[0]);
       this.highlightActiveSidebar();
+    } else {
+      this.showToast(`'${bookName}' के भजन उपलब्ध नहीं हैं।`);
     }
   }
 
@@ -1462,12 +1617,15 @@ class VedabaseApp {
       song = this.vsSlokas.find(s => s.songNumber === num) || this.vsSlokas[num - 1];
     } else {
       const sId = String(songIdOrNum).toLowerCase();
-      song = this.vsMap.get(sId) || this.vsSlokas.find(s => s.id === sId || s.title?.toLowerCase() === sId);
+      song = this.vsMap.get(sId) || this.vsSlokas.find(s => s.id?.toLowerCase() === sId || s.title?.toLowerCase() === sId);
     }
 
     if (song) {
       this.currentBook = 'VS';
-      this.chapterSlokas = (this.chapterSlokas && this.chapterSlokas.length > 0 && this.chapterSlokas.includes(song)) ? this.chapterSlokas : this.vsSlokas;
+      this.chapterSlokas = this.vsSlokas;
+      this.currentVsFilterType = null;
+      this.currentVsFilterVal = null;
+      song.parsed = false;
       await this.displaySloka(song);
       this.highlightActiveSidebar();
     }
@@ -1919,75 +2077,94 @@ class VedabaseApp {
 
   // Highlight active Scripture, Canto/Lila & Chapter in Sidebar
   highlightActiveSidebar() {
-    const isCC = this.currentBook === 'CC';
-    const isISO = this.currentBook === 'ISO';
-    const isVS = this.currentBook === 'VS';
-    const isBG = this.currentBook === 'BG';
+    try {
+      const isCC = this.currentBook === 'CC';
+      const isISO = this.currentBook === 'ISO';
+      const isVS = this.currentBook === 'VS';
+      const isBG = this.currentBook === 'BG';
 
-    const groupBG = document.getElementById('scriptureGroupBG');
-    const groupISO = document.getElementById('scriptureGroupISO');
-    const groupCC = document.getElementById('scriptureGroupCC');
-    const groupSB = document.getElementById('scriptureGroupSB');
-    const groupVS = document.getElementById('scriptureGroupVS');
+      const groupBG = document.getElementById('scriptureGroupBG');
+      const groupISO = document.getElementById('scriptureGroupISO');
+      const groupCC = document.getElementById('scriptureGroupCC');
+      const groupSB = document.getElementById('scriptureGroupSB');
+      const groupVS = document.getElementById('scriptureGroupVS');
 
-    if (isVS) {
-      if (groupVS) groupVS.classList.add('active', 'expanded');
-      if (groupBG) groupBG.classList.remove('active', 'expanded');
-      if (groupISO) groupISO.classList.remove('active', 'expanded');
-      if (groupCC) groupCC.classList.remove('active', 'expanded');
-      if (groupSB) groupSB.classList.remove('active', 'expanded');
-      return;
-    }
+      if (isVS) {
+        if (groupVS) groupVS.classList.add('active', 'expanded');
+        if (groupBG) groupBG.classList.remove('active', 'expanded');
+        if (groupISO) groupISO.classList.remove('active', 'expanded');
+        if (groupCC) groupCC.classList.remove('active', 'expanded');
+        if (groupSB) groupSB.classList.remove('active', 'expanded');
 
-    if (isCC) {
-      if (groupCC) groupCC.classList.add('active', 'expanded');
-      if (groupVS) groupVS.classList.remove('active', 'expanded');
-      const lilaKey = this.getLilaKey(this.currentLila);
-      document.querySelectorAll('#ccLilaListContainer .canto-item').forEach(el => {
-        if (el.id === `cc-lila-item-${lilaKey}`) {
-          el.classList.add('active', 'expanded');
-        } else {
-          el.classList.remove('active', 'expanded');
+        const curNum = this.currentSloka?.songNumber;
+        const vsContainer = document.getElementById('vsSongListContainer');
+        if (vsContainer) {
+          const activeBtns = vsContainer.querySelectorAll('.chapter-btn.active');
+          activeBtns.forEach(btn => btn.classList.remove('active'));
+
+          if (curNum) {
+            const songBtn = document.getElementById(`vs-song-btn-${curNum}`);
+            if (songBtn) {
+              songBtn.classList.add('active');
+              songBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }
         }
-      });
-      document.querySelectorAll('#ccLilaListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
-      const activeCcBtn = document.getElementById(`cc-chap-btn-${lilaKey}-${this.currentChapter}`);
-      if (activeCcBtn) activeCcBtn.classList.add('active');
-    } else if (isISO) {
-      if (groupISO) groupISO.classList.add('active', 'expanded');
-      if (groupVS) groupVS.classList.remove('active', 'expanded');
-      document.querySelectorAll('#isoMantraListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
-      const activeIsoBtn = document.getElementById(`iso-mantra-btn-${this.currentSloka?.verseKey || 'inv'}`);
-      if (activeIsoBtn) activeIsoBtn.classList.add('active');
-    } else if (isBG) {
-      if (groupBG) groupBG.classList.add('active', 'expanded');
-      if (groupVS) groupVS.classList.remove('active', 'expanded');
-      document.querySelectorAll('#bgChapterListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
-      const activeBgBtn = document.getElementById(`bg-chap-btn-${this.currentChapter}`);
-      if (activeBgBtn) activeBgBtn.classList.add('active');
-    } else {
-      if (groupSB) groupSB.classList.add('active', 'expanded');
-      if (groupVS) groupVS.classList.remove('active', 'expanded');
-      document.querySelectorAll('.canto-item').forEach(el => {
-        if (el.id === `canto-item-${this.currentCanto}`) {
-          el.classList.add('active', 'expanded');
-        } else {
-          el.classList.remove('active', 'expanded');
-        }
-      });
-      document.querySelectorAll('#cantoListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
-      const activeChapBtn = document.getElementById(`chap-btn-${this.currentCanto}-${this.currentChapter}`);
-      if (activeChapBtn) activeChapBtn.classList.add('active');
+        return;
+      }
+
+      if (isCC) {
+        if (groupCC) groupCC.classList.add('active', 'expanded');
+        if (groupVS) groupVS.classList.remove('active', 'expanded');
+        const lilaKey = this.getLilaKey(this.currentLila);
+        document.querySelectorAll('#ccLilaListContainer .canto-item').forEach(el => {
+          if (el.id === `cc-lila-item-${lilaKey}`) {
+            el.classList.add('active', 'expanded');
+          } else {
+            el.classList.remove('active', 'expanded');
+          }
+        });
+        document.querySelectorAll('#ccLilaListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
+        const activeCcBtn = document.getElementById(`cc-chap-btn-${lilaKey}-${this.currentChapter}`);
+        if (activeCcBtn) activeCcBtn.classList.add('active');
+      } else if (isISO) {
+        if (groupISO) groupISO.classList.add('active', 'expanded');
+        if (groupVS) groupVS.classList.remove('active', 'expanded');
+        document.querySelectorAll('#isoMantraListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
+        const activeIsoBtn = document.getElementById(`iso-mantra-btn-${this.currentSloka?.verseKey || 'inv'}`);
+        if (activeIsoBtn) activeIsoBtn.classList.add('active');
+      } else if (isBG) {
+        if (groupBG) groupBG.classList.add('active', 'expanded');
+        if (groupVS) groupVS.classList.remove('active', 'expanded');
+        document.querySelectorAll('#bgChapterListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
+        const activeBgBtn = document.getElementById(`bg-chap-btn-${this.currentChapter}`);
+        if (activeBgBtn) activeBgBtn.classList.add('active');
+      } else {
+        if (groupSB) groupSB.classList.add('active', 'expanded');
+        if (groupVS) groupVS.classList.remove('active', 'expanded');
+        document.querySelectorAll('#cantoListContainer .canto-item').forEach(el => {
+          if (el.id === `canto-item-${this.currentCanto}`) {
+            el.classList.add('active', 'expanded');
+          } else {
+            el.classList.remove('active', 'expanded');
+          }
+        });
+        document.querySelectorAll('#cantoListContainer .chapter-btn').forEach(btn => btn.classList.remove('active'));
+        const activeChapBtn = document.getElementById(`chap-btn-${this.currentCanto}-${this.currentChapter}`);
+        if (activeChapBtn) activeChapBtn.classList.add('active');
+      }
+    } catch (e) {
+      console.warn('highlightActiveSidebar error:', e);
     }
   }
 
   // Display a Sloka in the main reader area
   async displaySloka(sloka) {
     this.currentSloka = sloka;
-    const isCC = sloka.book === 'CC' || (sloka.id && sloka.id.startsWith('cc-'));
-    const isISO = !isCC && (sloka.book === 'ISO' || (sloka.id && sloka.id.startsWith('iso-')));
-    const isVS = !isCC && !isISO && (sloka.book === 'VS' || (sloka.id && sloka.id.startsWith('vs-')));
-    const isBG = !isCC && !isISO && !isVS && (sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')) || (!sloka.canto && !sloka.lila));
+    const isCC = sloka.book === 'CC' || (sloka.id && String(sloka.id).startsWith('cc-'));
+    const isISO = !isCC && (sloka.book === 'ISO' || (sloka.id && String(sloka.id).startsWith('iso-')));
+    const isVS = !isCC && !isISO && (sloka.scripture === 'VS' || sloka.book === 'VS' || (sloka.id && String(sloka.id).startsWith('vs-')) || Boolean(sloka.songNumber) || Boolean(sloka.songbook));
+    const isBG = !isCC && !isISO && !isVS && (sloka.book === 'BG' || (sloka.id && String(sloka.id).startsWith('bg-')) || (!sloka.canto && !sloka.lila));
 
     if (isCC) this.currentBook = 'CC';
     else if (isISO) this.currentBook = 'ISO';
@@ -2084,6 +2261,9 @@ class VedabaseApp {
     const sanskritEl = document.getElementById('sanskritDevanagari');
     if (sanskritEl) {
       if (isVS) {
+        if (!sloka.parsed || !sloka.sanskritDevanagari) {
+          this.parseSongBody(sloka);
+        }
         sanskritEl.innerHTML = this.highlightInHtml(sloka.sanskritDevanagari, this.currentHighlightWord) || 'गीत पद उपलब्ध नहीं हैं।';
       } else {
         sanskritEl.innerHTML = this.highlightInText(this.cleanSanskritText(sloka.sanskritDevanagari), this.currentHighlightWord) || 'श्लोक उपलब्ध नहीं है';
@@ -2175,6 +2355,23 @@ class VedabaseApp {
     const scrollContainer = document.getElementById('verseStripScroll');
     if (!scrollContainer || !this.currentSloka) return;
 
+    const labelEl = document.getElementById('verseSelectorLabel');
+    if (labelEl) {
+      if (this.currentBook === 'VS') {
+        if (this.currentVsFilterType === 'daily' || this.currentVsFilterType === 'author' || this.currentVsFilterType === 'book') {
+          labelEl.textContent = 'गीत (Songs):';
+        } else {
+          labelEl.textContent = 'पद (Stanzas):';
+        }
+      } else if (this.currentBook === 'ISO') {
+        labelEl.textContent = 'मंत्र (Mantras):';
+      } else if (this.currentBook === 'CC') {
+        labelEl.textContent = 'पयार (Verses):';
+      } else {
+        labelEl.textContent = 'श्लोक (Verses):';
+      }
+    }
+
     const isCC = this.currentBook === 'CC';
     const isISO = this.currentBook === 'ISO';
     const isBG = this.currentBook === 'BG';
@@ -2256,8 +2453,8 @@ class VedabaseApp {
           const isCurrent = (s.id === this.currentSloka?.id) || (s.songNumber === this.currentSloka?.songNumber);
           buttons.push(`
             <button class="verse-strip-btn has-data ${isCurrent ? 'active' : ''}"
-              onclick="window.app.loadVsFilteredSongIndex(${idx})"
-              title="${this.escapeHtml(s.title || '')} (${this.escapeHtml(s.authorHindi || s.author || '')})">
+              onclick="window.app.loadVsSong('${s.id}')"
+              title="${this.escapeHtml(s.titleHindi || s.title || '')} (${this.escapeHtml(s.authorHindi || s.author || '')})">
               ${idx + 1}
             </button>
           `);
@@ -2333,11 +2530,12 @@ class VedabaseApp {
     if (isVS) {
       if (this.currentVsFilterType === 'daily') {
         const totalDaily = (window.VS_MANIFEST?.dailyPrayers?.length) || 15;
-        counter.textContent = `नित्य आरती ${this.currentVsDailyIndex + 1} / ${totalDaily}`;
+        counter.textContent = `नित्य आरती ${(this.currentVsDailyIndex !== null && this.currentVsDailyIndex !== undefined) ? this.currentVsDailyIndex + 1 : 1} / ${totalDaily}`;
       } else if (this.currentVsFilterType === 'author' || this.currentVsFilterType === 'book') {
-        const curIdx = this.chapterSlokas.findIndex(s => s.id === this.currentSloka.id || s.songNumber === this.currentSloka.songNumber);
+        const list = Array.isArray(this.chapterSlokas) && this.chapterSlokas.length > 0 ? this.chapterSlokas : (this.vsSlokas || []);
+        const curIdx = list.findIndex(s => s && ((s.id && s.id === this.currentSloka?.id) || (s.songNumber && s.songNumber === this.currentSloka?.songNumber)));
         const pos = curIdx >= 0 ? curIdx + 1 : 1;
-        counter.textContent = `गीत ${pos} / ${this.chapterSlokas.length}`;
+        counter.textContent = `गीत ${pos} / ${list.length}`;
       } else {
         const totalV = this.vsSlokas?.length || 2257;
         const vNum = this.currentSloka?.songNumber || 1;
@@ -2813,6 +3011,30 @@ class VedabaseApp {
   }
 
   applyPresSectionVisibility() {
+    const s = this.currentSloka;
+    const isVS = Boolean(s && (s.book === 'VS' || s.id?.startsWith('vs-') || this.currentBook === 'VS'));
+
+    const presWordsBox = document.getElementById('presWordsBox');
+    const presTranslationBox = document.getElementById('presTranslationBox');
+    const presPurportBox = document.getElementById('presPurportBox');
+    const togglePresWords = document.getElementById('togglePresWords');
+    const togglePresTranslation = document.getElementById('togglePresTranslation');
+    const togglePresPurport = document.getElementById('togglePresPurport');
+
+    if (isVS) {
+      if (presWordsBox) presWordsBox.style.display = 'none';
+      if (presTranslationBox) presTranslationBox.style.display = 'none';
+      if (presPurportBox) presPurportBox.style.display = 'none';
+      if (togglePresWords) togglePresWords.style.display = 'none';
+      if (togglePresTranslation) togglePresTranslation.style.display = 'none';
+      if (togglePresPurport) togglePresPurport.style.display = 'none';
+      return;
+    } else {
+      if (togglePresWords) togglePresWords.style.display = 'inline-flex';
+      if (togglePresTranslation) togglePresTranslation.style.display = 'inline-flex';
+      if (togglePresPurport) togglePresPurport.style.display = 'inline-flex';
+    }
+
     const chipMap = {
       sanskrit: 'togglePresSanskrit',
       words: 'togglePresWords',
@@ -2885,13 +3107,19 @@ class VedabaseApp {
     }
   }
 
-  renderPresentationSlide() {
+  renderPresentationSlide(keepScroll = false) {
     if (!this.currentSloka) return;
     const s = this.currentSloka;
     const isCC = s.book === 'CC' || s.id?.startsWith('cc-');
     const isISO = !isCC && (s.book === 'ISO' || s.id?.startsWith('iso-'));
     const isVS = !isCC && !isISO && (s.book === 'VS' || s.id?.startsWith('vs-'));
     const isBG = !isCC && !isISO && !isVS && (s.book === 'BG' || s.id?.startsWith('bg-'));
+
+    const overlay = document.getElementById('presentationOverlay');
+    if (overlay) overlay.classList.toggle('is-vs', !!isVS);
+
+    const stage = document.getElementById('presentationStage');
+    const prevScroll = (stage && keepScroll) ? stage.scrollTop : 0;
 
     const presVerseKey = document.getElementById('presVerseKey');
     if (presVerseKey) {
@@ -3002,7 +3230,7 @@ class VedabaseApp {
     const presSanskrit = document.getElementById('presSanskrit');
     if (presSanskrit) {
       if (isVS) {
-        presSanskrit.innerHTML = this.highlightInHtml(s.sanskritDevanagari, this.currentHighlightWord) || 'गीत उपलब्ध नहीं है';
+        presSanskrit.innerHTML = this.renderVsPresentationSlide(s);
       } else {
         presSanskrit.innerHTML = this.highlightInText(this.cleanSanskritText(s.sanskritDevanagari), this.currentHighlightWord) || 'श्लोक उपलब्ध नहीं है';
       }
@@ -3011,7 +3239,7 @@ class VedabaseApp {
     const presTranslation = document.getElementById('presTranslation');
     if (presTranslation) {
       if (isVS) {
-        presTranslation.innerHTML = this.highlightInHtml(s.formattedTransHtml || s.hindiTranslation, this.currentHighlightWord) || 'अनुवाद उपलब्ध नहीं है';
+        presTranslation.innerHTML = '';
       } else {
         presTranslation.innerHTML = this.highlightInHtml(this.renderParagraphs(s.hindiTranslation), this.currentHighlightWord) || 'अनुवाद उपलब्ध नहीं है';
       }
@@ -3043,13 +3271,107 @@ class VedabaseApp {
       presPurport.innerHTML = s.hindiPurport ? this.highlightInHtml(this.renderParagraphs(s.hindiPurport), this.currentHighlightWord) : '<p style="color: var(--text-muted);">तात्पर्य उपलब्ध नहीं है</p>';
     }
 
-    this.applyPresSectionVisibility();
+    const presVsFloatingBar = document.getElementById('presVsFloatingBar');
+    const presWordsBox = document.getElementById('presWordsBox');
+    const presTranslationBox = document.getElementById('presTranslationBox');
+    const presPurportBox = document.getElementById('presPurportBox');
+
+    if (isVS) {
+      const langTrigger = document.getElementById('btnPresVsLangToggle');
+      if (langTrigger) langTrigger.style.display = 'flex';
+
+      const btnDeva = document.getElementById('presVsScriptDeva');
+      const btnIast = document.getElementById('presVsScriptIast');
+      if (btnDeva) btnDeva.classList.toggle('active', this.vsScriptMode === 'devanagari');
+      if (btnIast) btnIast.classList.toggle('active', this.vsScriptMode === 'iast');
+
+      const presTransBtn = document.getElementById('presVsTransBtn');
+      const presTransBtnLabel = document.getElementById('presVsTransBtnLabel');
+      if (presTransBtn) presTransBtn.classList.toggle('active', !!this.presVsShowTrans);
+      if (presTransBtnLabel) presTransBtnLabel.textContent = this.presVsShowTrans ? 'अनुवाद छुपाएँ (Hide)' : 'अनुवाद दिखाएँ (Show)';
+
+      // Hide separate outer presentation boxes for VS (everything is compact inline inside stanzas)
+      if (presWordsBox) presWordsBox.style.display = 'none';
+      if (presTranslationBox) presTranslationBox.style.display = 'none';
+      if (presPurportBox) presPurportBox.style.display = 'none';
+    } else {
+      const langTrigger = document.getElementById('btnPresVsLangToggle');
+      const popover = document.getElementById('presVsLangPopover');
+      if (langTrigger) langTrigger.style.display = 'none';
+      if (popover) popover.style.display = 'none';
+      this.applyPresSectionVisibility();
+    }
+
     this.applyPresSlideDetailsVisibility();
     this.applyPresFontSize();
     this.triggerHighlightFadeTimer();
 
-    const stage = document.getElementById('presentationStage');
-    if (stage) stage.scrollTop = 0;
+    if (stage) {
+      if (keepScroll && prevScroll > 0) {
+        stage.scrollTop = prevScroll;
+      } else if (!keepScroll) {
+        stage.scrollTop = 0;
+      }
+    }
+  }
+
+  // Render dedicated majestic slide typography for Vaishnava Songs
+  renderVsPresentationSlide(s) {
+    if (!s) return '';
+    let stanzas = s.stanzas || [];
+    let validStanzas = stanzas.filter(st => st && st.text && st.text.trim() && st.text.trim() !== '\\');
+    if (validStanzas.length === 0) {
+      const hindiMeta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
+        ? (window.VsTranslationsHindi.getHindiMetadata(s.id) || window.VsTranslationsHindi.getHindiMetadata(s.songNumber) || window.VsTranslationsHindi.getHindiMetadata(s.verseKey))
+        : null;
+      if (hindiMeta && Array.isArray(hindiMeta.transliterations) && hindiMeta.transliterations.length > 0) {
+        validStanzas = hindiMeta.transliterations.map((t, idx) => ({
+          num: String(idx + 1),
+          text: t
+        }));
+        s.stanzas = validStanzas;
+      }
+    }
+    stanzas = validStanzas;
+
+    const transList = s.translations || [];
+    const isDeva = (this.vsScriptMode !== 'iast');
+    const showTrans = Boolean(this.presVsShowTrans);
+
+    return `
+      <div class="pres-vs-slide-container">
+        ${stanzas.map((st, idx) => {
+          const iastText = st.text;
+          const devaText = (window.IastTransliteration && window.IastTransliteration.toDevanagari)
+            ? window.IastTransliteration.toDevanagari(iastText)
+            : iastText;
+          const lyricsText = isDeva ? devaText : iastText;
+          const lyricsHtml = this.highlightInHtml(this.escapeHtml(lyricsText).replace(/\n/g, '<br>'), this.currentHighlightWord);
+
+          const transEn = transList[idx]?.text || '';
+          const transHi = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiTranslation)
+            ? (window.VsTranslationsHindi.getHindiTranslation(s, idx) || window.VsTranslationsHindi.getHindiTranslation(s.id, idx) || window.VsTranslationsHindi.getHindiTranslation(s.songNumber, idx) || window.VsTranslationsHindi.getHindiTranslation(s.verseKey, idx) || window.VsTranslationsHindi.getHindiTranslation(s.title, idx))
+            : null;
+          const activeTrans = isDeva ? transHi : transEn;
+          const hasActiveTrans = Boolean(activeTrans && activeTrans.trim());
+
+          const stanzaLabel = `— ${st.num} —`;
+
+          return `
+            <div class="pres-vs-stanza-block" id="pres-vs-st-${st.num}">
+              <div class="pres-vs-stanza-num">${stanzaLabel}</div>
+              <div class="pres-vs-stanza-lyrics">${lyricsHtml}</div>
+              ${(showTrans && hasActiveTrans) ? `
+                <div class="pres-vs-stanza-trans">
+                  <span>📖</span>
+                  <span>${this.escapeHtml(activeTrans).replace(/\n/g, '<br>')}</span>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
   }
 
   // Theme Management
@@ -3543,8 +3865,13 @@ class VedabaseApp {
   }
 
   escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   // Bind all event listeners & keyboard shortcuts
