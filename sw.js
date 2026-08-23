@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hindi-vedabase-v3.12';
+const CACHE_NAME = 'hindi-vedabase-v3.17';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -7,12 +7,14 @@ const ASSETS_TO_CACHE = [
   './js/iso-chapters-data.js',
   './js/cc-chapters-data.js',
   './js/sb-chapters-data.js',
+  './js/vs-chapters-data.js',
   './js/search.js',
   './js/app.js',
   './data/bhagavad-gita/bg-manifest.json',
   './data/isopanisad/iso-manifest.json',
   './data/chaitanya-charitamrita/cc-manifest.json',
   './data/srimad-bhagavatam/cantos-manifest.json',
+  './data/vaishnava-songs/vaishnava-songs-manifest.json',
   './vedabase.ico',
   './manifest.json'
 ];

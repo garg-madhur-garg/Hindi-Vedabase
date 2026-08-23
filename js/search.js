@@ -186,9 +186,23 @@ class VedabaseSearchEngine {
       });
     }
 
+    // Index 1,602 Vaishnava Songs from VS_SONGS_INDEX
+    if (window.VS_SONGS_INDEX && Array.isArray(window.VS_SONGS_INDEX)) {
+      window.VS_SONGS_INDEX.forEach(s => {
+        const vsText = `वैष्णव गीत भजन प्रार्थना आरतियाँ ${s.title || ''} ${s.author || ''} ${s.authorHi || ''} ${s.book || ''} ${s.firstLine || ''} vs-${s.num} vs ${s.num}`;
+        const vsTokens = this.tokenize(vsText);
+        vsTokens.forEach(tok => {
+          if (!this.wordIndex.has(tok)) {
+            this.wordIndex.set(tok, new Set());
+          }
+          this.wordIndex.get(tok).add(s.id || `vs-${s.num}`);
+        });
+      });
+    }
+
     this.isIndexed = true;
     console.timeEnd('SearchIndexBuild');
-    console.log(`Indexed ${this.slokas.length} verses across BG, ISO, CC & SB successfully.`);
+    console.log(`Indexed ${this.slokas.length} verses across BG, ISO, CC, SB & VS successfully.`);
   }
 
   // Clear all in-memory search indices
@@ -208,7 +222,8 @@ class VedabaseSearchEngine {
       const s = newSlokas[i];
       const isCC = s.book === 'CC' || (s.id && s.id.startsWith('cc-'));
       const isISO = !isCC && (s.book === 'ISO' || (s.id && s.id.startsWith('iso-')));
-      const isBG = !isCC && !isISO && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
+      const isVS = !isCC && !isISO && (s.book === 'VS' || (s.id && s.id.startsWith('vs-')));
+      const isBG = !isCC && !isISO && !isVS && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
 
       let key;
       if (isCC) {
@@ -216,6 +231,8 @@ class VedabaseSearchEngine {
         key = `cc ${lilaKey} ${s.chapter}.${s.verse}`;
       } else if (isISO) {
         key = `iso ${s.verseKey || s.verse}`;
+      } else if (isVS) {
+        key = `vs ${s.songNumber || s.id}`;
       } else if (isBG) {
         key = s.verseKey || `${s.chapter}.${s.verse}`;
       } else {
@@ -371,6 +388,12 @@ class VedabaseSearchEngine {
       }
     }
 
+    // Pattern 0: Vaishnava Songs: "vs 1", "vs 46", "vs-1"
+    const vsMatch = trimmed.match(/^(?:vs|song)[\s.\-:]*(\d+)$/i);
+    if (vsMatch) {
+      return { book: 'VS', songNumber: parseInt(vsMatch[1], 10) };
+    }
+
     // Pattern 1: Explicit BG query: "bg 2.13", "bg 18.66", "bg 2 13", "bg:2:13", "bg-2-13"
     const bgMatch = trimmed.match(/^bg[\s.\-:]*(\d+)[.\-:\s]+(\d+[\-\d]*)$/i);
     if (bgMatch) {
@@ -505,6 +528,21 @@ class VedabaseSearchEngine {
             book: 'ISO'
           };
         }
+      } else if (ref.book === 'VS') {
+        const exactMatch = (window.app && window.app.vsSlokas && window.app.vsSlokas.find(s => s.songNumber === ref.songNumber)) ||
+                           this.verseMap.get(`vs ${ref.songNumber}`) ||
+                           this.verseMap.get(`vs-${ref.songNumber}`);
+        if (exactMatch) {
+          const timeMs = (performance.now() - startTime).toFixed(2);
+          return {
+            results: [exactMatch],
+            totalCount: 1,
+            timeMs,
+            isRefMatch: true,
+            exactVerseKey: `VS ${ref.songNumber} - ${exactMatch.title || ''}`,
+            book: 'VS'
+          };
+        }
       } else if (ref.book === 'BG' && !ref.isChapter) {
         const bgKey = `${ref.chapter}.${ref.verse}`;
         const exactMatch = this.verseMap.get(`bg-${ref.chapter}-${ref.verse}`) ||
@@ -599,7 +637,8 @@ class VedabaseSearchEngine {
       const s = searchPool[i];
       const isCC = s.book === 'CC' || (s.id && s.id.startsWith('cc-'));
       const isISO = !isCC && (s.book === 'ISO' || (s.id && s.id.startsWith('iso-')));
-      const isBG = !isCC && !isISO && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
+      const isVS = !isCC && !isISO && (s.book === 'VS' || (s.id && s.id.startsWith('vs-')));
+      const isBG = !isCC && !isISO && !isVS && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
 
       // Check Tag filter if specified
       if (normFilterTag) {
@@ -619,21 +658,23 @@ class VedabaseSearchEngine {
         key = `cc ${lilaKey} ${s.chapter}.${s.verse}`;
       } else if (isISO) {
         key = `iso ${s.verseKey || s.verse}`;
+      } else if (isVS) {
+        key = `vs ${s.songNumber || s.id} ${s.title || ''}`;
       } else if (isBG) {
         key = s.verseKey || `${s.chapter}.${s.verse}`;
       } else {
         key = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
       }
 
-      // Boost if query matches verseKey
-      if (key.includes(trimmedQuery)) {
-        score += 100;
+      // Boost if query matches verseKey or title
+      if (key.toLowerCase().includes(trimmedQuery.toLowerCase())) {
+        score += 120;
       }
 
-      const sanskrit = (s.sanskritDevanagari || '').toLowerCase();
-      const iast = (s.sanskritIAST || '').toLowerCase();
-      const translation = (s.hindiTranslation || '').toLowerCase();
-      const purport = (s.hindiPurport || '').toLowerCase();
+      const sanskrit = (s.sanskritDevanagari || s.title || '').toLowerCase();
+      const iast = (s.sanskritIAST || s.firstLine || s.body || '').toLowerCase();
+      const translation = (s.hindiTranslation || s.authorHindi || s.author || '').toLowerCase();
+      const purport = (s.hindiPurport || s.book || '').toLowerCase();
       const wordMeanings = (s.wordToWord || []).map(w => `${w.sanskrit} ${w.hindi}`).join(' ').toLowerCase();
       const lowQ = trimmedQuery.toLowerCase();
 

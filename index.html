@@ -149,6 +149,25 @@
             <!-- Generated dynamically via app.js -->
           </ul>
         </div>
+
+        <!-- Scripture Item 5: Vaishnava Songs & Prayers (Expandable) -->
+        <div class="scripture-group" id="scriptureGroupVS">
+          <button class="scripture-header-btn" onclick="window.app.toggleScriptureAccordion('scriptureGroupVS')">
+            <div class="scripture-info">
+              <span class="scripture-icon">🎵</span>
+              <div class="scripture-titles">
+                <span class="scripture-name">वैष्णव गीत एवं आरतियाँ</span>
+                <span class="scripture-badge">2,257 भजन • 55 आचार्य</span>
+              </div>
+            </div>
+            <span class="scripture-arrow">▾</span>
+          </button>
+          
+          <!-- Vaishnava Songs Navigation List -->
+          <ul class="canto-list" id="vsSongListContainer">
+            <!-- Generated dynamically via app.js -->
+          </ul>
+        </div>
       </div>
     </aside>
 
@@ -181,6 +200,39 @@
               <span>सम्पादित करें</span>
             </button>
           </div>
+        </div>
+
+        <!-- Vaishnava Song Audio Player Container -->
+        <div class="vs-audio-player-box" id="vsAudioPlayerBox" style="display: none;">
+          <div class="vs-audio-header">
+            <div class="vs-audio-info">
+              <span class="vs-audio-icon">🎙️</span>
+              <span class="vs-audio-title" id="vsAudioCurrentTrackTitle">ऑडियो रिकॉर्डिंग</span>
+            </div>
+            <div class="vs-audio-track-selector-wrapper">
+              <select id="vsAudioTrackSelect" class="vs-audio-select" title="गायक / रिकॉर्डिंग चुनें">
+                <!-- Dynamically populated options -->
+              </select>
+            </div>
+          </div>
+          <div class="vs-audio-controls-row">
+            <button type="button" class="vs-audio-btn-play" id="vsBtnAudioPlay" title="चलाएँ / रोकें (Play/Pause)">
+              <span id="vsPlayIcon">▶️</span>
+            </button>
+            <div class="vs-audio-progress-group">
+              <span class="vs-audio-time" id="vsAudioCurrentTime">0:00</span>
+              <input type="range" class="vs-audio-seek-slider" id="vsAudioSeekSlider" min="0" max="100" value="0" step="0.1" title="सीक करें" />
+              <span class="vs-audio-time" id="vsAudioDuration">0:00</span>
+            </div>
+            <div class="vs-audio-volume-group">
+              <button type="button" class="vs-audio-btn-vol" id="vsBtnAudioMute" title="म्यूट / अनम्यूट">
+                <span id="vsVolIcon">🔊</span>
+              </button>
+              <input type="range" class="vs-audio-vol-slider" id="vsAudioVolSlider" min="0" max="1" value="0.9" step="0.05" title="ध्वनि स्तर (Volume)" />
+            </div>
+          </div>
+          <!-- Hidden Native Audio Element -->
+          <audio id="vsNativeAudio" preload="none"></audio>
         </div>
 
         <!-- Interactive Verse Number Selector Strip -->
@@ -364,7 +416,20 @@
             </button>
           </div>
 
-          <!-- Card 5: Download Specific Canto JSON (canto-1.json to canto-12.json) -->
+          <!-- Card 5: Download Vaishnava Songs JSON (vaishnava-songs.json) -->
+          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+              <span>🎵</span> <span>वैष्णव गीत एवं आरतियाँ JSON डाउनलोड करें (Vaishnava Songs Export)</span>
+            </h3>
+            <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
+              सभी 1,602 वैष्णव भजनों, आरतियों, शब्दार्थों व ऑडियो लिंक्स का सम्पूर्ण <code>vaishnava-songs.json</code> डाउनलोड करें जिसे <code>data/vaishnava-songs/</code> फोल्डर में सीधे रखा जा सकता है।
+            </p>
+            <button type="button" class="btn-action btn-presentation" id="btnExportVsJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+              📥 सम्पूर्ण वैष्णव गीत JSON डाउनलोड करें (.json)
+            </button>
+          </div>
+
+          <!-- Card 6: Download Specific Canto JSON (canto-1.json to canto-12.json) -->
           <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
             <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>📖</span> <span>स्कन्ध अनुसार JSON डाउनलोड करें (Canto-wise Export)</span>
@@ -619,11 +684,12 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JavaScript Modules (Direct JSON Architecture) -->
-  <script src="js/bg-chapters-data.js?v=3.12"></script>
-  <script src="js/iso-chapters-data.js?v=3.12"></script>
-  <script src="js/cc-chapters-data.js?v=3.12"></script>
-  <script src="js/sb-chapters-data.js?v=3.12"></script>
-  <script src="js/search.js?v=3.12"></script>
-  <script src="js/app.js?v=3.12"></script>
+  <script src="js/bg-chapters-data.js?v=3.13"></script>
+  <script src="js/iso-chapters-data.js?v=3.13"></script>
+  <script src="js/cc-chapters-data.js?v=3.13"></script>
+  <script src="js/sb-chapters-data.js?v=3.13"></script>
+  <script src="js/vs-chapters-data.js?v=3.13"></script>
+  <script src="js/search.js?v=3.13"></script>
+  <script src="js/app.js?v=3.13"></script>
 </body>
 </html>
