@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hindi-vedabase-v3.72';
+const CACHE_NAME = 'hindi-vedabase-v3.73';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
