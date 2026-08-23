@@ -1,6 +1,6 @@
-{
+﻿{
     "title":  "वैष्णव गीत, भजन एवं आरतियाँ (Vaishnava Songs \u0026 Prayers)",
-    "totalSongs":  2257,
+    "totalSongs":  271,
     "totalAuthors":  55,
     "totalSongbooks":  10,
     "dailyPrayers":  [
@@ -157,321 +157,321 @@
                      ],
     "authors":  [
                     {
-                        "songCount":  13,
+                        "name":  "A.C. Bhaktivedanta Swami",
                         "nameHindi":  "श्रील ए.सी. भक्तिवेदान्त स्वामी प्रभुपाद",
-                        "name":  "A.C. Bhaktivedanta Swami"
+                        "songCount":  13
                     },
                     {
-                        "songCount":  6,
+                        "name":  "Adi Sankaracarya",
                         "nameHindi":  "श्रील आदि शंकराचार्य",
-                        "name":  "Adi Sankaracarya"
+                        "songCount":  6
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Ananta Dasa Sastri",
                         "nameHindi":  "Ananta Dasa Sastri",
-                        "name":  "Ananta Dasa Sastri"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  2,
+                        "name":  "B.R.Sridhara Deva Goswami",
                         "nameHindi":  "बी.आर. श्रीधर देव गोस्वामी",
-                        "name":  "B.R.Sridhara Deva Goswami"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Bhakta Salabega",
                         "nameHindi":  "भक्त सालबेग",
-                        "name":  "Bhakta Salabega"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Bhakti Caru Swami",
                         "nameHindi":  "भक्ति चारु स्वामी",
-                        "name":  "Bhakti Caru Swami"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Bhaktisiddhanta Saraswati",
                         "nameHindi":  "Bhaktisiddhanta Saraswati",
-                        "name":  "Bhaktisiddhanta Saraswati"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  76,
+                        "name":  "Bhaktivinoda Thakura",
                         "nameHindi":  "श्रील भक्तिविनोद ठाकुर",
-                        "name":  "Bhaktivinoda Thakura"
+                        "songCount":  76
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Bhishma Deva",
                         "nameHindi":  "भीष्मदेव",
-                        "name":  "Bhishma Deva"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  3,
+                        "name":  "Bilvamangala Thakura",
                         "nameHindi":  "Bilvamangala Thakura",
-                        "name":  "Bilvamangala Thakura"
+                        "songCount":  3
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Budhakaushika",
                         "nameHindi":  "Budhakaushika",
-                        "name":  "Budhakaushika"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Candrasekhara Kavi",
                         "nameHindi":  "चन्द्रशेखर कवि",
-                        "name":  "Candrasekhara Kavi"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Devakinandana Das Thakura",
                         "nameHindi":  "Devakinandana Das Thakura",
-                        "name":  "Devakinandana Das Thakura"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Gopis",
                         "nameHindi":  "Gopis",
-                        "name":  "Gopis"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Govinda Dasa Kaviraja",
                         "nameHindi":  "श्रील गोविन्द दास कविराज",
-                        "name":  "Govinda Dasa Kaviraja"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Hari Vyasa Devacarya",
                         "nameHindi":  "हरि व्यास देवाचार्य",
-                        "name":  "Hari Vyasa Devacarya"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Jagannatha Dasa",
                         "nameHindi":  "जगन्नाथ दास",
-                        "name":  "Jagannatha Dasa"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  3,
+                        "name":  "Jayadeva Goswami",
                         "nameHindi":  "श्रील जयदेव गोस्वामी",
-                        "name":  "Jayadeva Goswami"
+                        "songCount":  3
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Jayapataka Swami",
                         "nameHindi":  "जयपताका स्वामी",
-                        "name":  "Jayapataka Swami"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Jiva Goswami",
                         "nameHindi":  "श्रील जीव गोस्वामी",
-                        "name":  "Jiva Goswami"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Kanu Ramadasa Thakura",
                         "nameHindi":  "कानू रामदास ठाकुर",
-                        "name":  "Kanu Ramadasa Thakura"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  3,
+                        "name":  "Krsna Dasa",
                         "nameHindi":  "कृष्ण दास",
-                        "name":  "Krsna Dasa"
+                        "songCount":  3
                     },
                     {
-                        "songCount":  4,
+                        "name":  "Krsnadasa Kaviraja Goswami",
                         "nameHindi":  "श्रील कृष्णदास कविराज गोस्वामी",
-                        "name":  "Krsnadasa Kaviraja Goswami"
+                        "songCount":  4
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Kulasekhara Alvar",
                         "nameHindi":  "Kulasekhara Alvar",
-                        "name":  "Kulasekhara Alvar"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Kusakratha Dasa",
                         "nameHindi":  "Kusakratha Dasa",
-                        "name":  "Kusakratha Dasa"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  7,
+                        "name":  "Locana Dasa Thakura",
                         "nameHindi":  "श्रील लोचन दास ठाकुर",
-                        "name":  "Locana Dasa Thakura"
+                        "songCount":  7
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Lord Brahma",
                         "nameHindi":  "भगवान् ब्रह्मा",
-                        "name":  "Lord Brahma"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Lord Siva",
                         "nameHindi":  "Lord Siva",
-                        "name":  "Lord Siva"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Lord Sri Caitanya Mahaprabhu",
                         "nameHindi":  "श्री चैतन्य महाप्रभु",
-                        "name":  "Lord Sri Caitanya Mahaprabhu"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Madhvacharya",
                         "nameHindi":  "श्रील मध्वाचार्य",
-                        "name":  "Madhvacharya"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  3,
+                        "name":  "Mira Bhai",
                         "nameHindi":  "मीराबाई",
-                        "name":  "Mira Bhai"
+                        "songCount":  3
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Narahari Sarakara",
                         "nameHindi":  "नरहरि सरकार",
-                        "name":  "Narahari Sarakara"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  26,
+                        "name":  "Narottama Dasa Thakura",
                         "nameHindi":  "श्रील नरोत्तम दास ठाकुर",
-                        "name":  "Narottama Dasa Thakura"
+                        "songCount":  26
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Nilakanta Goswami",
                         "nameHindi":  "Nilakanta Goswami",
-                        "name":  "Nilakanta Goswami"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Prabodhananda Sarasvati",
                         "nameHindi":  "Prabodhananda Sarasvati",
-                        "name":  "Prabodhananda Sarasvati"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Prahalad Maharaj",
                         "nameHindi":  "भक्त प्रह्लाद महाराज",
-                        "name":  "Prahalad Maharaj"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Radha Mohana Dasa",
                         "nameHindi":  "राधा मोहन दास",
-                        "name":  "Radha Mohana Dasa"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Raghunatha Dasa Goswami",
                         "nameHindi":  "श्रील रघुनाथ दास गोस्वामी",
-                        "name":  "Raghunatha Dasa Goswami"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  5,
+                        "name":  "Rupa Goswami",
                         "nameHindi":  "श्रील रूप गोस्वामी",
-                        "name":  "Rupa Goswami"
+                        "songCount":  5
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Sanatana Goswami",
                         "nameHindi":  "श्रील सनातन गोस्वामी",
-                        "name":  "Sanatana Goswami"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  4,
+                        "name":  "Sarvabhauma Bhattacarya",
                         "nameHindi":  "सार्वभौम भट्टाचार्य",
-                        "name":  "Sarvabhauma Bhattacarya"
+                        "songCount":  4
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Satyavrata Muni",
                         "nameHindi":  "सत्यव्रत मुनि",
-                        "name":  "Satyavrata Muni"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Shani Deva",
                         "nameHindi":  "शनिदेव",
-                        "name":  "Shani Deva"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Srinivasa Acarya",
                         "nameHindi":  "श्रील श्रीनिवास आचार्य",
-                        "name":  "Srinivasa Acarya"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Sura Dasa",
                         "nameHindi":  "सूरदास",
-                        "name":  "Sura Dasa"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Svarupa Damodara Goswami",
                         "nameHindi":  "Svarupa Damodara Goswami",
-                        "name":  "Svarupa Damodara Goswami"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Vadiraja Tirtha",
                         "nameHindi":  "वादीराज तीर्थ",
-                        "name":  "Vadiraja Tirtha"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  1,
+                        "name":  "Vallabhacarya",
                         "nameHindi":  "Vallabhacarya",
-                        "name":  "Vallabhacarya"
+                        "songCount":  1
                     },
                     {
-                        "songCount":  2031,
+                        "name":  "Various Acharyas",
                         "nameHindi":  "Various Acharyas",
-                        "name":  "Various Acharyas"
+                        "songCount":  45
                     },
                     {
-                        "songCount":  6,
+                        "name":  "Vasudeva Ghosha",
                         "nameHindi":  "वासुदेव घोष",
-                        "name":  "Vasudeva Ghosha"
+                        "songCount":  6
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Vedanta Desika",
                         "nameHindi":  "वेदान्त दाशिक",
-                        "name":  "Vedanta Desika"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  2,
+                        "name":  "Vidyapati",
                         "nameHindi":  "श्रील विद्यापति",
-                        "name":  "Vidyapati"
+                        "songCount":  2
                     },
                     {
-                        "songCount":  4,
+                        "name":  "Visvanatha Cakravarti Thakura",
                         "nameHindi":  "श्रील विश्वनाथ चक्रवर्ती ठाकुर",
-                        "name":  "Visvanatha Cakravarti Thakura"
+                        "songCount":  4
                     },
                     {
-                        "songCount":  8,
+                        "name":  "Vrndavana Dasa Thakura",
                         "nameHindi":  "श्रील वृन्दावन दास ठाकुर",
-                        "name":  "Vrndavana Dasa Thakura"
+                        "songCount":  8
                     },
                     {
-                        "songCount":  6,
+                        "name":  "Vyasadeva",
                         "nameHindi":  "श्रील व्यासदेव",
-                        "name":  "Vyasadeva"
+                        "songCount":  6
                     }
                 ],
     "songbooks":  [
                       {
-                          "songCount":  2,
-                          "name":  "Gitamala"
+                          "name":  "Gitamala",
+                          "songCount":  2
                       },
                       {
-                          "songCount":  15,
-                          "name":  "Gitavali"
+                          "name":  "Gitavali",
+                          "songCount":  15
                       },
                       {
-                          "songCount":  11,
-                          "name":  "Kalyana Kalpataru"
+                          "name":  "Kalyana Kalpataru",
+                          "songCount":  11
                       },
                       {
-                          "songCount":  17,
-                          "name":  "More Songs"
+                          "name":  "More Songs",
+                          "songCount":  17
                       },
                       {
-                          "songCount":  41,
-                          "name":  "More Songs of the Vaisnava Acaryas"
+                          "name":  "More Songs of the Vaisnava Acaryas",
+                          "songCount":  41
                       },
                       {
-                          "songCount":  11,
-                          "name":  "Prarthana"
+                          "name":  "Prarthana",
+                          "songCount":  11
                       },
                       {
-                          "songCount":  16,
-                          "name":  "Saranagati"
+                          "name":  "Saranagati",
+                          "songCount":  16
                       },
                       {
-                          "songCount":  69,
-                          "name":  "Songs of Vaishnava Acaryas"
+                          "name":  "Songs of Vaishnava Acaryas",
+                          "songCount":  69
                       },
                       {
-                          "songCount":  2065,
-                          "name":  "Vaishnava Songs"
+                          "name":  "Vaishnava Songs",
+                          "songCount":  79
                       },
                       {
-                          "songCount":  10,
-                          "name":  "Vrindavane Bhajan"
+                          "name":  "Vrindavane Bhajan",
+                          "songCount":  10
                       }
                   ]
 }

@@ -1561,7 +1561,7 @@ class VedabaseApp {
     if (!vsContainer) return;
 
     const songsIndex = window.VS_SONGS_INDEX || [];
-    const totalCount = songsIndex.length || 2257;
+    const totalCount = songsIndex.length || 271;
 
     const songsHtml = songsIndex.map(s => {
       const isCur = this.currentBook === 'VS' && (this.currentSloka?.songNumber === s.num || this.currentSloka?.id === s.id);
@@ -2600,7 +2600,7 @@ class VedabaseApp {
         } else {
           const curNum = this.currentSloka?.songNumber || 1;
           const startNum = Math.max(1, curNum - 15);
-          const endNum = Math.min(this.vsSlokas?.length || 2257, curNum + 15);
+          const endNum = Math.min(this.vsSlokas?.length || 271, curNum + 15);
           for (let n = startNum; n <= endNum; n++) {
             const isCurrent = n === curNum;
             buttons.push(`
@@ -2663,7 +2663,7 @@ class VedabaseApp {
         const pos = curIdx >= 0 ? curIdx + 1 : 1;
         counter.textContent = `गीत ${pos} / ${list.length}`;
       } else {
-        const totalV = this.vsSlokas?.length || 2257;
+        const totalV = this.vsSlokas?.length || 271;
         const vNum = this.currentSloka?.songNumber || 1;
         counter.textContent = `गीत ${vNum} / ${totalV}`;
       }
@@ -2717,7 +2717,7 @@ class VedabaseApp {
         }
       } else {
         const currentNum = this.currentSloka?.songNumber || 1;
-        if (currentNum < (this.vsSlokas?.length || 2257)) {
+        if (currentNum < (this.vsSlokas?.length || 271)) {
           await this.loadVsSong(currentNum + 1);
         } else {
           this.showToast('वैष्णव गीतों का अन्तिम भजन!');
@@ -3283,7 +3283,7 @@ class VedabaseApp {
     const presCounter = document.getElementById('presCounter');
     if (presCounter) {
       if (isVS) {
-        const totalV = this.vsSlokas?.length || 1602;
+        const totalV = this.vsSlokas?.length || 271;
         presCounter.textContent = `गीत ${s.songNumber || 1} / ${totalV}`;
       } else if (isCC) {
         const ccLilas = getCcLilas();

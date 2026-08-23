@@ -186,7 +186,7 @@ class VedabaseSearchEngine {
       });
     }
 
-    // Index 1,602 Vaishnava Songs from VS_SONGS_INDEX
+    // Index 271 Vaishnava Songs from VS_SONGS_INDEX
     if (window.VS_SONGS_INDEX && Array.isArray(window.VS_SONGS_INDEX)) {
       window.VS_SONGS_INDEX.forEach(s => {
         const vsText = `वैष्णव गीत भजन प्रार्थना आरतियाँ ${s.title || ''} ${s.author || ''} ${s.authorHi || ''} ${s.book || ''} ${s.firstLine || ''} vs-${s.num} vs ${s.num}`;
