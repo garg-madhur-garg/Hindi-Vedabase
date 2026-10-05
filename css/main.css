@@ -582,8 +582,16 @@ input, textarea, select {
   align-items: center;
   gap: 0.4rem;
   overflow-x: auto;
+  overflow-y: hidden;
   padding-bottom: 2px;
-  scrollbar-width: thin;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.verse-strip-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .verse-strip-btn {

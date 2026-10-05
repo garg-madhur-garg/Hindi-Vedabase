@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="hi" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🛡️ व्यवस्थापक समीक्षा पोर्टल | हिन्दी वेदबेस (Admin Portal)</title>
+  <title>🛡️ Admin Portal | Hindi Vedabase</title>
   <link rel="icon" type="image/x-icon" href="vedabase.ico">
-  <link rel="stylesheet" href="css/main.css?v=3.75">
+  <link rel="stylesheet" href="css/main.css?v=3.80">
+  <!-- JSZip for 1-Click All-Data ZIP Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     body {
       background: var(--bg-primary, #0f172a);
@@ -71,6 +73,7 @@
       align-items: center;
       gap: 0.5rem;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .tab-btn.active {
       color: var(--accent-gold, #f59e0b);
@@ -128,22 +131,69 @@
       .diff-grid { grid-template-columns: 1fr; }
     }
     .diff-box {
-      font-size: 0.9rem;
-      line-height: 1.6;
-      max-height: 280px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      max-height: 320px;
       overflow-y: auto;
-      padding: 0.65rem;
+      padding: 0.85rem 1rem;
       border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: inherit;
     }
     .diff-old {
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      color: #fca5a5;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1.5px solid rgba(239, 68, 68, 0.3);
+      color: #cbd5e1; /* Neutral grey-white: unchanged text stays normal, NOT all-red */
     }
     .diff-new {
-      background: rgba(34, 197, 94, 0.08);
-      border: 1px solid rgba(34, 197, 94, 0.2);
-      color: #86efac;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1.5px solid rgba(34, 197, 94, 0.3);
+      color: #cbd5e1; /* Neutral grey-white: unchanged text stays normal, NOT all-green */
+    }
+    .diff-del-highlight {
+      background: rgba(239, 68, 68, 0.35) !important;
+      color: #ff8080 !important;
+      padding: 2px 5px !important;
+      border-radius: 4px !important;
+      text-decoration: line-through !important;
+      border-bottom: 2px solid #ef4444 !important;
+      font-weight: 700 !important;
+      box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.4);
+    }
+    .diff-add-highlight {
+      background: rgba(34, 197, 94, 0.35) !important;
+      color: #4ade80 !important;
+      padding: 2px 5px !important;
+      border-radius: 4px !important;
+      border-bottom: 2px solid #22c55e !important;
+      font-weight: 700 !important;
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+    }
+    .diff-space-del {
+      background: rgba(239, 68, 68, 0.45) !important;
+      color: #fca5a5 !important;
+      padding: 0 4px !important;
+      border-radius: 3px !important;
+      border: 1px dashed #ef4444 !important;
+      font-family: monospace !important;
+      font-size: 0.82em !important;
+      font-weight: 700 !important;
+      text-decoration: line-through !important;
+      display: inline-block !important;
+      margin: 0 1px !important;
+    }
+    .diff-space-add {
+      background: rgba(34, 197, 94, 0.45) !important;
+      color: #86efac !important;
+      padding: 0 4px !important;
+      border-radius: 3px !important;
+      border: 1px dashed #22c55e !important;
+      font-family: monospace !important;
+      font-size: 0.82em !important;
+      font-weight: 700 !important;
+      display: inline-block !important;
+      margin: 0 1px !important;
     }
     .toast-msg {
       position: fixed;
@@ -163,6 +213,32 @@
       from { transform: translateY(30px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+    .backup-card {
+      background: var(--bg-secondary, #1e293b);
+      border: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 16px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .btn-backup-action {
+      background: var(--accent-gold, #f59e0b);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.925rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-backup-action:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <body>
@@ -170,20 +246,24 @@
   <!-- Top Admin Navbar -->
   <header class="admin-navbar">
     <div class="admin-brand">
-      <span>🛡️ हिन्दी वेदबेस व्यवस्थापक</span>
+      <span>🛡️ Hindi Vedabase Admin</span>
       <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 0.15rem 0.5rem; border-radius: 9999px; border: 1px solid rgba(34, 197, 94, 0.3);">
         🟢 Cloud Live
       </span>
     </div>
-    <div style="display: flex; gap: 0.75rem; align-items: center;">
-      <a href="index.html" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
-        📖 वेदबेस मुख्य पृष्ठ
+    <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+      <a href="index.html" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
+        📖 View Reader
       </a>
-      <button id="btnChangePin" style="background: transparent; color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
-        🔑 पिन बदलें
+      <!-- Header Backup & Restore Button -->
+      <button id="btnHeaderBackup" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border: 1px solid rgba(245, 158, 11, 0.4); padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem;">
+        💾 Backup & Restore
+      </button>
+      <button id="btnChangePin" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+        🔑 Change PIN
       </button>
       <button id="btnLogout" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
-        लॉगआउट
+        Logout
       </button>
     </div>
   </header>
@@ -192,17 +272,17 @@
   <div id="authScreen" class="admin-container" style="display: none;">
     <div class="auth-card">
       <div style="font-size: 2.75rem; margin-bottom: 0.75rem;">🔐</div>
-      <h2 style="margin: 0 0 0.5rem 0; font-size: 1.4rem; color: var(--accent-gold);">व्यवस्थापक सत्यापन (Admin PIN)</h2>
+      <h2 style="margin: 0 0 0.5rem 0; font-size: 1.4rem; color: var(--accent-gold);">Admin Verification</h2>
       <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
-        सुधार सुझावों की समीक्षा हेतु अपना पिन दर्ज करें।
+        Enter your administrator PIN to review suggestions and manage data.
       </p>
       <input type="password" id="inputPin" style="width: 80%; padding: 0.65rem 1rem; font-size: 1.1rem; text-align: center; background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 8px; color: var(--text-primary); letter-spacing: 4px; margin-bottom: 1rem;" placeholder="••••" autofocus>
-      <div id="pinError" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 1rem; display: none;">गलत पिन! पुनः प्रयास करें। (डिफ़ॉल्ट: 108)</div>
+      <div id="pinError" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 1rem; display: none;">Incorrect PIN! Please try again. (Default: 108)</div>
       <button id="btnUnlock" style="width: 85%; padding: 0.75rem; background: var(--accent-gold); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
-        🔓 पोर्टल खोलें
+        🔓 Unlock Portal
       </button>
       <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);">
-        डिफ़ॉल्ट पिन: <strong>108</strong> (पोर्टल के अंदर से बदल सकते हैं)
+        Default PIN: <strong>108</strong> (Changeable inside the portal)
       </div>
     </div>
   </div>
@@ -212,28 +292,28 @@
     
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
       <div>
-        <h1 style="font-size: 1.6rem; margin: 0 0 0.35rem 0; color: var(--text-primary);">पाठक सुधार सुझाव समीक्षा</h1>
+        <h1 style="font-size: 1.6rem; margin: 0 0 0.35rem 0; color: var(--text-primary);">Reader Suggestions & Community Edits</h1>
         <div style="color: var(--text-secondary); font-size: 0.9rem;">
-          स्वीकृत (Approve) किया गया सुझाव बिना पेज रीफ़्रेश किए सभी यूज़र्स के लिए तुरंत लाइव हो जाता है।
+          Approved changes instantly go live in real-time for all readers without page reloads.
         </div>
       </div>
       <button id="btnRefresh" style="display: flex; align-items: center; gap: 0.4rem; background: var(--bg-secondary); color: var(--accent-gold); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
-        🔄 रिफ्रेश
+        🔄 Refresh
       </button>
     </div>
 
     <!-- Tabs -->
     <div class="tabs-bar">
       <button class="tab-btn active" id="tabPending">
-        <span>⏳ प्रतीक्षित सुझाव (Pending)</span>
+        <span>⏳ Pending Suggestions</span>
         <span class="tab-badge" id="badgePendingCount">0</span>
       </button>
       <button class="tab-btn" id="tabApproved">
-        <span>✅ स्वीकृत इतिहास (Live Approved)</span>
+        <span>✅ Live Approved</span>
         <span class="tab-badge" id="badgeApprovedCount" style="background: rgba(34, 197, 94, 0.2); color: #4ade80;">0</span>
       </button>
       <button class="tab-btn" id="tabRejected">
-        <span>❌ अस्वीकृत (Rejected)</span>
+        <span>❌ Rejected</span>
         <span class="tab-badge" id="badgeRejectedCount" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">0</span>
       </button>
     </div>
@@ -241,7 +321,7 @@
     <!-- Cards Container -->
     <div id="cardsList">
       <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
-        क्लाउड से डेटा लोड हो रहा है...
+        Loading data from cloud...
       </div>
     </div>
 
@@ -252,7 +332,7 @@
   <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=3.75"></script>
+  <script src="js/firebase-sync.js?v=3.80"></script>
 
   <script>
     (function() {
@@ -265,38 +345,39 @@
         return localStorage.getItem('vedabase_admin_pin') || '108';
       }
 
-      function showToast(msg) {
-        const area = document.getElementById('toastArea');
-        const t = document.createElement('div');
-        t.className = 'toast-msg';
-        t.textContent = msg;
-        area.appendChild(t);
-        setTimeout(() => t.remove(), 3500);
+      function isAuthed() {
+        return sessionStorage.getItem('vedabase_admin_authed') === 'true';
       }
 
-      // Check PIN
       function checkAuth() {
-        const isAuthed = sessionStorage.getItem('vedabase_admin_authed') === 'true';
-        if (isAuthed) {
-          document.getElementById('authScreen').style.display = 'none';
-          document.getElementById('dashboardScreen').style.display = 'block';
+        const authScreen = document.getElementById('authScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+
+        if (isAuthed()) {
+          authScreen.style.display = 'none';
+          dashboardScreen.style.display = 'block';
           loadData();
         } else {
-          document.getElementById('authScreen').style.display = 'block';
-          document.getElementById('dashboardScreen').style.display = 'none';
+          authScreen.style.display = 'block';
+          dashboardScreen.style.display = 'none';
+          document.getElementById('inputPin').value = '';
           document.getElementById('inputPin').focus();
         }
       }
 
+      // PIN authentication logic
       document.getElementById('btnUnlock').addEventListener('click', () => {
-        const val = document.getElementById('inputPin').value.trim();
-        if (val === getSavedPin()) {
+        const entered = document.getElementById('inputPin').value.trim();
+        const pinError = document.getElementById('pinError');
+        if (entered === getSavedPin()) {
           sessionStorage.setItem('vedabase_admin_authed', 'true');
-          document.getElementById('pinError').style.display = 'none';
+          pinError.style.display = 'none';
           checkAuth();
-          showToast('🔓 सत्यापन सफल! स्वागत है।');
+          showToast('Welcome, Administrator!');
         } else {
-          document.getElementById('pinError').style.display = 'block';
+          pinError.style.display = 'block';
+          document.getElementById('inputPin').value = '';
+          document.getElementById('inputPin').focus();
         }
       });
 
@@ -307,20 +388,29 @@
       document.getElementById('btnLogout').addEventListener('click', () => {
         sessionStorage.removeItem('vedabase_admin_authed');
         checkAuth();
-        showToast('सत्र समाप्त हुआ।');
+        showToast('Session ended.');
       });
 
       document.getElementById('btnChangePin').addEventListener('click', () => {
-        const current = prompt('वर्तमान व्यवस्थापक पिन दर्ज करें:');
+        const current = prompt('Enter current Admin PIN:');
         if (current !== getSavedPin()) {
-          alert('वर्तमान पिन गलत है!');
+          alert('Incorrect current PIN!');
           return;
         }
-        const newPin = prompt('नया व्यवस्थापक पिन दर्ज करें (कम से कम 3 अंक):');
+        const newPin = prompt('Enter new Admin PIN (minimum 3 digits):');
         if (newPin && newPin.trim().length >= 3) {
           localStorage.setItem('vedabase_admin_pin', newPin.trim());
-          alert('✅ पिन सफलतापूर्वक बदल दिया गया!');
+          alert('✅ PIN updated successfully!');
         }
+      });
+
+      // Header Backup Shortcut Button
+      document.getElementById('btnHeaderBackup').addEventListener('click', () => {
+        if (!isAuthed()) {
+          checkAuth();
+          return;
+        }
+        switchTab('backup');
       });
 
       // Tabs Switch
@@ -332,18 +422,300 @@
       function switchTab(tab) {
         currentTab = tab;
         ['tabPending', 'tabApproved', 'tabRejected'].forEach(id => {
-          document.getElementById(id).classList.remove('active');
+          document.getElementById(id)?.classList.remove('active');
         });
-        if (tab === 'pending') document.getElementById('tabPending').classList.add('active');
-        if (tab === 'approved') document.getElementById('tabApproved').classList.add('active');
-        if (tab === 'rejected') document.getElementById('tabRejected').classList.add('active');
+
+        const btnHeaderBackup = document.getElementById('btnHeaderBackup');
+        if (tab === 'backup') {
+          if (btnHeaderBackup) {
+            btnHeaderBackup.style.background = 'var(--accent-gold)';
+            btnHeaderBackup.style.color = '#000';
+            btnHeaderBackup.style.fontWeight = '700';
+          }
+        } else {
+          if (btnHeaderBackup) {
+            btnHeaderBackup.style.background = 'rgba(245, 158, 11, 0.15)';
+            btnHeaderBackup.style.color = 'var(--accent-gold)';
+            btnHeaderBackup.style.fontWeight = '600';
+          }
+          if (tab === 'pending') document.getElementById('tabPending')?.classList.add('active');
+          if (tab === 'approved') document.getElementById('tabApproved')?.classList.add('active');
+          if (tab === 'rejected') document.getElementById('tabRejected')?.classList.add('active');
+        }
         renderCards();
       }
 
-      // Fetch from Firestore
+      // =========================================================================
+      // BACKUP & RESTORE CENTER (EXACTLY 2 OPTIONS)
+      // =========================================================================
+
+      // List of all 16 project JSON files to package
+      const ALL_PROJECT_JSON_FILES = [
+        { path: 'data/bhagavad-gita/bhagavad-gita.json', name: 'bhagavad-gita.json', folder: 'data/bhagavad-gita' },
+        { path: 'data/isopanisad/isopanisad.json', name: 'isopanisad.json', folder: 'data/isopanisad' },
+        { path: 'data/chaitanya-charitamrita/chaitanya-charitamrita.json', name: 'chaitanya-charitamrita.json', folder: 'data/chaitanya-charitamrita' },
+        { path: 'data/vaishnava-songs/vaishnava-songs.json', name: 'vaishnava-songs.json', folder: 'data/vaishnava-songs' },
+        { path: 'data/srimad-bhagavatam/canto-1.json', name: 'canto-1.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-2.json', name: 'canto-2.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-3.json', name: 'canto-3.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-4.json', name: 'canto-4.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-5.json', name: 'canto-5.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-6.json', name: 'canto-6.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-7.json', name: 'canto-7.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-8.json', name: 'canto-8.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-9.json', name: 'canto-9.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-10.json', name: 'canto-10.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-11.json', name: 'canto-11.json', folder: 'data/srimad-bhagavatam' },
+        { path: 'data/srimad-bhagavatam/canto-12.json', name: 'canto-12.json', folder: 'data/srimad-bhagavatam' }
+      ];
+
+      // Option 1: 1-Click Complete Database Download (ZIP with all JSON files + Cloud Edits)
+      async function downloadAllJsonZip() {
+        const btn = document.getElementById('btnDownloadAllZip');
+        const statusEl = document.getElementById('zipProgressStatus');
+        if (btn) btn.disabled = true;
+
+        try {
+          if (!window.JSZip) {
+            throw new Error('JSZip library is loading. Please check internet connection.');
+          }
+
+          const zip = new JSZip();
+          const total = ALL_PROJECT_JSON_FILES.length;
+
+          // 1. Fetch each scripture JSON and put in zip
+          for (let i = 0; i < total; i++) {
+            const item = ALL_PROJECT_JSON_FILES[i];
+            if (statusEl) statusEl.textContent = `⏳ Fetching ${item.name} (${i + 1}/${total})...`;
+            
+            try {
+              const res = await fetch(item.path);
+              if (res.ok) {
+                const text = await res.text();
+                zip.folder(item.folder).file(item.name, text);
+              }
+            } catch (fetchErr) {
+              console.warn(`Could not include ${item.path}:`, fetchErr);
+            }
+          }
+
+          // 2. Include live approved suggestions from Firestore
+          const approvedList = allSuggestions.filter(s => s.status === 'approved');
+          zip.file('approved-edits-backup.json', JSON.stringify(approvedList, null, 2));
+
+          // 3. Generate the ZIP file
+          if (statusEl) statusEl.textContent = '📦 Packaging ZIP file...';
+          const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+          // 4. Trigger download
+          const dateStr = new Date().toISOString().slice(0, 10);
+          const zipUrl = URL.createObjectURL(zipBlob);
+          const a = document.createElement('a');
+          a.href = zipUrl;
+          a.download = `Hindi_Vedabase_Full_Database_Backup_${dateStr}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(zipUrl);
+
+          if (statusEl) statusEl.textContent = '✅ All JSON files downloaded successfully in ZIP!';
+          showToast('✅ All JSON files downloaded in ZIP!');
+        } catch (err) {
+          alert('Error downloading ZIP: ' + err.message);
+          if (statusEl) statusEl.textContent = '⚠️ Error: ' + err.message;
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      }
+
+      // Option 2: Import & Restore Data from JSON
+      let stagedImportData = null;
+
+      function handleImportFileSelect(e) {
+        const file = e.target.files?.[0];
+        const previewEl = document.getElementById('importPreviewBox');
+        const startBtn = document.getElementById('btnStartImport');
+        stagedImportData = null;
+
+        if (!file) {
+          if (previewEl) previewEl.style.display = 'none';
+          if (startBtn) startBtn.style.display = 'none';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const parsed = JSON.parse(event.target.result);
+            stagedImportData = parsed;
+
+            let count = Array.isArray(parsed) ? parsed.length : (Object.keys(parsed).length);
+            let typeLabel = 'Records / Items';
+
+            if (Array.isArray(parsed)) {
+              if (parsed[0] && (parsed[0].verseKey || parsed[0].verse || parsed[0].sanskritDevanagari)) {
+                typeLabel = 'Scripture Verses';
+              } else if (parsed[0] && (parsed[0].status || parsed[0].whatChanged || parsed[0].sloka)) {
+                typeLabel = 'Community Suggestions / Edits';
+              }
+            }
+
+            previewEl.innerHTML = `
+              <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; padding: 0.85rem; color: #86efac; font-size: 0.9rem;">
+                <strong>📄 File Analyzed:</strong> ${escapeHtml(file.name)} (${(file.size / 1024).toFixed(1)} KB)<br>
+                <strong>📊 Detected:</strong> ${count} ${typeLabel}<br>
+                Ready to import into database.
+              </div>
+            `;
+            previewEl.style.display = 'block';
+            startBtn.style.display = 'inline-flex';
+          } catch (err) {
+            previewEl.innerHTML = `
+              <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 0.85rem; color: #fca5a5; font-size: 0.9rem;">
+                ⚠️ Invalid JSON File: ${escapeHtml(err.message)}
+              </div>
+            `;
+            previewEl.style.display = 'block';
+            startBtn.style.display = 'none';
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      async function executeImport() {
+        if (!stagedImportData) return;
+        const progressEl = document.getElementById('importProgressText');
+        const startBtn = document.getElementById('btnStartImport');
+
+        if (!confirm('Are you sure you want to import this data into Firestore? Live readers will see updated approved items.')) {
+          return;
+        }
+
+        startBtn.disabled = true;
+        try {
+          if (!window.vedabaseFirebase || !window.vedabaseFirebase.db) {
+            await window.vedabaseFirebase.init();
+          }
+
+          const db = window.vedabaseFirebase.db;
+          const items = Array.isArray(stagedImportData) ? stagedImportData : [stagedImportData];
+
+          let importedCount = 0;
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const docId = item._docId || item.id || `import_${Date.now()}_${i}`;
+            
+            // Remove local metadata key
+            const cleanItem = { ...item };
+            delete cleanItem._docId;
+            if (!cleanItem.status) cleanItem.status = 'approved';
+            if (!cleanItem.importedAt) cleanItem.importedAt = new Date().toISOString();
+
+            await db.collection('vedabase_suggestions').doc(docId).set(cleanItem, { merge: true });
+            importedCount++;
+
+            if (progressEl) {
+              progressEl.textContent = `⏳ Importing: ${importedCount} / ${items.length}...`;
+            }
+          }
+
+          if (progressEl) {
+            progressEl.textContent = `✅ Successfully imported ${importedCount} items into Firestore!`;
+          }
+          showToast(`✅ Successfully imported ${importedCount} records!`);
+          await loadData();
+        } catch (err) {
+          alert('Import failed: ' + err.message);
+          if (progressEl) progressEl.textContent = '⚠️ Error: ' + err.message;
+        } finally {
+          startBtn.disabled = false;
+        }
+      }
+
+      // Render the 2-Option Backup & Restore Screen
+      function renderBackupPanel(container) {
+        container.innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <!-- Header Intro -->
+            <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.25rem 1.5rem;">
+              <h2 style="margin: 0 0 0.35rem 0; font-size: 1.3rem; color: var(--accent-gold); display: flex; align-items: center; gap: 0.5rem;">
+                <span>💾</span> <span>Database Backup & Restore Center</span>
+              </h2>
+              <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+                Private administrative control for backing up all scripture JSON files and restoring data.
+              </p>
+            </div>
+
+            <!-- OPTION 1: 1-Click All JSON Files Download (ZIP) -->
+            <div class="backup-card" style="border: 1.5px solid rgba(245, 158, 11, 0.45);">
+              <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.4rem;">📦</span>
+                <h3 style="margin: 0; font-size: 1.2rem; color: var(--accent-gold);">
+                  Option 1: Complete Database Download (All JSON Files)
+                </h3>
+              </div>
+              <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0 0 1.25rem 0; line-height: 1.55;">
+                Click below to download <strong>every scripture JSON file</strong> in a single, clean ZIP archive:
+                <br>
+                <span style="font-size: 0.85rem; color: var(--text-primary); display: inline-block; margin-top: 0.4rem;">
+                  • <strong>Bhagavad Gita</strong> (700 verses) &bull; <strong>Sri Isopanisad</strong> (19 mantras) &bull; <strong>Sri Caitanya-caritamrta</strong> (62 chapters) &bull; <strong>Vaishnava Songs</strong> (2,257 songs) &bull; <strong>Srimad Bhagavatam</strong> (Cantos 1 to 12) &bull; <strong>Cloud Approved Community Edits</strong>
+                </span>
+              </p>
+              
+              <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <button type="button" id="btnDownloadAllZip" class="btn-backup-action">
+                  <span>📥</span> <span>Download All JSON Files (.zip)</span>
+                </button>
+                <span id="zipProgressStatus" style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 600;"></span>
+              </div>
+            </div>
+
+            <!-- OPTION 2: Import & Restore from JSON -->
+            <div class="backup-card" style="border: 1.5px solid rgba(59, 130, 246, 0.4);">
+              <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.4rem;">📂</span>
+                <h3 style="margin: 0; font-size: 1.2rem; color: #60a5fa;">
+                  Option 2: Import & Restore Data from JSON
+                </h3>
+              </div>
+              <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0 0 1.25rem 0; line-height: 1.55;">
+                Upload a JSON file (approved edits backup, custom verse edits, or scripture JSON) to restore or bulk-sync data into the database.
+              </p>
+
+              <div style="background: var(--bg-tertiary); padding: 1.25rem; border-radius: 10px; border: 1px dashed var(--border-color); margin-bottom: 1rem;">
+                <input type="file" id="inputImportJsonFile" accept=".json" style="font-size: 0.9rem; color: var(--text-primary); cursor: pointer;" />
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem;">
+                  Accepts standard <code>.json</code> backup files.
+                </div>
+              </div>
+
+              <!-- File Preview Area -->
+              <div id="importPreviewBox" style="display: none; margin-bottom: 1rem;"></div>
+
+              <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <button type="button" id="btnStartImport" class="btn-backup-action" style="background: #3b82f6; color: #ffffff; display: none;">
+                  <span>🚀</span> <span>Start Import / Restore</span>
+                </button>
+                <span id="importProgressText" style="font-size: 0.85rem; color: #60a5fa; font-weight: 600;"></span>
+              </div>
+            </div>
+
+          </div>
+        `;
+
+        document.getElementById('btnDownloadAllZip')?.addEventListener('click', downloadAllJsonZip);
+        document.getElementById('inputImportJsonFile')?.addEventListener('change', handleImportFileSelect);
+        document.getElementById('btnStartImport')?.addEventListener('click', executeImport);
+      }
+
+      // =========================================================================
+      // FIRESTORE FETCH & RENDER SUGGESTION CARDS
+      // =========================================================================
+
       async function loadData() {
         const container = document.getElementById('cardsList');
-        container.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--accent-gold);">📡 क्लाउड से सुझाव लोड हो रहे हैं...</div>';
+        container.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--accent-gold);">📡 Loading suggestions from cloud...</div>';
 
         try {
           if (!window.vedabaseFirebase || !window.vedabaseFirebase.db) {
@@ -363,7 +735,7 @@
           updateBadges();
           renderCards();
         } catch (err) {
-          container.innerHTML = `<div style="text-align: center; padding: 2rem; color: #ef4444;">त्रुटि: ${err.message}</div>`;
+          container.innerHTML = `<div style="text-align: center; padding: 2rem; color: #ef4444;">Error: ${err.message}</div>`;
         }
       }
 
@@ -379,6 +751,11 @@
 
       function renderCards() {
         const container = document.getElementById('cardsList');
+        if (currentTab === 'backup') {
+          renderBackupPanel(container);
+          return;
+        }
+
         const filtered = allSuggestions.filter(s => {
           const st = s.status || 'pending';
           return st === currentTab;
@@ -389,10 +766,10 @@
             <div style="text-align: center; padding: 4rem 1rem; color: var(--text-secondary); background: var(--bg-secondary); border-radius: 14px; border: 1px dashed var(--border-color);">
               <div style="font-size: 3rem; margin-bottom: 0.5rem;">${currentTab === 'pending' ? '🎉' : (currentTab === 'approved' ? '📂' : '🗑️')}</div>
               <h3 style="color: var(--text-primary); margin-bottom: 0.25rem;">
-                ${currentTab === 'pending' ? 'कोई नया प्रतीक्षित सुझाव नहीं है!' : (currentTab === 'approved' ? 'कोई स्वीकृत सुझाव दर्ज नहीं है।' : 'कोई अस्वीकृत सुझाव नहीं है।')}
+                ${currentTab === 'pending' ? 'No pending suggestions!' : (currentTab === 'approved' ? 'No approved edits recorded.' : 'No rejected suggestions.')}
               </h3>
               <p style="font-size: 0.9rem; margin: 0;">
-                ${currentTab === 'pending' ? 'सभी प्राप्त सुझावों की समीक्षा की जा चुकी है।' : 'जब आप किसी सुझाव को स्वीकृत करेंगे, वह यहाँ सुरक्षित रहेगा।'}
+                ${currentTab === 'pending' ? 'All received suggestions have been reviewed.' : 'When you approve a suggestion, it will appear here.'}
               </p>
             </div>
           `;
@@ -404,10 +781,10 @@
           const card = document.createElement('div');
           card.className = 'suggestion-card';
 
-          const slokaRef = item.sloka || item.verseReference || 'श्लोक';
-          const fieldName = item.field || item.fieldName || 'पाठ सुधार';
+          const slokaRef = item.sloka || item.verseReference || 'Verse';
+          const fieldName = item.field || item.fieldName || 'Text Edit';
           const whatChanged = item.whatChanged || item.reason || item.notes || '';
-          const name = item.name || item.suggesterName || 'जिज्ञासु पाठक';
+          const name = item.name || item.suggesterName || 'Reader';
           const phone = item.phone || '';
           const oldText = item.oldText || (item.changes?.[0]?.oldText) || '—';
           const newText = item.newText || (item.changes?.[0]?.newText) || '—';
@@ -418,13 +795,13 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
               <div>
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
-                  <span class="sloka-badge">${slokaRef}</span>
-                  <span class="field-tag">📝 ${fieldName}</span>
+                  <span class="sloka-badge">${escapeHtml(slokaRef)}</span>
+                  <span class="field-tag">📝 ${escapeHtml(fieldName)}</span>
                 </div>
                 <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                  <span>👤 सुझावकर्ता: <strong style="color: var(--text-primary);">${name}</strong></span>
-                  ${phone ? `<span style="margin: 0 0.35rem;">•</span><span>📱 <a href="https://wa.me/91${phone.replace(/[^0-9]/g, '')}" target="_blank" style="color: #4ade80; text-decoration: none; font-weight: 600;">${phone} (WhatsApp)</a></span>` : ''}
-                  ${whatChanged ? `<div style="margin-top: 0.3rem; color: var(--accent-gold);">🔍 क्या बदला: <em>"${whatChanged}"</em></div>` : ''}
+                  <span>👤 Contributor: <strong style="color: var(--text-primary);">${escapeHtml(name)}</strong></span>
+                  ${phone ? `<span style="margin: 0 0.35rem;">•</span><span>📱 <a href="https://wa.me/91${phone.replace(/[^0-9]/g, '')}" target="_blank" style="color: #4ade80; text-decoration: none; font-weight: 600;">${escapeHtml(phone)} (WhatsApp)</a></span>` : ''}
+                  ${whatChanged ? `<div style="margin-top: 0.3rem; color: var(--accent-gold);">🔍 Change Summary: <em>"${escapeHtml(whatChanged)}"</em></div>` : ''}
                 </div>
               </div>
 
@@ -433,43 +810,44 @@
                 ${currentTab === 'pending' ? `
                   <div style="display: flex; gap: 0.5rem;">
                     <button class="btn-reject" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.45rem 0.85rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
-                      ❌ अस्वीकार
+                      ❌ Reject
                     </button>
                     <button class="btn-approve" style="background: var(--accent-gold); color: #000; border: none; padding: 0.45rem 1rem; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.85rem;">
-                      ✅ स्वीकारें & लाइव करें
+                      ✅ Approve & Go Live
                     </button>
                   </div>
                 ` : (currentTab === 'approved' ? `
                   <button class="btn-revert" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
-                    ↩️ वापस पेंडिंग करें
+                    ↩️ Revert to Pending
                   </button>
                 ` : `
                   <button class="btn-revert" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
-                    ↩️ पुनः विचार करें
+                    ↩️ Reconsider
                   </button>
                 `)}
               </div>
             </div>
-            <!-- Diff View -->
+
+            <!-- GitHub Style Word-Level Diff Box -->
             <div class="diff-grid">
-              <div class="diff-box diff-old">
-                <div style="font-weight: 700; color: #f87171; font-size: 0.8rem; margin-bottom: 0.35rem; display: flex; justify-content: space-between;">
-                  <span>🔻 मूल पाठ (हटाया / बदला गया):</span>
-                  <span style="font-size: 0.72rem; color: #fca5a5; opacity: 0.8;">लाल स्ट्राइक = पुराना</span>
+              <div>
+                <div style="font-size: 0.78rem; color: #f87171; font-weight: 700; margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;">
+                  <span>🔴 Original Text (Database)</span>
+                  <span style="font-size: 0.72rem; color: #94a3b8; font-weight: normal;">(Red Strike = Removed)</span>
                 </div>
-                <div style="white-space: pre-wrap; line-height: 1.7;">${diffResult.oldHtml}</div>
+                <div class="diff-box diff-old">${diffResult.oldHtml}</div>
               </div>
-              <div class="diff-box diff-new">
-                <div style="font-weight: 700; color: #4ade80; font-size: 0.8rem; margin-bottom: 0.35rem; display: flex; justify-content: space-between;">
-                  <span>✨ सुधारा हुआ पाठ (नया जोड़ा गया):</span>
-                  <span style="font-size: 0.72rem; color: #86efac; opacity: 0.8;">हरा हाइलाइट = नया</span>
+              <div>
+                <div style="font-size: 0.78rem; color: #4ade80; font-weight: 700; margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;">
+                  <span>🟢 Proposed Change</span>
+                  <span style="font-size: 0.72rem; color: #94a3b8; font-weight: normal;">(Green Badge = Added / Changed)</span>
                 </div>
-                <div style="white-space: pre-wrap; line-height: 1.7;">${diffResult.newHtml}</div>
+                <div class="diff-box diff-new">${diffResult.newHtml}</div>
               </div>
             </div>
           `;
 
-          // Button Events
+          // Bind card buttons
           card.querySelector('.btn-approve')?.addEventListener('click', () => updateStatus(item, 'approved'));
           card.querySelector('.btn-reject')?.addEventListener('click', () => updateStatus(item, 'rejected'));
           card.querySelector('.btn-revert')?.addEventListener('click', () => updateStatus(item, 'pending'));
@@ -484,30 +862,75 @@
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;');
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
       }
 
-      // GitHub-style Word-Level Diffing Algorithm (LCS)
-      function computeWordDiff(text1, text2) {
-        const s1 = String(text1 || '').trim();
-        const s2 = String(text2 || '').trim();
-        if (!s1 && !s2) return { oldHtml: '', newHtml: '' };
-        if (!s1) return { oldHtml: '<em>(खाली)</em>', newHtml: `<span style="background: rgba(34, 197, 94, 0.35); color: #86efac; padding: 2px 5px; border-radius: 4px; border-bottom: 2px solid #22c55e; font-weight: 700;">${escapeHtml(s2)}</span>` };
-        if (!s2) return { oldHtml: `<span style="background: rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 2px 5px; border-radius: 4px; text-decoration: line-through; border-bottom: 2px solid #ef4444; font-weight: 600;">${escapeHtml(s1)}</span>`, newHtml: '<em>(हटा दिया गया)</em>' };
+      // High-precision Tokenizer
+      // Breaks text into Words (in any language/script), Whitespace sequences, and Punctuation/Symbols
+      function tokenize(str) {
+        if (!str) return [];
+        try {
+          return str.match(/[\p{L}\p{M}\p{N}]+|\s+|[^\p{L}\p{M}\p{N}\s]/gu) || [str];
+        } catch (e) {
+          return str.match(/[\w\u0900-\u097F]+|\s+|[^\w\u0900-\u097F\s]/g) || [str];
+        }
+      }
 
-        // Tokenize words and punctuation
-        const tokenize = (s) => s.match(/([^\s\p{P}]+|\s+|[\p{P}])/gu) || [s];
-        const words1 = tokenize(s1);
-        const words2 = tokenize(s2);
+      // GitHub Style Word-Level Inline Diff (LCS DP with Common Prefix/Suffix Optimization)
+      function computeWordDiff(s1, s2) {
+        const text1 = String(s1 || '');
+        const text2 = String(s2 || '');
 
-        const n = words1.length;
-        const m = words2.length;
+        if (!text1 && !text2) return { oldHtml: '—', newHtml: '—' };
+        if (text1 === text2) {
+          return {
+            oldHtml: escapeHtml(text1),
+            newHtml: escapeHtml(text2)
+          };
+        }
+        if (!text1) {
+          return {
+            oldHtml: '<em style="color: var(--text-muted);">(Empty)</em>',
+            newHtml: `<span class="diff-add-highlight">${escapeHtml(text2)}</span>`
+          };
+        }
+        if (!text2) {
+          return {
+            oldHtml: `<span class="diff-del-highlight">${escapeHtml(text1)}</span>`,
+            newHtml: '<em style="color: var(--text-muted);">(Deleted)</em>'
+          };
+        }
 
-        // Longest Common Subsequence table
+        const words1 = tokenize(text1);
+        const words2 = tokenize(text2);
+
+        // 1. Fast path: Find common prefix
+        let start = 0;
+        while (start < words1.length && start < words2.length && words1[start] === words2[start]) {
+          start++;
+        }
+
+        // 2. Fast path: Find common suffix
+        let end1 = words1.length - 1;
+        let end2 = words2.length - 1;
+        while (end1 >= start && end2 >= start && words1[end1] === words2[end2]) {
+          end1--;
+          end2--;
+        }
+
+        // 3. Middle difference tokens
+        const mid1 = words1.slice(start, end1 + 1);
+        const mid2 = words2.slice(start, end2 + 1);
+
+        const n = mid1.length;
+        const m = mid2.length;
+
+        // Longest Common Subsequence DP on middle tokens
         const dp = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
         for (let i = 1; i <= n; i++) {
           for (let j = 1; j <= m; j++) {
-            if (words1[i - 1] === words2[j - 1]) {
+            if (mid1[i - 1] === mid2[j - 1]) {
               dp[i][j] = dp[i - 1][j - 1] + 1;
             } else {
               dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
@@ -515,36 +938,70 @@
           }
         }
 
-        // Backtrack
+        // Backtrack through middle tokens
         let i = n;
         let j = m;
-        const oldTokens = [];
-        const newTokens = [];
+        const midOld = [];
+        const midNew = [];
 
         while (i > 0 || j > 0) {
-          if (i > 0 && j > 0 && words1[i - 1] === words2[j - 1]) {
-            oldTokens.unshift({ type: 'same', val: words1[i - 1] });
-            newTokens.unshift({ type: 'same', val: words2[j - 1] });
+          if (i > 0 && j > 0 && mid1[i - 1] === mid2[j - 1]) {
+            midOld.unshift({ type: 'same', val: mid1[i - 1] });
+            midNew.unshift({ type: 'same', val: mid2[j - 1] });
             i--;
             j--;
           } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
-            newTokens.unshift({ type: 'add', val: words2[j - 1] });
+            midNew.unshift({ type: 'add', val: mid2[j - 1] });
             j--;
           } else if (i > 0 && (j === 0 || dp[i][j - 1] < dp[i - 1][j])) {
-            oldTokens.unshift({ type: 'del', val: words1[i - 1] });
+            midOld.unshift({ type: 'del', val: mid1[i - 1] });
             i--;
           }
         }
 
+        // Assemble tokens: prefix + diff + suffix
+        const oldTokens = [];
+        const newTokens = [];
+
+        for (let k = 0; k < start; k++) {
+          oldTokens.push({ type: 'same', val: words1[k] });
+          newTokens.push({ type: 'same', val: words1[k] });
+        }
+
+        oldTokens.push(...midOld);
+        newTokens.push(...midNew);
+
+        for (let k = end1 + 1; k < words1.length; k++) {
+          oldTokens.push({ type: 'same', val: words1[k] });
+        }
+        for (let k = end2 + 1; k < words2.length; k++) {
+          newTokens.push({ type: 'same', val: words2[k] });
+        }
+
         const renderTokens = (tokens) => {
           return tokens.map(t => {
-            const esc = escapeHtml(t.val);
-            if (t.type === 'del') {
-              return `<span style="background: rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 1px 4px; border-radius: 4px; text-decoration: line-through; border-bottom: 2px solid #ef4444; font-weight: 700;">${esc}</span>`;
-            } else if (t.type === 'add') {
-              return `<span style="background: rgba(34, 197, 94, 0.35); color: #86efac; padding: 1px 4px; border-radius: 4px; border-bottom: 2px solid #22c55e; font-weight: 700;">${esc}</span>`;
+            if (t.type === 'same') {
+              return escapeHtml(t.val);
             }
-            return esc;
+
+            const isWhitespace = /^\s+$/.test(t.val);
+
+            if (t.type === 'del') {
+              if (isWhitespace) {
+                const count = t.val.length;
+                const label = count === 1 ? '␣' : `␣×${count}`;
+                return `<span class="diff-space-del" title="${count} space(s) removed">[${label}]</span>`;
+              }
+              return `<span class="diff-del-highlight">${escapeHtml(t.val)}</span>`;
+            } else if (t.type === 'add') {
+              if (isWhitespace) {
+                const count = t.val.length;
+                const label = count === 1 ? '␣' : `␣×${count}`;
+                return `<span class="diff-space-add" title="${count} space(s) added">[${label}]</span>`;
+              }
+              return `<span class="diff-add-highlight">${escapeHtml(t.val)}</span>`;
+            }
+            return escapeHtml(t.val);
           }).join('');
         };
 
@@ -555,8 +1012,8 @@
       }
 
       async function updateStatus(item, newStatus) {
-        const actionLabel = newStatus === 'approved' ? 'स्वीकृत' : (newStatus === 'rejected' ? 'अस्वीकृत' : 'पेंडिंग');
-        if (!confirm(`क्या आप ${item.sloka || 'श्लोक'} के इस सुधार को ${actionLabel} करना चाहते हैं?`)) {
+        const actionLabel = newStatus === 'approved' ? 'Approve' : (newStatus === 'rejected' ? 'Reject' : 'Revert to Pending');
+        if (!confirm(`Are you sure you want to ${actionLabel} the suggested change for ${item.sloka || 'this verse'}?`)) {
           return;
         }
 
@@ -571,13 +1028,27 @@
           renderCards();
 
           if (newStatus === 'approved') {
-            showToast(`✅ ${item.sloka || 'श्लोक'} स्वीकृत होकर सभी यूज़र्स के लिए लाइव हो गया!`);
+            showToast(`✅ ${item.sloka || 'Verse'} edit approved and live for all readers!`);
           } else {
-            showToast(`सुझाव ${actionLabel} कर दिया गया।`);
+            showToast(`Suggestion marked as ${newStatus}.`);
           }
         } catch (err) {
-          alert('त्रुटि: ' + err.message);
+          alert('Error: ' + err.message);
         }
+      }
+
+      function showToast(msg) {
+        const area = document.getElementById('toastArea');
+        if (!area) return;
+        const t = document.createElement('div');
+        t.className = 'toast-msg';
+        t.textContent = msg;
+        area.appendChild(t);
+        setTimeout(() => {
+          t.style.opacity = '0';
+          t.style.transition = 'opacity 0.3s ease';
+          setTimeout(() => t.remove(), 300);
+        }, 3200);
       }
 
       // Init on load

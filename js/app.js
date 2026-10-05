@@ -1512,9 +1512,9 @@ class VedabaseApp {
           <button class="chapter-btn ${this.currentBook === 'BG' && ch.chapter === this.currentChapter ? 'active' : ''}"
             id="bg-chap-btn-${ch.chapter}"
             onclick="window.app.loadBgChapter(${ch.chapter})"
-            title="${ch.name} (${ch.totalVerses} श्लोक)">
+            title="${ch.name} (${ch.totalVerses} Verses)">
             <div style="font-weight: 600;">अध्याय ${ch.chapter}: ${ch.name}</div>
-            <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} श्लोक</div>
+            <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} Verses</div>
           </button>
         </li>
       `).join('');
@@ -1553,9 +1553,9 @@ class VedabaseApp {
                 <button class="chapter-btn ${this.currentBook === 'CC' && l.lila === this.currentLila && ch.chapter === this.currentChapter ? 'active' : ''}" 
                   id="cc-chap-btn-${l.key}-${ch.chapter}"
                   onclick="window.app.loadCcChapter('${l.key}', ${ch.chapter})"
-                  title="${ch.name} (${ch.totalVerses} पयार)">
+                  title="${ch.name} (${ch.totalVerses} Verses)">
                   <div style="font-weight: 600;">अध्याय ${ch.chapter}: ${ch.name}</div>
-                  <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} पयार</div>
+                  <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} Verses</div>
                 </button>
               </li>
             `).join('')}
@@ -1580,9 +1580,9 @@ class VedabaseApp {
                 <button class="chapter-btn ${this.currentBook === 'SB' && c.canto === this.currentCanto && ch.chapter === this.currentChapter ? 'active' : ''}" 
                   id="chap-btn-${c.canto}-${ch.chapter}"
                   onclick="window.app.loadChapter(${c.canto}, ${ch.chapter})"
-                  title="${ch.name} (${ch.totalVerses} श्लोक)">
+                  title="${ch.name} (${ch.totalVerses} Verses)">
                   <div style="font-weight: 600;">अध्याय ${ch.chapter}: ${ch.name}</div>
-                  <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} श्लोक</div>
+                  <div style="font-size: 0.725rem; color: var(--accent-gold);">${ch.totalVerses} Verses</div>
                 </button>
               </li>
             `).join('')}
@@ -1676,7 +1676,7 @@ class VedabaseApp {
     vsContainer.innerHTML = `
       <div style="padding: 0.4rem 0.25rem 0.6rem; position: sticky; top: 0; background: var(--bg-sidebar, #fff); z-index: 5;">
         <input type="text" id="vsSidebarSearchInput"
-          placeholder="🔍 भजन नाम या संख्या खोजें (1 - ${totalCount})..."
+          placeholder="🔍 Search song title or number (1 - ${totalCount})..."
           oninput="window.app.filterVsSidebar(this.value)"
           class="form-control"
           style="font-size: 0.8rem; padding: 0.45rem 0.65rem; border-radius: 6px; width: 100%; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-color); box-sizing: border-box;">
@@ -2485,9 +2485,9 @@ class VedabaseApp {
         if (!sloka.parsed || !sloka.formattedStanzasHtml) {
           this.parseSongBody(sloka);
         }
-        sanskritEl.innerHTML = this.highlightInHtml(sloka.formattedStanzasHtml || sloka.sanskritDevanagari, this.currentHighlightWord) || 'गीत पद उपलब्ध नहीं हैं।';
+        sanskritEl.innerHTML = this.highlightInHtml(sloka.formattedStanzasHtml || sloka.sanskritDevanagari, this.currentHighlightWord) || 'Song text not available.';
       } else {
-        sanskritEl.innerHTML = this.highlightInText(this.cleanSanskritText(sloka.sanskritDevanagari), this.currentHighlightWord) || 'श्लोक उपलब्ध नहीं है';
+        sanskritEl.innerHTML = this.highlightInText(this.cleanSanskritText(sloka.sanskritDevanagari), this.currentHighlightWord) || 'Verse text not available';
       }
     }
 
@@ -2535,14 +2535,14 @@ class VedabaseApp {
             `;
           }).join('');
         } else {
-          wordGrid.innerHTML = '<span style="color: var(--text-muted); font-size: 0.9rem;">पदच्छेद शब्दार्थ उपलब्ध नहीं है।</span>';
+          wordGrid.innerHTML = '<span style="color: var(--text-muted); font-size: 0.9rem;">Word-for-word meanings not available.</span>';
         }
       }
 
       // Hindi Translation
       const transEl = document.getElementById('hindiTranslation');
       if (transEl) {
-        transEl.innerHTML = this.highlightInHtml(this.renderParagraphs(sloka.hindiTranslation), this.currentHighlightWord) || 'हिन्दी अनुवाद उपलब्ध नहीं है।';
+        transEl.innerHTML = this.highlightInHtml(this.renderParagraphs(sloka.hindiTranslation), this.currentHighlightWord) || 'Translation not available.';
       }
 
       // Hindi Purport / Tatparya
@@ -3044,9 +3044,9 @@ class VedabaseApp {
       (s.hindiPurport ? `🪔 *तात्पर्य:*\n${s.hindiPurport.substring(0, 400)}...\n\n` : '');
 
     navigator.clipboard.writeText(formatted).then(() => {
-      this.showToast('📋 पयार/श्लोक/गीत क्लिपबोर्ड में कॉपी हो गया!');
+      this.showToast('📋 Verse copied to clipboard!');
     }).catch(() => {
-      this.showToast('कॉपी करने में असमर्थ।');
+      this.showToast('Failed to copy to clipboard.');
     });
   }
 
@@ -3070,7 +3070,7 @@ class VedabaseApp {
     }
 
     if (!res.results || res.results.length === 0) {
-      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">'${this.escapeHtml(trimmed || '')}' के लिए कोई श्लोक/पयार/गीत नहीं मिला।</div>`;
+      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No verses or songs found for "${this.escapeHtml(trimmed || '')}".</div>`;
       return;
     }
 
@@ -3147,7 +3147,7 @@ class VedabaseApp {
     this.applyPresFontSize();
     this.renderPresentationSlide();
     this.hidePresMenu();
-    this.showToast('📽️ प्रेजेंटेशन मोड सक्रिय (नियंत्रण मेनू हेतु ☰ या M दबाएँ)');
+    this.showToast('📽️ Presentation Mode Active (Press ☰ or M for controls)');
   }
 
   closePresentationMode() {
@@ -3453,7 +3453,7 @@ class VedabaseApp {
       if (isVS) {
         presSanskrit.innerHTML = this.renderVsPresentationSlide(s);
       } else {
-        presSanskrit.innerHTML = this.highlightInText(this.cleanSanskritText(s.sanskritDevanagari), this.currentHighlightWord) || 'श्लोक उपलब्ध नहीं है';
+        presSanskrit.innerHTML = this.highlightInText(this.cleanSanskritText(s.sanskritDevanagari), this.currentHighlightWord) || 'Verse text not available';
       }
     }
 
@@ -3462,7 +3462,7 @@ class VedabaseApp {
       if (isVS) {
         presTranslation.innerHTML = '';
       } else {
-        presTranslation.innerHTML = this.highlightInHtml(this.renderParagraphs(s.hindiTranslation), this.currentHighlightWord) || 'अनुवाद उपलब्ध नहीं है';
+        presTranslation.innerHTML = this.highlightInHtml(this.renderParagraphs(s.hindiTranslation), this.currentHighlightWord) || 'Translation not available';
       }
     }
 
@@ -3483,13 +3483,13 @@ class VedabaseApp {
           `;
         }).join('');
       } else {
-        presWordsGrid.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">शब्दार्थ उपलब्ध नहीं है</div>';
+        presWordsGrid.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">Word-for-word meanings not available</div>';
       }
     }
 
     const presPurport = document.getElementById('presPurport');
     if (presPurport) {
-      presPurport.innerHTML = s.hindiPurport ? this.highlightInHtml(this.renderParagraphs(s.hindiPurport), this.currentHighlightWord) : '<p style="color: var(--text-muted);">तात्पर्य उपलब्ध नहीं है</p>';
+      presPurport.innerHTML = s.hindiPurport ? this.highlightInHtml(this.renderParagraphs(s.hindiPurport), this.currentHighlightWord) : '<p style="color: var(--text-muted);">Purport not available</p>';
     }
 
     const presVsFloatingBar = document.getElementById('presVsFloatingBar');
@@ -3674,7 +3674,7 @@ class VedabaseApp {
 
     if (isVS) {
       const sNum = sloka.songNumber || sloka.id?.replace(/^vs-/, '') || '';
-      if (titleEl) titleEl.textContent = `✏️ वैष्णव गीत सम्पादन (#${sNum} - ${sloka.title || ''})`;
+      if (titleEl) titleEl.textContent = `✏️ Edit Song (#${sNum} - ${sloka.title || ''})`;
 
       if (slokaChips) slokaChips.style.display = 'none';
       if (songChips) songChips.style.display = 'flex';
@@ -3700,9 +3700,9 @@ class VedabaseApp {
       const vsIastGroup = document.getElementById('editVsIastGroup');
       if (vsIastGroup) vsIastGroup.style.display = 'block';
 
-      if (sanskritLabel) sanskritLabel.innerHTML = `<span>🕉️ देवनागरी (हिन्दी) भजन पद / श्लोक (Devanagari Hindi Song Lyrics / Sloka):</span>`;
-      if (transLabel) transLabel.innerHTML = `<span>📖 हिन्दी अनुवाद (Hindi Translation - पद अनुसार 1, 2, ...):</span>`;
-      if (purportLabel) purportLabel.innerHTML = `<span>🔤 English Translation / तात्पर्य (English Translation / Purport):</span>`;
+      if (sanskritLabel) sanskritLabel.innerHTML = `<span>🕉️ Devanagari Song Lyrics / Verse:</span>`;
+      if (transLabel) transLabel.innerHTML = `<span>📖 Hindi Translation (Stanza-wise):</span>`;
+      if (purportLabel) purportLabel.innerHTML = `<span>🔤 English Translation / Purport:</span>`;
 
       // Extract Clean Lyrics & Translations
       let lyrics = '';
@@ -3835,20 +3835,20 @@ class VedabaseApp {
       if (vsMetaFields) vsMetaFields.style.display = 'none';
       if (wordGroup) wordGroup.style.display = 'block';
 
-      if (sanskritLabel) sanskritLabel.innerHTML = `<span>📜 मूल संस्कृत श्लोक (Sanskrit Devanagari):</span>`;
-      if (transLabel) transLabel.innerHTML = `<span>📖 हिन्दी अनुवाद (Translation):</span>`;
-      if (purportLabel) purportLabel.innerHTML = `<span>🪔 श्रील प्रभुपाद तात्पर्य (Purport):</span>`;
+      if (sanskritLabel) sanskritLabel.innerHTML = `<span>📜 Sanskrit Devanagari / Verse Text:</span>`;
+      if (transLabel) transLabel.innerHTML = `<span>📖 Hindi Translation:</span>`;
+      if (purportLabel) purportLabel.innerHTML = `<span>🪔 Srila Prabhupada Purport:</span>`;
 
       if (titleEl) {
         if (isCC) {
           const lKey = this.getLilaKey(sloka.lila || sloka.canto || 1).toUpperCase();
-          titleEl.textContent = `✏️ श्री चैतन्य-चरितामृत सम्पादन (CC ${lKey} ${sloka.chapter}.${sloka.verse})`;
+          titleEl.textContent = `✏️ Edit Verse (CC ${lKey} ${sloka.chapter}.${sloka.verse})`;
         } else if (isISO) {
-          titleEl.textContent = `✏️ श्री ईशोपनिषद् सम्पादन (${sloka.verseKey === 'inv' ? 'मंगलाचरण' : 'मंत्र ' + sloka.verseKey})`;
+          titleEl.textContent = `✏️ Edit Mantra (ISO ${sloka.verseKey === 'inv' ? 'Invocation' : 'Mantra ' + sloka.verseKey})`;
         } else if (isBG) {
-          titleEl.textContent = `✏️ श्लोक सम्पादन (BG ${sloka.verseKey})`;
+          titleEl.textContent = `✏️ Edit Verse (BG ${sloka.verseKey})`;
         } else {
-          titleEl.textContent = `✏️ श्लोक सम्पादन (SB ${sloka.verseKey})`;
+          titleEl.textContent = `✏️ Edit Verse (SB ${sloka.verseKey})`;
         }
       }
 
@@ -4106,9 +4106,9 @@ class VedabaseApp {
     };
 
     try {
-      this.showToast('⏳ सुधार सुझाव क्लाउड पर भेजा जा रहा है...');
+      this.showToast('⏳ Submitting suggestion to cloud...');
       if (!window.vedabaseFirebase) {
-        throw new Error('Firebase सेवा लोड नहीं हो सकी। कृपया इंटरनेट जांचें।');
+        throw new Error('Firebase service not loaded. Please check internet connection.');
       }
 
       await window.vedabaseFirebase.submitDeltaSuggestion(payload);
@@ -4117,10 +4117,10 @@ class VedabaseApp {
       this.closeAllModals();
 
       // Show clear confirmation toast
-      this.showToast(`🙏 धन्यवाद! ${verseReference} का सुधार सुझाव समीक्षा हेतु भेज दिया गया है। व्यवस्थापक की स्वीकृति के बाद यह सभी के लिए लाइव होगा।`);
+      this.showToast(`🙏 Thank you! Suggestion for ${verseReference} submitted for review. It will go live once approved by admin.`);
     } catch (err) {
       console.error('Error submitting suggestion:', err);
-      this.showToast(`⚠️ त्रुटि: ${err.message || 'सुझाव नहीं भेजा जा सका।'}`);
+      this.showToast(`⚠️ Error: ${err.message || 'Could not submit suggestion.'}`);
     }
   }
 
@@ -4440,6 +4440,17 @@ class VedabaseApp {
       e.stopPropagation();
       this.togglePresSlideDetails();
     });
+
+    // Horizontal mouse wheel scrolling for verse selector strip
+    const stripScroll = document.getElementById('verseStripScroll');
+    if (stripScroll) {
+      stripScroll.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          stripScroll.scrollLeft += e.deltaY;
+        }
+      }, { passive: false });
+    }
     document.getElementById('togglePresHeaderDetails')?.addEventListener('click', () => this.togglePresSlideDetails());
     document.getElementById('togglePresSanskrit')?.addEventListener('click', () => this.togglePresSection('sanskrit'));
     document.getElementById('togglePresWords')?.addEventListener('click', () => this.togglePresSection('words'));
