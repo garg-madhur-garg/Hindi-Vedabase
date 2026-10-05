@@ -1,0 +1,18 @@
+# Cloudflare Pages Ignore List
+# Files and folders in this list are excluded from deployment to Cloudflare Pages.
+
+# Raw sources (Master files > 60MB, not used by frontend)
+data/raw-sources/
+
+# Local server scripts
+server.ps1
+start_server.bat
+start_app.bat
+
+# Firebase rules (deployed via Firebase CLI, not Pages)
+firestore.rules
+
+# Temporary and backup files
+*.log
+*.tmp
+*.bak
