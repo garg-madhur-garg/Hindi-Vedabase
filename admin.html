@@ -1214,29 +1214,31 @@
           }
         }
 
-        const msgText = `हरे कृष्ण ${name} जी! 🙏\n\nहिंदी वेदाबेस (Hindi Vedabase) पर आपके द्वारा भेजा गया सुझाव (${slokaRef}) स्वीकृत (Approved) कर दिया गया है और अब वेबसाइट पर सभी पाठकों के लिए लाइव है।\n\n• ग्रंथ व श्लोक: ${slokaRef}\n• सुधार: ${fieldName}\n• स्थिति: स्वीकृत व लाइव (Approved & Live)\n\nश्लोक देखें:\n${directUrl}\n\nइस पावन सेवा के लिए आपका हार्दिक धन्यवाद! 🪔\n\n— हिंदी वेदाबेस (Hindi Vedabase)`;
+        const waMessage = `Hare Krishna ${name} ji! 🙏\n\nHindi Vedabase par aapka suggestion (${slokaRef}) approve ho gaya hai aur website par update ho chuka hai.\n\nVerse link:\n${directUrl}\n\nThank you so much for your contribution! 🙏\n— Hindi Vedabase`;
+
+        const emailSubject = `✅ Suggestion Approved: ${slokaRef} | Hindi Vedabase`;
+        const emailBody = `Hare Krishna ${name} ji! 🙏\n\nHindi Vedabase par aapka suggestion approve ho gaya hai aur website par live ho chuka hai.\n\n• Verse: ${slokaRef}\n• Field: ${fieldName}\n• Status: Approved & Live\n\nAap is link par check kar sakte hain:\n${directUrl}\n\nThank you so much for your contribution! 🙏\n\nRegards,\nHindi Vedabase Team`;
 
         if (isEmail) {
-          const subject = `✅ [Approved] हिंदी वेदाबेस: आपका सुझाव स्वीकृत हुआ — ${slokaRef}`;
-          const mailtoUrl = `mailto:${encodeURIComponent(contactRaw)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msgText)}`;
-          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contactRaw)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(msgText)}`;
+          const mailtoUrl = `mailto:${encodeURIComponent(contactRaw)}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contactRaw)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
           return {
             isEmail: true,
             contact: contactRaw,
-            subject,
-            msgText,
+            subject: emailSubject,
+            msgText: emailBody,
             mailtoUrl,
             gmailUrl
           };
         } else {
           const cleanPhone = contactRaw.replace(/[^0-9]/g, '');
           const normalizedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
-          const waUrl = `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(msgText)}`;
+          const waUrl = `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(waMessage)}`;
           return {
             isEmail: false,
             contact: contactRaw,
             cleanPhone: normalizedPhone,
-            msgText,
+            msgText: waMessage,
             waUrl
           };
         }
