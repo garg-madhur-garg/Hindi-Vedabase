@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="hi" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>हिन्दी वेदबेस | श्रीमद्भगवद्गीता, श्री ईशोपनिषद्, श्रीमद्भागवतम् एवं श्री चैतन्य-चरितामृत (श्रील प्रभुपाद)</title>
-  <meta name="description" content="श्रीमद्भगवद्गीता (700 श्लोक), श्री ईशोपनिषद् (19 मंत्र), श्रीमद्भागवतम् (18,000 श्लोक) एवं श्री चैतन्य-चरितामृत (62 अध्याय) - प्रामाणिक श्लोक, पदच्छेद, शब्दार्थ, हिन्दी अनुवाद एवं श्रील प्रभुपाद तात्पर्य सहित उच्च-गति सर्च योग्य वेदबेस">
-  
+  <title>हिन्दी वेदबेस | श्रीमद्भगवद्गीता, श्री ईशोपनिषद्, श्रीमद्भागवतम् एवं श्री चैतन्य-चरितामृत (श्रील प्रभुपाद)
+  </title>
+  <meta name="description"
+    content="श्रीमद्भगवद्गीता (700 श्लोक), श्री ईशोपनिषद् (19 मंत्र), श्रीमद्भागवतम् (18,000 श्लोक) एवं श्री चैतन्य-चरितामृत (62 अध्याय) - प्रामाणिक श्लोक, पदच्छेद, शब्दार्थ, हिन्दी अनुवाद एवं श्रील प्रभुपाद तात्पर्य सहित उच्च-गति सर्च योग्य वेदबेस">
+
   <!-- Main Stylesheet & PWA Manifest -->
   <link rel="stylesheet" href="css/main.css?v=3.80">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b0f19">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕉️</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕉️</text></svg>">
   <style>
     /* Completely hide scrollbars on verse strip while retaining smooth scrolling */
     .verse-strip-scroll {
@@ -19,6 +23,7 @@
       overflow-x: auto !important;
       overflow-y: hidden !important;
     }
+
     .verse-strip-scroll::-webkit-scrollbar {
       display: none !important;
       width: 0 !important;
@@ -28,17 +33,18 @@
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js').catch(() => { });
       });
     }
   </script>
 </head>
+
 <body>
 
   <!-- Header -->
   <header class="app-header">
     <div class="header-container">
-      
+
       <!-- Logo & Title -->
       <div class="logo-group" id="logoHome" style="cursor: pointer;">
         <img src="vedabase.ico" alt="Vedabase Logo" class="app-logo-icon" />
@@ -49,14 +55,15 @@
 
       <!-- Header Action Controls (Unified Right Toolbar) -->
       <div class="header-actions">
-        
+
         <!-- Search Icon Button -->
         <button class="btn-icon header-icon-btn" id="btnOpenSearch" title="Search verses or keywords (Ctrl + K)">
           <span>🔍</span>
         </button>
 
         <!-- Presentation Mode Button -->
-        <button class="btn-action btn-presentation" id="btnPresentationMode" title="Presentation Mode (Lectures / Classes)">
+        <button class="btn-action btn-presentation" id="btnPresentationMode"
+          title="Presentation Mode (Lectures / Classes)">
           <span>📽️</span>
           <span class="btn-label">Presentation Mode</span>
         </button>
@@ -73,7 +80,7 @@
 
   <!-- Main Container -->
   <main class="app-main">
-    
+
     <!-- Sidebar: Scriptures & Cantos Navigation -->
     <aside class="sidebar">
       <div class="sidebar-header">
@@ -81,7 +88,7 @@
           <span>📚 Scriptures</span>
         </div>
       </div>
-      
+
       <div class="scripture-collection" id="scriptureCollectionContainer">
         <!-- Scripture Item 1: Srimad Bhagavad Gita (Expandable) -->
         <div class="scripture-group active expanded" id="scriptureGroupBG">
@@ -95,7 +102,7 @@
             </div>
             <span class="scripture-arrow">▾</span>
           </button>
-          
+
           <!-- Chapters 1 to 18 List -->
           <ul class="canto-list" id="bgChapterListContainer">
             <!-- Generated dynamically via app.js -->
@@ -114,7 +121,7 @@
             </div>
             <span class="scripture-arrow">▾</span>
           </button>
-          
+
           <!-- Mantras List -->
           <ul class="canto-list" id="isoMantraListContainer">
             <!-- Generated dynamically via app.js -->
@@ -133,7 +140,7 @@
             </div>
             <span class="scripture-arrow">▾</span>
           </button>
-          
+
           <!-- Cantos 1 to 12 List -->
           <ul class="canto-list" id="cantoListContainer">
             <!-- Generated dynamically via app.js -->
@@ -152,7 +159,7 @@
             </div>
             <span class="scripture-arrow">▾</span>
           </button>
-          
+
           <!-- Lilas & Chapters List -->
           <ul class="canto-list" id="ccLilaListContainer">
             <!-- Generated dynamically via app.js -->
@@ -171,7 +178,7 @@
             </div>
             <span class="scripture-arrow">▾</span>
           </button>
-          
+
           <!-- Vaishnava Songs Navigation List -->
           <ul class="canto-list" id="vsSongListContainer">
             <!-- Generated dynamically via app.js -->
@@ -182,10 +189,10 @@
 
     <!-- Main Content & Reader Area -->
     <section class="content-area">
-      
+
       <!-- Main Sloka Card (Directly at Top - Zero Vertical Space Wasted) -->
       <article class="sloka-card" id="mainSlokaCard">
-        
+
         <!-- Sloka Card Header -->
         <div class="sloka-header">
           <div class="verse-badge-group">
@@ -226,14 +233,16 @@
             </button>
             <div class="vs-audio-progress-group">
               <span class="vs-audio-time" id="vsAudioCurrentTime">0:00</span>
-              <input type="range" class="vs-audio-seek-slider" id="vsAudioSeekSlider" min="0" max="100" value="0" step="0.1" title="Seek" />
+              <input type="range" class="vs-audio-seek-slider" id="vsAudioSeekSlider" min="0" max="100" value="0"
+                step="0.1" title="Seek" />
               <span class="vs-audio-time" id="vsAudioDuration">0:00</span>
             </div>
             <div class="vs-audio-volume-group">
               <button type="button" class="vs-audio-btn-vol" id="vsBtnAudioMute" title="Mute / Unmute">
                 <span id="vsVolIcon">🔊</span>
               </button>
-              <input type="range" class="vs-audio-vol-slider" id="vsAudioVolSlider" min="0" max="1" value="0.9" step="0.05" title="Volume" />
+              <input type="range" class="vs-audio-vol-slider" id="vsAudioVolSlider" min="0" max="1" value="0.9"
+                step="0.05" title="Volume" />
             </div>
           </div>
           <!-- Hidden Native Audio Element -->
@@ -263,7 +272,8 @@
           <div class="section-title">
             <span>✨</span>
             <span>Word-for-Word Meanings</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-left: auto;">(Click any word to see cross-scripture usage)</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-left: auto;">(Click
+              any word to see cross-scripture usage)</span>
           </div>
           <div class="word-chips-grid" id="wordChipsGrid">
             <!-- Dynamically populated chips -->
@@ -299,7 +309,7 @@
         <button class="nav-verse-btn" id="btnPrevVerse">
           <span>←</span>
           <span>Previous</span>
-          <span class="kbd-shortcut" style="margin-left: 0.35rem;">← Key</span>
+          <!-- <span class="kbd-shortcut" style="margin-left: 0.35rem;">← Key</span> -->
         </button>
 
         <span style="font-size: 0.85rem; color: var(--text-muted);" id="verseCounterStatus">1 / 1</span>
@@ -307,7 +317,7 @@
         <button class="nav-verse-btn" id="btnNextVerse">
           <span>Next</span>
           <span>→</span>
-          <span class="kbd-shortcut" style="margin-left: 0.35rem;">→ Key</span>
+          <!-- <span class="kbd-shortcut" style="margin-left: 0.35rem;">→ Key</span> -->
         </button>
       </nav>
 
@@ -327,13 +337,9 @@
       <div class="modal-body">
         <div class="search-input-group" style="margin-bottom: 1rem;">
           <span class="search-icon">🔍</span>
-          <input 
-            type="text" 
-            class="search-input" 
-            id="modalSearchInput" 
+          <input type="text" class="search-input" id="modalSearchInput"
             placeholder="Enter verse (e.g. 1.1.1, BG 2.13) or search keyword (e.g. krishna, भक्ति)..."
-            autocomplete="off"
-          >
+            autocomplete="off">
           <span class="kbd-shortcut" id="searchSpeedBadge">0 ms</span>
         </div>
 
@@ -362,88 +368,112 @@
 
       <div class="modal-body">
         <div style="display: flex; flex-direction: column; gap: 1.5rem; padding: 0.5rem 0;">
-          
+
           <!-- Card 1: My Custom Edits (Permanent Local Storage) -->
-          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 16px; padding: 1.6rem;">
-            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between;">
-              <span style="display: flex; align-items: center; gap: 0.6rem;"><span>✨</span> <span>मेरे सम्पादित श्लोक (My Custom Edits)</span></span>
-              <span id="customEditsCountBadge" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-gold); font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 9999px; font-weight: 700;">0 सम्पादित</span>
+          <div class="preview-box"
+            style="background: var(--bg-tertiary); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 16px; padding: 1.6rem;">
+            <h3
+              style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between;">
+              <span style="display: flex; align-items: center; gap: 0.6rem;"><span>✨</span> <span>मेरे सम्पादित श्लोक
+                  (My Custom Edits)</span></span>
+              <span id="customEditsCountBadge"
+                style="background: rgba(245, 158, 11, 0.2); color: var(--accent-gold); font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 9999px; font-weight: 700;">0
+                सम्पादित</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
-              जब भी आप किसी श्लोक को सम्पादित करते हैं, वह आपके ब्राउज़र में हमेशा के लिए सुरक्षित (Permanent) रहता है। आप केवल अपने सम्पादित श्लोकों का बैकअप अलग से भी डाउनलोड कर सकते हैं।
+              जब भी आप किसी श्लोक को सम्पादित करते हैं, वह आपके ब्राउज़र में हमेशा के लिए सुरक्षित (Permanent) रहता है।
+              आप केवल अपने सम्पादित श्लोकों का बैकअप अलग से भी डाउनलोड कर सकते हैं।
             </p>
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-              <button type="button" class="btn-action btn-presentation" id="btnExportCustomEdits" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+              <button type="button" class="btn-action btn-presentation" id="btnExportCustomEdits"
+                style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
                 📥 केवल मेरे सम्पादित श्लोक डाउनलोड करें (.json)
               </button>
-              <button type="button" class="btn-action" id="btnClearAllCustomEdits" style="font-size: 0.9rem; padding: 0.55rem 1.15rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+              <button type="button" class="btn-action" id="btnClearAllCustomEdits"
+                style="font-size: 0.9rem; padding: 0.55rem 1.15rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
                 🗑️ सभी सम्पादित श्लोक रीसेट करें (Revert All to JSON)
               </button>
             </div>
           </div>
 
           <!-- Card 2: Download Bhagavad Gita JSON (bhagavad-gita.json) -->
-          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
-            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+          <div class="preview-box"
+            style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3
+              style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>🕉️</span> <span>Bhagavad-gītā JSON Export</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
               Download complete 18 chapters and 700 verses in <code>bhagavad-gita.json</code>.
             </p>
-            <button type="button" class="btn-action btn-presentation" id="btnExportBgJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+            <button type="button" class="btn-action btn-presentation" id="btnExportBgJSON"
+              style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
               📥 Download Complete Bhagavad-gītā JSON (.json)
             </button>
           </div>
 
           <!-- Card 3: Download Sri Isopanisad JSON (isopanisad.json) -->
-          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
-            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+          <div class="preview-box"
+            style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3
+              style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>🪔</span> <span>Śrī Īśopaniṣad JSON Export</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
               Download Invocation and all 18 mantras in <code>isopanisad.json</code>.
             </p>
-            <button type="button" class="btn-action btn-presentation" id="btnExportIsoJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+            <button type="button" class="btn-action btn-presentation" id="btnExportIsoJSON"
+              style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
               📥 Download Complete Śrī Īśopaniṣad JSON (.json)
             </button>
           </div>
 
           <!-- Card 4: Download Sri Caitanya-caritamrta JSON (chaitanya-charitamrita.json) -->
-          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
-            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+          <div class="preview-box"
+            style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3
+              style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>🌺</span> <span>Śrī Caitanya-caritāmṛta JSON Export</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
               Download complete Adi, Madhya, and Antya Lilas in <code>chaitanya-charitamrita.json</code>.
             </p>
-            <button type="button" class="btn-action btn-presentation" id="btnExportCcJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+            <button type="button" class="btn-action btn-presentation" id="btnExportCcJSON"
+              style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
               📥 Download Complete Śrī Caitanya-caritāmṛta JSON (.json)
             </button>
           </div>
 
           <!-- Card 5: Download Vaishnava Songs JSON (vaishnava-songs.json) -->
-          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
-            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+          <div class="preview-box"
+            style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3
+              style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>🎵</span> <span>Songs of the Vaiṣṇava Ācāryas JSON Export</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
               Download complete collection of 2,257 songs in <code>vaishnava-songs.json</code>.
             </p>
-            <button type="button" class="btn-action btn-presentation" id="btnExportVsJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+            <button type="button" class="btn-action btn-presentation" id="btnExportVsJSON"
+              style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
               📥 Download Complete Vaishnava Songs JSON (.json)
             </button>
           </div>
 
           <!-- Card 6: Download Specific Canto JSON (canto-1.json to canto-12.json) -->
-          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
-            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+          <div class="preview-box"
+            style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3
+              style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>📖</span> <span>Śrīmad-Bhāgavatam Canto-wise JSON Export</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.1rem; line-height: 1.55;">
-              जिस स्कन्ध में आपने सम्पादन किया है, केवल उसका <code>canto-X.json</code> डाउनलोड करके <code>data/srimad-bhagavatam/</code> फोल्डर में सीधे रिप्लेस (Replace) कर सकते हैं।
+              जिस स्कन्ध में आपने सम्पादन किया है, केवल उसका <code>canto-X.json</code> डाउनलोड करके
+              <code>data/srimad-bhagavatam/</code> फोल्डर में सीधे रिप्लेस (Replace) कर सकते हैं।
             </p>
             <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-              <select id="exportCantoSelect" style="background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.55rem 0.85rem; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer;">
+              <select id="exportCantoSelect"
+                style="background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.55rem 0.85rem; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer;">
                 <option value="1">स्कन्ध 1 (Canto 1 - 808 श्लोक)</option>
                 <option value="2">स्कन्ध 2 (Canto 2 - 393 श्लोक)</option>
                 <option value="3">स्कन्ध 3 (Canto 3 - 1416 श्लोक)</option>
@@ -457,35 +487,43 @@
                 <option value="11">स्कन्ध 11 (Canto 11 - 1369 श्लोक)</option>
                 <option value="12">स्कन्ध 12 (Canto 12 - 550 श्लोक)</option>
               </select>
-              <button type="button" class="btn-action btn-presentation" id="btnExportCantoJSON" style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
+              <button type="button" class="btn-action btn-presentation" id="btnExportCantoJSON"
+                style="font-size: 0.9rem; padding: 0.55rem 1.15rem;">
                 📥 Canto JSON डाउनलोड करें
               </button>
             </div>
           </div>
 
           <!-- Card 4: Download Complete Database Backup -->
-          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
-            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+          <div class="preview-box"
+            style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3
+              style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>💾</span> <span>सम्पूर्ण वेदबेस डेटाबेस बैकअप (Master Backup)</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.55;">
               श्रीमद्भगवद्गीता एवं श्रीमद्भागवतम् के समस्त श्लोकों का एक एकल JSON बैकअप फाइल डाउनलोड करें।
             </p>
-            <button type="button" class="btn-action btn-primary" id="btnExportJSON" style="font-size: 0.95rem; padding: 0.65rem 1.35rem;">
+            <button type="button" class="btn-action btn-primary" id="btnExportJSON"
+              style="font-size: 0.95rem; padding: 0.65rem 1.35rem;">
               📥 सम्पूर्ण डेटाबेस बैकअप डाउनलोड करें (.json)
             </button>
           </div>
 
           <!-- Card 3: Restore Database from Backup File -->
-          <div class="preview-box" style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
-            <h3 style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
+          <div class="preview-box"
+            style="background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 1.6rem;">
+            <h3
+              style="color: var(--accent-gold); font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem;">
               <span>📂</span> <span>बैकअप फाइल से डेटा रीस्टोर करें</span>
             </h3>
             <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.55;">
               पहले से सहेजी गई JSON बैकअप फाइल को चुनें और पूरे ऐप में सभी श्लोक स्वतः रीस्टोर करें।
             </p>
-            <input type="file" id="importJSONFile" accept=".json" style="margin-bottom: 0.75rem; color: var(--text-primary); font-size: 0.925rem;">
-            <div id="importProgressText" style="font-size: 0.925rem; color: var(--accent-gold); font-weight: 600; margin-top: 0.5rem;"></div>
+            <input type="file" id="importJSONFile" accept=".json"
+              style="margin-bottom: 0.75rem; color: var(--text-primary); font-size: 0.925rem;">
+            <div id="importProgressText"
+              style="font-size: 0.925rem; color: var(--accent-gold); font-weight: 600; margin-top: 0.5rem;"></div>
           </div>
 
         </div>
@@ -505,36 +543,49 @@
       <div class="modal-body">
         <form id="editVerseForm">
           <input type="hidden" id="editVerseKey" />
-          
+
           <!-- Verse Location Chips Bar (For SB, BG, ISO, CC) -->
           <div class="edit-meta-chips" id="editSlokaChips" style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
-            <div class="edit-chip" id="editCantoChipBox" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+            <div class="edit-chip" id="editCantoChipBox"
+              style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
               <span>📖 Canto:</span>
-              <span id="editCantoBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">1</span>
+              <span id="editCantoBadge" class="edit-chip-val"
+                style="font-weight: 700; color: var(--accent-gold);">1</span>
             </div>
-            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+            <div class="edit-chip"
+              style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
               <span>📑 Chapter:</span>
-              <span id="editChapterBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">1</span>
+              <span id="editChapterBadge" class="edit-chip-val"
+                style="font-weight: 700; color: var(--accent-gold);">1</span>
             </div>
-            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+            <div class="edit-chip"
+              style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
               <span>🔢 Verse:</span>
-              <span id="editVerseBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">1</span>
+              <span id="editVerseBadge" class="edit-chip-val"
+                style="font-weight: 700; color: var(--accent-gold);">1</span>
             </div>
           </div>
 
           <!-- Song Location Chips Bar (For Vaishnava Songs) -->
-          <div class="edit-meta-chips" id="editSongChips" style="display: none; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
-            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+          <div class="edit-meta-chips" id="editSongChips"
+            style="display: none; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <div class="edit-chip"
+              style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
               <span>🎵 Song No:</span>
-              <span id="editSongNumBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">#1</span>
+              <span id="editSongNumBadge" class="edit-chip-val"
+                style="font-weight: 700; color: var(--accent-gold);">#1</span>
             </div>
-            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+            <div class="edit-chip"
+              style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
               <span>✍️ Author:</span>
-              <span id="editSongAuthorBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">-</span>
+              <span id="editSongAuthorBadge" class="edit-chip-val"
+                style="font-weight: 700; color: var(--accent-gold);">-</span>
             </div>
-            <div class="edit-chip" style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
+            <div class="edit-chip"
+              style="background: var(--bg-tertiary); padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem;">
               <span>📚 Source Book:</span>
-              <span id="editSongBookBadge" class="edit-chip-val" style="font-weight: 700; color: var(--accent-gold);">-</span>
+              <span id="editSongBookBadge" class="edit-chip-val"
+                style="font-weight: 700; color: var(--accent-gold);">-</span>
             </div>
           </div>
 
@@ -542,22 +593,28 @@
           <div id="editVsMetaFields" style="display: none; margin-bottom: 1rem;">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
               <div class="form-group">
-                <label class="form-label" for="editVsTitle" style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
+                <label class="form-label" for="editVsTitle"
+                  style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
                   <span>🏷️ Song Title:</span>
                 </label>
-                <input type="text" id="editVsTitle" class="form-input" style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
+                <input type="text" id="editVsTitle" class="form-input"
+                  style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
               </div>
               <div class="form-group">
-                <label class="form-label" for="editVsAuthor" style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
+                <label class="form-label" for="editVsAuthor"
+                  style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
                   <span>✍️ Author / Poet:</span>
                 </label>
-                <input type="text" id="editVsAuthor" class="form-input" style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
+                <input type="text" id="editVsAuthor" class="form-input"
+                  style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
               </div>
               <div class="form-group">
-                <label class="form-label" for="editVsBook" style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
+                <label class="form-label" for="editVsBook"
+                  style="display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.85rem; color: var(--accent-gold);">
                   <span>📚 Source Book:</span>
                 </label>
-                <input type="text" id="editVsBook" class="form-input" style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
+                <input type="text" id="editVsBook" class="form-input"
+                  style="width: 100%; padding: 0.45rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);" />
               </div>
             </div>
           </div>
@@ -570,72 +627,98 @@
 
           <!-- Sanskrit / Song Lyrics Field -->
           <div class="form-group" style="margin-bottom: 1rem;">
-            <label class="form-label" for="editSanskrit" id="editSanskritLabel" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
+            <label class="form-label" for="editSanskrit" id="editSanskritLabel"
+              style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>📜 Sanskrit Devanagari / Verse Text:</span>
             </label>
-            <textarea id="editSanskrit" class="form-textarea edit-textarea sanskrit-field" rows="6" style="width: 100%; font-family: var(--font-sanskrit);" placeholder="Sanskrit verse / song lyrics stanzas here..."></textarea>
+            <textarea id="editSanskrit" class="form-textarea edit-textarea sanskrit-field" rows="6"
+              style="width: 100%; font-family: var(--font-sanskrit);"
+              placeholder="Sanskrit verse / song lyrics stanzas here..."></textarea>
           </div>
 
           <!-- Vaishnava Songs Dedicated IAST / Roman Lyrics Field -->
           <div class="form-group" id="editVsIastGroup" style="margin-bottom: 1rem; display: none;">
-            <label class="form-label" for="editVsIast" id="editVsIastLabel" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
+            <label class="form-label" for="editVsIast" id="editVsIastLabel"
+              style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>🔤 Roman / IAST Lyrics:</span>
             </label>
-            <textarea id="editVsIast" class="form-textarea edit-textarea" rows="5" style="width: 100%; font-family: monospace; font-size: 0.9rem;" placeholder="Roman IAST lyrics stanzas..."></textarea>
+            <textarea id="editVsIast" class="form-textarea edit-textarea" rows="5"
+              style="width: 100%; font-family: monospace; font-size: 0.9rem;"
+              placeholder="Roman IAST lyrics stanzas..."></textarea>
           </div>
 
           <!-- Word-to-Word Field -->
           <div class="form-group" id="editWordToWordGroup" style="margin-bottom: 1rem;">
-            <label class="form-label" for="editWordToWord" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
+            <label class="form-label" for="editWordToWord"
+              style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>✨ Word-for-Word Meanings:</span>
             </label>
-            <textarea id="editWordToWord" class="form-textarea edit-textarea" rows="4" style="width: 100%;" placeholder="व्यासः — व्यास ने;&#10;इति — इस प्रकार;&#10;सम्प्रश्न — पूर्ण जिज्ञासा;"></textarea>
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">💡 Format each word as <strong>"word — meaning;"</strong></div>
+            <textarea id="editWordToWord" class="form-textarea edit-textarea" rows="4" style="width: 100%;"
+              placeholder="व्यासः — व्यास ने;&#10;इति — इस प्रकार;&#10;सम्प्रश्न — पूर्ण जिज्ञासा;"></textarea>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">💡 Format each word as
+              <strong>"word — meaning;"</strong>
+            </div>
           </div>
 
           <!-- Translation Field -->
           <div class="form-group" style="margin-bottom: 1rem;">
-            <label class="form-label" for="editTranslation" id="editTranslationLabel" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
+            <label class="form-label" for="editTranslation" id="editTranslationLabel"
+              style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>📖 Hindi Translation:</span>
             </label>
-            <textarea id="editTranslation" class="form-textarea edit-textarea" rows="5" style="width: 100%;" placeholder="Hindi translation stanzas here..."></textarea>
+            <textarea id="editTranslation" class="form-textarea edit-textarea" rows="5" style="width: 100%;"
+              placeholder="Hindi translation stanzas here..."></textarea>
           </div>
 
           <!-- Purport / English Translation Field -->
           <div class="form-group" style="margin-bottom: 1rem;">
-            <label class="form-label" for="editPurport" id="editPurportLabel" style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
+            <label class="form-label" for="editPurport" id="editPurportLabel"
+              style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--accent-gold);">
               <span>🪔 Srila Prabhupada Purport:</span>
             </label>
-            <textarea id="editPurport" class="form-textarea edit-textarea" rows="6" style="width: 100%;" placeholder="Detailed purport or commentary here..."></textarea>
+            <textarea id="editPurport" class="form-textarea edit-textarea" rows="6" style="width: 100%;"
+              placeholder="Detailed purport or commentary here..."></textarea>
           </div>
 
           <!-- Suggester Details (Name, Mobile, What Changed) -->
-          <div id="suggesterDetailsGroup" style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; background: var(--bg-tertiary); padding: 0.85rem; border-radius: 10px; border: 1px solid var(--border-color);">
+          <div id="suggesterDetailsGroup"
+            style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; background: var(--bg-tertiary); padding: 0.85rem; border-radius: 10px; border: 1px solid var(--border-color);">
             <div style="grid-template-columns: 1fr 1fr; display: grid; gap: 0.75rem;">
               <div>
-                <label class="form-label" style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
+                <label class="form-label"
+                  style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
                   <span>👤 Your Name (Optional):</span>
                 </label>
-                <input type="text" id="editSuggesterName" class="form-input" style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);" placeholder="e.g. Your Name (Optional)">
+                <input type="text" id="editSuggesterName" class="form-input"
+                  style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);"
+                  placeholder="e.g. Your Name (Optional)">
               </div>
               <div>
-                <label class="form-label" style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
+                <label class="form-label"
+                  style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
                   <span>📱 WhatsApp / Mobile No. (Optional):</span>
                 </label>
-                <input type="tel" id="editSuggesterPhone" class="form-input" style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);" placeholder="e.g. 9876543210 (Optional)">
+                <input type="tel" id="editSuggesterPhone" class="form-input"
+                  style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);"
+                  placeholder="e.g. 9876543210 (Optional)">
               </div>
             </div>
             <div>
-              <label class="form-label" style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
+              <label class="form-label"
+                style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
                 <span>🔍 What change was made?:</span>
               </label>
-              <input type="text" id="editSuggesterNotes" class="form-input" style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);" placeholder="e.g. Fixed typo in line 2, corrected word meaning">
+              <input type="text" id="editSuggesterNotes" class="form-input"
+                style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);"
+                placeholder="e.g. Fixed typo in line 2, corrected word meaning">
             </div>
           </div>
 
           <!-- Footer Action Buttons -->
-          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; margin-top: 1.25rem;">
-            <button type="button" class="btn-action" style="background: var(--bg-tertiary); color: var(--text-secondary);" id="btnCancelEdit">Cancel</button>
+          <div
+            style="display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; margin-top: 1.25rem;">
+            <button type="button" class="btn-action"
+              style="background: var(--bg-tertiary); color: var(--text-secondary);" id="btnCancelEdit">Cancel</button>
             <button type="submit" class="btn-action btn-primary" id="btnSaveEditedVerse">🙏 Submit Suggestion</button>
           </div>
         </form>
@@ -648,14 +731,15 @@
        ========================================================================== -->
   <div class="presentation-overlay" id="presentationOverlay">
     <div class="presentation-container">
-      
+
       <!-- Subtle Floating Hamburger Trigger in Top-Right Corner (Non-intrusive) -->
       <button class="pres-hamburger-trigger" id="btnPresMenuToggle" title="Toggle Menu (M)">
         <span class="hamburger-icon" id="presMenuIcon">☰</span>
       </button>
 
       <!-- Vaishnava Songs Dedicated Translation & Script Trigger (Positioned directly under Hamburger) -->
-      <button class="pres-vs-lang-trigger" id="btnPresVsLangToggle" onclick="window.app.togglePresVsLangPopover()" title="Translation & Script Menu">
+      <button class="pres-vs-lang-trigger" id="btnPresVsLangToggle" onclick="window.app.togglePresVsLangPopover()"
+        title="Translation & Script Menu">
         <span class="pres-lang-btn-text">अ/A</span>
       </button>
 
@@ -663,12 +747,15 @@
       <div class="pres-vs-popover" id="presVsLangPopover" style="display: none;">
         <div class="pres-popover-title">🌐 Script</div>
         <div class="pres-popover-row">
-          <button type="button" class="pres-vs-script-btn active" id="presVsScriptDeva" onclick="window.app.setVsScriptMode('devanagari')" title="Devanagari Script">🕉️ Devanagari</button>
-          <button type="button" class="pres-vs-script-btn" id="presVsScriptIast" onclick="window.app.setVsScriptMode('iast')" title="English / IAST Roman">🔤 Eng</button>
+          <button type="button" class="pres-vs-script-btn active" id="presVsScriptDeva"
+            onclick="window.app.setVsScriptMode('devanagari')" title="Devanagari Script">🕉️ Devanagari</button>
+          <button type="button" class="pres-vs-script-btn" id="presVsScriptIast"
+            onclick="window.app.setVsScriptMode('iast')" title="English / IAST Roman">🔤 Eng</button>
         </div>
         <div class="pres-popover-divider"></div>
         <div class="pres-popover-title">📖 Translation</div>
-        <button type="button" class="pres-popover-action-btn" id="presVsTransBtn" onclick="window.app.toggleAllVsTranslations(this)" title="Toggle all translations">
+        <button type="button" class="pres-popover-action-btn" id="presVsTransBtn"
+          onclick="window.app.toggleAllVsTranslations(this)" title="Toggle all translations">
           <span class="chip-dot" id="presVsTransDot">●</span>
           <span id="presVsTransBtnLabel">Toggle Translation</span>
         </button>
@@ -686,23 +773,28 @@
 
           <!-- Compact Multi-Toggle Chips (Details, Verse, Word Meanings, Translation, Purport) -->
           <div class="pres-toggle-group" title="Toggle visible sections">
-            <button type="button" class="pres-toggle-chip active" id="togglePresHeaderDetails" data-section="headerDetails" title="Toggle Header Details">
+            <button type="button" class="pres-toggle-chip active" id="togglePresHeaderDetails"
+              data-section="headerDetails" title="Toggle Header Details">
               <span class="chip-dot">●</span>
               <span>Details</span>
             </button>
-            <button type="button" class="pres-toggle-chip active" id="togglePresSanskrit" data-section="sanskrit" title="Toggle Verse">
+            <button type="button" class="pres-toggle-chip active" id="togglePresSanskrit" data-section="sanskrit"
+              title="Toggle Verse">
               <span class="chip-dot">●</span>
               <span>Verse</span>
             </button>
-            <button type="button" class="pres-toggle-chip active" id="togglePresWords" data-section="words" title="Toggle Word Meanings">
+            <button type="button" class="pres-toggle-chip active" id="togglePresWords" data-section="words"
+              title="Toggle Word Meanings">
               <span class="chip-dot">●</span>
               <span>Word Meanings</span>
             </button>
-            <button type="button" class="pres-toggle-chip active" id="togglePresTranslation" data-section="translation" title="Toggle Translation">
+            <button type="button" class="pres-toggle-chip active" id="togglePresTranslation" data-section="translation"
+              title="Toggle Translation">
               <span class="chip-dot">●</span>
               <span>Translation</span>
             </button>
-            <button type="button" class="pres-toggle-chip active" id="togglePresPurport" data-section="purport" title="Toggle Purport">
+            <button type="button" class="pres-toggle-chip active" id="togglePresPurport" data-section="purport"
+              title="Toggle Purport">
               <span class="chip-dot">●</span>
               <span>Purport</span>
             </button>
@@ -717,17 +809,19 @@
           <!-- Theme & Fullscreen -->
           <button class="pres-icon-btn" id="btnPresTheme" title="Toggle Theme">🌓</button>
           <button class="pres-icon-btn" id="btnPresFullscreen" title="Toggle Fullscreen (F11)">⛶</button>
-          <button class="pres-icon-btn btn-exit-pres" id="btnClosePresentation" title="Exit Presentation (Esc)">✕</button>
+          <button class="pres-icon-btn btn-exit-pres" id="btnClosePresentation"
+            title="Exit Presentation (Esc)">✕</button>
         </div>
       </div>
 
       <!-- Presentation Slide Stage (Scrolls naturally from top, no internal scrollbars) -->
       <div class="presentation-stage" id="presentationStage">
-        
+
         <!-- Presentation Slide Top Header Line -->
         <div class="pres-slide-header" id="presSlideHeader">
           <div class="pres-slide-badge-row">
-            <span class="pres-slide-badge" id="presSlideBadge" title="Verse Number (Click to toggle details)">SB 1.1.1</span>
+            <span class="pres-slide-badge" id="presSlideBadge" title="Verse Number (Click to toggle details)">SB
+              1.1.1</span>
             <button type="button" class="pres-slide-toggle-btn" id="btnTogglePresDetails" title="Toggle Details">
               <span id="presDetailsToggleIcon">▴</span>
             </button>
@@ -796,4 +890,5 @@
   <script src="js/firebase-sync.js?v=3.75"></script>
   <script src="js/app.js?v=3.75"></script>
 </body>
+
 </html>
