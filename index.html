@@ -600,13 +600,34 @@
             <textarea id="editPurport" class="form-textarea edit-textarea" rows="6" style="width: 100%;" placeholder="विस्तृत तात्पर्य या अंग्रेजी अनुवाद..."></textarea>
           </div>
 
-          <!-- Footer Action Buttons -->
-          <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap;">
-            <button type="button" class="btn-action" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 0.875rem;" id="btnRevertSingleVerse">↩️ मूल JSON डेटा रीसेट करें (Revert)</button>
-            <div style="display: flex; gap: 0.75rem;">
-              <button type="button" class="btn-action" style="background: var(--bg-tertiary); color: var(--text-secondary);" id="btnCancelEdit">रद्द करें</button>
-              <button type="submit" class="btn-action btn-primary" id="btnSaveEditedVerse">💾 सुरक्षित करें (Save Changes)</button>
+          <!-- Suggester Details (Name, Mobile, What Changed) -->
+          <div id="suggesterDetailsGroup" style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; background: var(--bg-tertiary); padding: 0.85rem; border-radius: 10px; border: 1px solid var(--border-color);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div>
+                <label class="form-label" style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
+                  <span>👤 आपका नाम (Your Name):</span>
+                </label>
+                <input type="text" id="editSuggesterName" class="form-input" style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);" placeholder="उदा. जिज्ञासु पाठक / भक्त (वैकल्पिक)">
+              </div>
+              <div>
+                <label class="form-label" style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
+                  <span>📱 मोबाइल नं. / WhatsApp (वैकल्पिक):</span>
+                </label>
+                <input type="tel" id="editSuggesterPhone" class="form-input" style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);" placeholder="उदा. 9876543210 (सम्पर्क हेतु)">
+              </div>
             </div>
+            <div>
+              <label class="form-label" style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--accent-gold); margin-bottom: 0.3rem;">
+                <span>🔍 क्या बदलाव किया है? (What change was made?):</span>
+              </label>
+              <input type="text" id="editSuggesterNotes" class="form-input" style="width: 100%; padding: 0.45rem 0.65rem; font-size: 0.85rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary);" placeholder="उदा. दूसरी पंक्ति में वर्तनी सुधार, शब्द का अर्थ ठीक किया">
+            </div>
+          </div>
+
+          <!-- Footer Action Buttons -->
+          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; margin-top: 1.25rem;">
+            <button type="button" class="btn-action" style="background: var(--bg-tertiary); color: var(--text-secondary);" id="btnCancelEdit">रद्द करें</button>
+            <button type="submit" class="btn-action btn-primary" id="btnSaveEditedVerse">🙏 सुझाव सबमिट करें (Submit Suggestion)</button>
           </div>
         </form>
       </div>
@@ -760,6 +781,10 @@
   <script src="js/vs-hindi-raw.js?v=3.74"></script>
   <script src="js/vs-translations-hindi.js?v=3.74"></script>
   <script src="js/search.js?v=3.74"></script>
-  <script src="js/app.js?v=3.74"></script>
+  <!-- Firebase SDKs & Cloud Sync Engine -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-sync.js?v=3.75"></script>
+  <script src="js/app.js?v=3.75"></script>
 </body>
 </html>

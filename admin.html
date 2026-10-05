@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛡️ व्यवस्थापक समीक्षा पोर्टल | हिन्दी वेदबेस (Admin Portal)</title>
+  <link rel="icon" type="image/x-icon" href="vedabase.ico">
+  <link rel="stylesheet" href="css/main.css?v=3.75">
+  <style>
+    body {
+      background: var(--bg-primary, #0f172a);
+      color: var(--text-primary, #f8fafc);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .admin-navbar {
+      background: var(--bg-secondary, #1e293b);
+      border-bottom: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--accent-gold, #f59e0b);
+    }
+    .admin-container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1.25rem 4rem;
+    }
+    .auth-card {
+      background: var(--bg-secondary, #1e293b);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      max-width: 420px;
+      margin: 4rem auto;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    .tabs-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-secondary, #94a3b8);
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      color: var(--accent-gold, #f59e0b);
+      border-bottom-color: var(--accent-gold, #f59e0b);
+    }
+    .tab-badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--accent-gold, #f59e0b);
+      font-weight: 700;
+    }
+    .suggestion-card {
+      background: var(--bg-secondary, #1e293b);
+      border: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 14px;
+      padding: 1.35rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .suggestion-card:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+    .sloka-badge {
+      background: var(--accent-gold, #f59e0b);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .field-tag {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      font-size: 0.8rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+      background: var(--bg-tertiary, #0f172a);
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    }
+    @media (max-width: 768px) {
+      .diff-grid { grid-template-columns: 1fr; }
+    }
+    .diff-box {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 0.65rem;
+      border-radius: 8px;
+    }
+    .diff-old {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+    .diff-new {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #86efac;
+    }
+    .toast-msg {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid var(--accent-gold, #f59e0b);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      font-weight: 600;
+      animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Admin Navbar -->
+  <header class="admin-navbar">
+    <div class="admin-brand">
+      <span>🛡️ हिन्दी वेदबेस व्यवस्थापक</span>
+      <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 0.15rem 0.5rem; border-radius: 9999px; border: 1px solid rgba(34, 197, 94, 0.3);">
+        🟢 Cloud Live
+      </span>
+    </div>
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+      <a href="index.html" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
+        📖 वेदबेस मुख्य पृष्ठ
+      </a>
+      <button id="btnChangePin" style="background: transparent; color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+        🔑 पिन बदलें
+      </button>
+      <button id="btnLogout" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+        लॉगआउट
+      </button>
+    </div>
+  </header>
+
+  <!-- Auth Screen (PIN Lock) -->
+  <div id="authScreen" class="admin-container" style="display: none;">
+    <div class="auth-card">
+      <div style="font-size: 2.75rem; margin-bottom: 0.75rem;">🔐</div>
+      <h2 style="margin: 0 0 0.5rem 0; font-size: 1.4rem; color: var(--accent-gold);">व्यवस्थापक सत्यापन (Admin PIN)</h2>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        सुधार सुझावों की समीक्षा हेतु अपना पिन दर्ज करें।
+      </p>
+      <input type="password" id="inputPin" style="width: 80%; padding: 0.65rem 1rem; font-size: 1.1rem; text-align: center; background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 8px; color: var(--text-primary); letter-spacing: 4px; margin-bottom: 1rem;" placeholder="••••" autofocus>
+      <div id="pinError" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 1rem; display: none;">गलत पिन! पुनः प्रयास करें। (डिफ़ॉल्ट: 108)</div>
+      <button id="btnUnlock" style="width: 85%; padding: 0.75rem; background: var(--accent-gold); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
+        🔓 पोर्टल खोलें
+      </button>
+      <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);">
+        डिफ़ॉल्ट पिन: <strong>108</strong> (पोर्टल के अंदर से बदल सकते हैं)
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard -->
+  <main id="dashboardScreen" class="admin-container" style="display: none;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="font-size: 1.6rem; margin: 0 0 0.35rem 0; color: var(--text-primary);">पाठक सुधार सुझाव समीक्षा</h1>
+        <div style="color: var(--text-secondary); font-size: 0.9rem;">
+          स्वीकृत (Approve) किया गया सुझाव बिना पेज रीफ़्रेश किए सभी यूज़र्स के लिए तुरंत लाइव हो जाता है।
+        </div>
+      </div>
+      <button id="btnRefresh" style="display: flex; align-items: center; gap: 0.4rem; background: var(--bg-secondary); color: var(--accent-gold); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+        🔄 रिफ्रेश
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" id="tabPending">
+        <span>⏳ प्रतीक्षित सुझाव (Pending)</span>
+        <span class="tab-badge" id="badgePendingCount">0</span>
+      </button>
+      <button class="tab-btn" id="tabApproved">
+        <span>✅ स्वीकृत इतिहास (Live Approved)</span>
+        <span class="tab-badge" id="badgeApprovedCount" style="background: rgba(34, 197, 94, 0.2); color: #4ade80;">0</span>
+      </button>
+      <button class="tab-btn" id="tabRejected">
+        <span>❌ अस्वीकृत (Rejected)</span>
+        <span class="tab-badge" id="badgeRejectedCount" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">0</span>
+      </button>
+    </div>
+
+    <!-- Cards Container -->
+    <div id="cardsList">
+      <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+        क्लाउड से डेटा लोड हो रहा है...
+      </div>
+    </div>
+
+  </main>
+
+  <div id="toastArea"></div>
+
+  <!-- Firebase Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-sync.js?v=3.75"></script>
+
+  <script>
+    (function() {
+      'use strict';
+
+      let currentTab = 'pending';
+      let allSuggestions = [];
+
+      function getSavedPin() {
+        return localStorage.getItem('vedabase_admin_pin') || '108';
+      }
+
+      function showToast(msg) {
+        const area = document.getElementById('toastArea');
+        const t = document.createElement('div');
+        t.className = 'toast-msg';
+        t.textContent = msg;
+        area.appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+      }
+
+      // Check PIN
+      function checkAuth() {
+        const isAuthed = sessionStorage.getItem('vedabase_admin_authed') === 'true';
+        if (isAuthed) {
+          document.getElementById('authScreen').style.display = 'none';
+          document.getElementById('dashboardScreen').style.display = 'block';
+          loadData();
+        } else {
+          document.getElementById('authScreen').style.display = 'block';
+          document.getElementById('dashboardScreen').style.display = 'none';
+          document.getElementById('inputPin').focus();
+        }
+      }
+
+      document.getElementById('btnUnlock').addEventListener('click', () => {
+        const val = document.getElementById('inputPin').value.trim();
+        if (val === getSavedPin()) {
+          sessionStorage.setItem('vedabase_admin_authed', 'true');
+          document.getElementById('pinError').style.display = 'none';
+          checkAuth();
+          showToast('🔓 सत्यापन सफल! स्वागत है।');
+        } else {
+          document.getElementById('pinError').style.display = 'block';
+        }
+      });
+
+      document.getElementById('inputPin').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById('btnUnlock').click();
+      });
+
+      document.getElementById('btnLogout').addEventListener('click', () => {
+        sessionStorage.removeItem('vedabase_admin_authed');
+        checkAuth();
+        showToast('सत्र समाप्त हुआ।');
+      });
+
+      document.getElementById('btnChangePin').addEventListener('click', () => {
+        const current = prompt('वर्तमान व्यवस्थापक पिन दर्ज करें:');
+        if (current !== getSavedPin()) {
+          alert('वर्तमान पिन गलत है!');
+          return;
+        }
+        const newPin = prompt('नया व्यवस्थापक पिन दर्ज करें (कम से कम 3 अंक):');
+        if (newPin && newPin.trim().length >= 3) {
+          localStorage.setItem('vedabase_admin_pin', newPin.trim());
+          alert('✅ पिन सफलतापूर्वक बदल दिया गया!');
+        }
+      });
+
+      // Tabs Switch
+      document.getElementById('tabPending').addEventListener('click', () => switchTab('pending'));
+      document.getElementById('tabApproved').addEventListener('click', () => switchTab('approved'));
+      document.getElementById('tabRejected').addEventListener('click', () => switchTab('rejected'));
+      document.getElementById('btnRefresh').addEventListener('click', loadData);
+
+      function switchTab(tab) {
+        currentTab = tab;
+        ['tabPending', 'tabApproved', 'tabRejected'].forEach(id => {
+          document.getElementById(id).classList.remove('active');
+        });
+        if (tab === 'pending') document.getElementById('tabPending').classList.add('active');
+        if (tab === 'approved') document.getElementById('tabApproved').classList.add('active');
+        if (tab === 'rejected') document.getElementById('tabRejected').classList.add('active');
+        renderCards();
+      }
+
+      // Fetch from Firestore
+      async function loadData() {
+        const container = document.getElementById('cardsList');
+        container.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--accent-gold);">📡 क्लाउड से सुझाव लोड हो रहे हैं...</div>';
+
+        try {
+          if (!window.vedabaseFirebase || !window.vedabaseFirebase.db) {
+            await window.vedabaseFirebase.init();
+          }
+          const snapshot = await window.vedabaseFirebase.db.collection('vedabase_suggestions').get();
+          allSuggestions = [];
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            data._docId = doc.id;
+            allSuggestions.push(data);
+          });
+
+          // Sort by creation / id descending
+          allSuggestions.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
+
+          updateBadges();
+          renderCards();
+        } catch (err) {
+          container.innerHTML = `<div style="text-align: center; padding: 2rem; color: #ef4444;">त्रुटि: ${err.message}</div>`;
+        }
+      }
+
+      function updateBadges() {
+        const pendingCount = allSuggestions.filter(s => (s.status || 'pending') === 'pending').length;
+        const approvedCount = allSuggestions.filter(s => s.status === 'approved').length;
+        const rejectedCount = allSuggestions.filter(s => s.status === 'rejected').length;
+
+        document.getElementById('badgePendingCount').textContent = pendingCount;
+        document.getElementById('badgeApprovedCount').textContent = approvedCount;
+        document.getElementById('badgeRejectedCount').textContent = rejectedCount;
+      }
+
+      function renderCards() {
+        const container = document.getElementById('cardsList');
+        const filtered = allSuggestions.filter(s => {
+          const st = s.status || 'pending';
+          return st === currentTab;
+        });
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 4rem 1rem; color: var(--text-secondary); background: var(--bg-secondary); border-radius: 14px; border: 1px dashed var(--border-color);">
+              <div style="font-size: 3rem; margin-bottom: 0.5rem;">${currentTab === 'pending' ? '🎉' : (currentTab === 'approved' ? '📂' : '🗑️')}</div>
+              <h3 style="color: var(--text-primary); margin-bottom: 0.25rem;">
+                ${currentTab === 'pending' ? 'कोई नया प्रतीक्षित सुझाव नहीं है!' : (currentTab === 'approved' ? 'कोई स्वीकृत सुझाव दर्ज नहीं है।' : 'कोई अस्वीकृत सुझाव नहीं है।')}
+              </h3>
+              <p style="font-size: 0.9rem; margin: 0;">
+                ${currentTab === 'pending' ? 'सभी प्राप्त सुझावों की समीक्षा की जा चुकी है।' : 'जब आप किसी सुझाव को स्वीकृत करेंगे, वह यहाँ सुरक्षित रहेगा।'}
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = '';
+        filtered.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'suggestion-card';
+
+          const slokaRef = item.sloka || item.verseReference || 'श्लोक';
+          const fieldName = item.field || item.fieldName || 'पाठ सुधार';
+          const whatChanged = item.whatChanged || item.reason || item.notes || '';
+          const name = item.name || item.suggesterName || 'जिज्ञासु पाठक';
+          const phone = item.phone || '';
+          const oldText = item.oldText || (item.changes?.[0]?.oldText) || '—';
+          const newText = item.newText || (item.changes?.[0]?.newText) || '—';
+
+          const diffResult = computeWordDiff(oldText, newText);
+
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
+                  <span class="sloka-badge">${slokaRef}</span>
+                  <span class="field-tag">📝 ${fieldName}</span>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                  <span>👤 सुझावकर्ता: <strong style="color: var(--text-primary);">${name}</strong></span>
+                  ${phone ? `<span style="margin: 0 0.35rem;">•</span><span>📱 <a href="https://wa.me/91${phone.replace(/[^0-9]/g, '')}" target="_blank" style="color: #4ade80; text-decoration: none; font-weight: 600;">${phone} (WhatsApp)</a></span>` : ''}
+                  ${whatChanged ? `<div style="margin-top: 0.3rem; color: var(--accent-gold);">🔍 क्या बदला: <em>"${whatChanged}"</em></div>` : ''}
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div>
+                ${currentTab === 'pending' ? `
+                  <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-reject" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.45rem 0.85rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
+                      ❌ अस्वीकार
+                    </button>
+                    <button class="btn-approve" style="background: var(--accent-gold); color: #000; border: none; padding: 0.45rem 1rem; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.85rem;">
+                      ✅ स्वीकारें & लाइव करें
+                    </button>
+                  </div>
+                ` : (currentTab === 'approved' ? `
+                  <button class="btn-revert" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
+                    ↩️ वापस पेंडिंग करें
+                  </button>
+                ` : `
+                  <button class="btn-revert" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
+                    ↩️ पुनः विचार करें
+                  </button>
+                `)}
+              </div>
+            </div>
+            <!-- Diff View -->
+            <div class="diff-grid">
+              <div class="diff-box diff-old">
+                <div style="font-weight: 700; color: #f87171; font-size: 0.8rem; margin-bottom: 0.35rem; display: flex; justify-content: space-between;">
+                  <span>🔻 मूल पाठ (हटाया / बदला गया):</span>
+                  <span style="font-size: 0.72rem; color: #fca5a5; opacity: 0.8;">लाल स्ट्राइक = पुराना</span>
+                </div>
+                <div style="white-space: pre-wrap; line-height: 1.7;">${diffResult.oldHtml}</div>
+              </div>
+              <div class="diff-box diff-new">
+                <div style="font-weight: 700; color: #4ade80; font-size: 0.8rem; margin-bottom: 0.35rem; display: flex; justify-content: space-between;">
+                  <span>✨ सुधारा हुआ पाठ (नया जोड़ा गया):</span>
+                  <span style="font-size: 0.72rem; color: #86efac; opacity: 0.8;">हरा हाइलाइट = नया</span>
+                </div>
+                <div style="white-space: pre-wrap; line-height: 1.7;">${diffResult.newHtml}</div>
+              </div>
+            </div>
+          `;
+
+          // Button Events
+          card.querySelector('.btn-approve')?.addEventListener('click', () => updateStatus(item, 'approved'));
+          card.querySelector('.btn-reject')?.addEventListener('click', () => updateStatus(item, 'rejected'));
+          card.querySelector('.btn-revert')?.addEventListener('click', () => updateStatus(item, 'pending'));
+
+          container.appendChild(card);
+        });
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // GitHub-style Word-Level Diffing Algorithm (LCS)
+      function computeWordDiff(text1, text2) {
+        const s1 = String(text1 || '').trim();
+        const s2 = String(text2 || '').trim();
+        if (!s1 && !s2) return { oldHtml: '', newHtml: '' };
+        if (!s1) return { oldHtml: '<em>(खाली)</em>', newHtml: `<span style="background: rgba(34, 197, 94, 0.35); color: #86efac; padding: 2px 5px; border-radius: 4px; border-bottom: 2px solid #22c55e; font-weight: 700;">${escapeHtml(s2)}</span>` };
+        if (!s2) return { oldHtml: `<span style="background: rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 2px 5px; border-radius: 4px; text-decoration: line-through; border-bottom: 2px solid #ef4444; font-weight: 600;">${escapeHtml(s1)}</span>`, newHtml: '<em>(हटा दिया गया)</em>' };
+
+        // Tokenize words and punctuation
+        const tokenize = (s) => s.match(/([^\s\p{P}]+|\s+|[\p{P}])/gu) || [s];
+        const words1 = tokenize(s1);
+        const words2 = tokenize(s2);
+
+        const n = words1.length;
+        const m = words2.length;
+
+        // Longest Common Subsequence table
+        const dp = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+        for (let i = 1; i <= n; i++) {
+          for (let j = 1; j <= m; j++) {
+            if (words1[i - 1] === words2[j - 1]) {
+              dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+              dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+          }
+        }
+
+        // Backtrack
+        let i = n;
+        let j = m;
+        const oldTokens = [];
+        const newTokens = [];
+
+        while (i > 0 || j > 0) {
+          if (i > 0 && j > 0 && words1[i - 1] === words2[j - 1]) {
+            oldTokens.unshift({ type: 'same', val: words1[i - 1] });
+            newTokens.unshift({ type: 'same', val: words2[j - 1] });
+            i--;
+            j--;
+          } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+            newTokens.unshift({ type: 'add', val: words2[j - 1] });
+            j--;
+          } else if (i > 0 && (j === 0 || dp[i][j - 1] < dp[i - 1][j])) {
+            oldTokens.unshift({ type: 'del', val: words1[i - 1] });
+            i--;
+          }
+        }
+
+        const renderTokens = (tokens) => {
+          return tokens.map(t => {
+            const esc = escapeHtml(t.val);
+            if (t.type === 'del') {
+              return `<span style="background: rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 1px 4px; border-radius: 4px; text-decoration: line-through; border-bottom: 2px solid #ef4444; font-weight: 700;">${esc}</span>`;
+            } else if (t.type === 'add') {
+              return `<span style="background: rgba(34, 197, 94, 0.35); color: #86efac; padding: 1px 4px; border-radius: 4px; border-bottom: 2px solid #22c55e; font-weight: 700;">${esc}</span>`;
+            }
+            return esc;
+          }).join('');
+        };
+
+        return {
+          oldHtml: renderTokens(oldTokens),
+          newHtml: renderTokens(newTokens)
+        };
+      }
+
+      async function updateStatus(item, newStatus) {
+        const actionLabel = newStatus === 'approved' ? 'स्वीकृत' : (newStatus === 'rejected' ? 'अस्वीकृत' : 'पेंडिंग');
+        if (!confirm(`क्या आप ${item.sloka || 'श्लोक'} के इस सुधार को ${actionLabel} करना चाहते हैं?`)) {
+          return;
+        }
+
+        try {
+          await window.vedabaseFirebase.db.collection('vedabase_suggestions').doc(item._docId).update({
+            status: newStatus,
+            reviewedAt: new Date().toISOString()
+          });
+
+          item.status = newStatus;
+          updateBadges();
+          renderCards();
+
+          if (newStatus === 'approved') {
+            showToast(`✅ ${item.sloka || 'श्लोक'} स्वीकृत होकर सभी यूज़र्स के लिए लाइव हो गया!`);
+          } else {
+            showToast(`सुझाव ${actionLabel} कर दिया गया।`);
+          }
+        } catch (err) {
+          alert('त्रुटि: ' + err.message);
+        }
+      }
+
+      // Init on load
+      document.addEventListener('DOMContentLoaded', () => {
+        checkAuth();
+      });
+
+    })();
+  </script>
+</body>
+</html>

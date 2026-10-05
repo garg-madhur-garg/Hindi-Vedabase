@@ -492,6 +492,13 @@ class VedabaseApp {
   // Merge user custom edits onto any incoming slokas array
   applyUserCustomEdits(slokas) {
     if (!slokas || slokas.length === 0) return slokas;
+
+    // 1. First apply cloud approved overrides if active
+    if (window.vedabaseFirebase && typeof window.vedabaseFirebase.applyApprovedOverrides === 'function') {
+      slokas = window.vedabaseFirebase.applyApprovedOverrides(slokas);
+    }
+
+    // 2. Then apply local user edits (if any)
     const userEdits = this.getUserCustomEdits();
     return slokas.map(s => {
       const isVS = s.book === 'VS' || (s.id && String(s.id).startsWith('vs-')) || Boolean(s.songNumber) || s.scripture === 'VS';
@@ -1461,6 +1468,7 @@ class VedabaseApp {
 
     this.setupTheme();
     this.bindEvents();
+    this.initFirebaseIntegration();
     this.setupAudioPlayer();
     this.renderSidebar();
 
@@ -2367,6 +2375,12 @@ class VedabaseApp {
 
   // Display a Sloka in the main reader area
   async displaySloka(sloka) {
+    if (window.vedabaseFirebase && typeof window.vedabaseFirebase.getOverrideForSloka === 'function') {
+      const ov = window.vedabaseFirebase.getOverrideForSloka(sloka);
+      if (ov) {
+        Object.assign(sloka, ov, { isCloudApproved: true });
+      }
+    }
     this.currentSloka = sloka;
     const isCC = sloka.book === 'CC' || (sloka.id && String(sloka.id).startsWith('cc-'));
     const isISO = !isCC && (sloka.book === 'ISO' || (sloka.id && String(sloka.id).startsWith('iso-')));
@@ -3866,352 +3880,285 @@ class VedabaseApp {
       document.getElementById('editPurport').value = sloka.hindiPurport || '';
     }
 
+    // Configure Modal UI for suggestion submission
+    const submitBtn = document.getElementById('btnSaveEditedVerse');
+    if (submitBtn) {
+      submitBtn.textContent = '🙏 सुझाव सबमिट करें (Submit Suggestion)';
+    }
+
+    const suggNameInput = document.getElementById('editSuggesterName');
+    const suggPhoneInput = document.getElementById('editSuggesterPhone');
+    const suggNotesInput = document.getElementById('editSuggesterNotes');
+    if (suggNotesInput) suggNotesInput.value = '';
+    if (suggPhoneInput) suggPhoneInput.value = '';
+    if (suggNameInput && !suggNameInput.value) {
+      suggNameInput.value = '';
+    }
+
     this.openModal('editVerseModal');
   }
 
-  // Save changes from Edit Sloka / Song Modal
+  // Save changes from Edit Sloka / Song Modal - Clean DELTA Suggestion to Firebase
   async saveEditedVerse() {
-    const verseKey = document.getElementById('editVerseKey').value;
-    const canto = parseInt(document.getElementById('editCanto').value, 10);
-    const chapter = parseInt(document.getElementById('editChapter').value, 10);
-    const verse = document.getElementById('editVerse').value;
-    const sanskrit = document.getElementById('editSanskrit').value.trim();
-    const wordsRaw = document.getElementById('editWordToWord').value.trim();
-    const translation = document.getElementById('editTranslation').value.trim();
-    const purport = document.getElementById('editPurport').value.trim();
-
-    const isVS = canto === -3 || this.currentBook === 'VS' || this.currentBook === 'VAISHNAVA_SONGS';
-    const isCC = !isVS && (canto === -2 || this.currentBook === 'CC');
-    const isISO = !isVS && !isCC && (canto === -1 || this.currentBook === 'ISO');
-    const isBG = !isVS && !isCC && !isISO && (canto === 0 || this.currentBook === 'BG');
-
-    // Handling for Vaishnava Songs
-    if (isVS) {
-      const songNumber = parseInt(document.getElementById('editSongNumber').value, 10) || this.currentSloka?.songNumber || 1;
-      const songId = document.getElementById('editSongId').value || this.currentSloka?.id || `vs-${songNumber}`;
-      const titleVal = document.getElementById('editVsTitle').value.trim() || this.currentSloka?.title || '';
-      const authorVal = document.getElementById('editVsAuthor').value.trim() || this.currentSloka?.author || '';
-      const bookVal = document.getElementById('editVsBook').value.trim() || this.currentSloka?.book || 'Songs by Vaishnavas';
-      const devaLyricsVal = sanskrit;
-      const iastLyricsVal = document.getElementById('editVsIast')?.value?.trim() || '';
-      const hindiTransVal = translation;
-      const englishTransVal = purport;
-
-      // Extract Devanagari stanzas
-      const devaStanzasArray = [];
-      if (devaLyricsVal) {
-        if (devaLyricsVal.match(/(?:^|\n)\s*\(?(?:\d+|ध्रुवपद|refrain)\)?[\.\:\)]?\s*(?:\n|$)/i)) {
-          const parts = devaLyricsVal.split(/(?:^|\n)\s*\(?(\d+|ध्रुवपद|refrain)\)?[\.\:\)]?\s*(?:\n|$)/i);
-          for (let i = 1; i < parts.length; i += 2) {
-            const txt = (parts[i + 1] || '').trim();
-            if (txt) devaStanzasArray.push(txt);
-          }
-        } else {
-          devaLyricsVal.split(/\n\s*\n+/).forEach(p => {
-            const pt = p.trim();
-            if (pt) devaStanzasArray.push(pt);
-          });
-        }
-      }
-
-      // Build updated body for IAST
-      let effectiveIast = iastLyricsVal;
-      if (!effectiveIast && devaLyricsVal) {
-        effectiveIast = devaLyricsVal;
-      }
-      let updatedBody = effectiveIast;
-      if (englishTransVal) {
-        updatedBody += '\n\nTRANSLATION\n' + englishTransVal;
-      }
-
-      // Parse Hindi translations into array
-      const hindiTransArray = [];
-      if (hindiTransVal) {
-        if (hindiTransVal.match(/(?:^|\n)\s*\(?\d+\)?[\.\)]\s*/)) {
-          const parts = hindiTransVal.split(/(?:^|\n)\s*\(?(\d+)\)?[\.\)]\s*/);
-          for (let i = 1; i < parts.length; i += 2) {
-            const txt = (parts[i + 1] || '').trim();
-            if (txt) hindiTransArray.push(txt);
-          }
-        } else {
-          hindiTransVal.split(/\n\s*\n+/).forEach(p => {
-            const pt = p.trim();
-            if (pt) hindiTransArray.push(pt);
-          });
-        }
-      }
-
-      // Update Custom Hindi Songs Dataset dynamically
-      if (!window.VsTranslationsHindi) window.VsTranslationsHindi = {};
-      if (!window.VsTranslationsHindi.CUSTOM) window.VsTranslationsHindi.CUSTOM = {};
-      const customEntry = {
-        title: titleVal,
-        transliterations: devaStanzasArray,
-        translations: hindiTransArray,
-        isUserEdited: true
-      };
-      window.VsTranslationsHindi.CUSTOM[String(songNumber)] = customEntry;
-      window.VsTranslationsHindi.CUSTOM[songId] = customEntry;
-      if (typeof window.VsTranslationsHindi.init === 'function') {
-        window.VsTranslationsHindi.init();
-      }
-
-      const sloka = {
-        id: songId,
-        songNumber: songNumber,
-        verseKey: `VS ${songNumber}`,
-        scripture: "VS",
-        book: bookVal,
-        songbook: bookVal,
-        title: titleVal,
-        author: authorVal,
-        authorHindi: authorVal,
-        category: this.currentSloka?.category || '',
-        firstLine: (devaLyricsVal || effectiveIast || this.currentSloka?.firstLine || '').split('\n')[0]?.trim() || '',
-        body: updatedBody,
-        sanskritDevanagari: devaLyricsVal,
-        hindiDevanagariStanzas: devaStanzasArray,
-        hindiTranslation: hindiTransVal,
-        hindiTranslations: hindiTransArray,
-        englishTranslation: englishTransVal,
-        hindiPurport: englishTransVal,
-        audioLinks: this.currentSloka?.audioLinks || [],
-        isUserEdited: true,
-        lastEditedAt: new Date().toISOString()
-      };
-
-      // 1. Save in-memory structures & permanent localStorage backup
-      await this.saveUserCustomEdit(sloka);
-
-      // 2. Send update directly to server API
-      let diskSaved = false;
-      try {
-        const resp = await fetch('/api/save-verse', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(sloka)
-        });
-        if (resp.ok) {
-          const result = await resp.json();
-          if (result.success) diskSaved = true;
-        }
-      } catch (e) {
-        console.warn('Server direct file-save notice:', e);
-      }
-
-      // 3. Parse song body and re-render
-      sloka.parsed = false;
-      this.parseSongBody(sloka);
-
-      if (diskSaved) {
-        this.showToast(`💾 वैष्णव गीत #${songNumber} सीधे vaishnava-songs.json एवं स्टोरेज में सुरक्षित हो गया!`);
-      } else {
-        this.showToast(`✅ वैष्णव गीत #${songNumber} सुरक्षित हुआ (Local Storage)`);
-      }
-
+    if (!this.currentSloka) {
       this.closeAllModals();
-      this.currentSloka = sloka;
-      await this.displaySloka(sloka);
       return;
     }
 
-    const wordToWord = [];
-    if (wordsRaw) {
-      const parts = wordsRaw.split(/[;\n]+/).map(p => p.trim()).filter(p => p.length > 0);
-      parts.forEach(part => {
-        const pair = part.split(/[—\-–:]/).map(s => s.trim());
-        if (pair.length >= 2) {
-          wordToWord.push({ sanskrit: pair[0], hindi: pair.slice(1).join(' - ') });
-        } else if (pair.length === 1 && pair[0]) {
-          wordToWord.push({ sanskrit: pair[0], hindi: '' });
-        }
-      });
-    }
+    const suggesterName = document.getElementById('editSuggesterName')?.value?.trim() || 'जिज्ञासु पाठक';
+    const suggesterPhone = document.getElementById('editSuggesterPhone')?.value?.trim() || '';
+    const suggesterNotes = document.getElementById('editSuggesterNotes')?.value?.trim() || '';
 
-    let sloka;
-    if (isCC) {
-      const lilaNum = this.currentLila || 1;
+    const verseKey = document.getElementById('editVerseKey')?.value || this.currentSloka.verseKey || '';
+    const cantoVal = parseInt(document.getElementById('editCanto')?.value, 10);
+    const chapterVal = parseInt(document.getElementById('editChapter')?.value, 10);
+    const verseVal = document.getElementById('editVerse')?.value || this.currentSloka.verse || '';
+
+    const newSanskrit = (document.getElementById('editSanskrit')?.value || '').trim();
+    const newWordsRaw = (document.getElementById('editWordToWord')?.value || '').trim();
+    const newTranslation = (document.getElementById('editTranslation')?.value || '').trim();
+    const newPurport = (document.getElementById('editPurport')?.value || '').trim();
+
+    const isVS = cantoVal === -3 || this.currentBook === 'VS' || this.currentBook === 'VAISHNAVA_SONGS';
+    const isCC = !isVS && (cantoVal === -2 || this.currentBook === 'CC');
+    const isISO = !isVS && !isCC && (cantoVal === -1 || this.currentBook === 'ISO');
+    const isBG = !isVS && !isCC && !isISO && (cantoVal === 0 || this.currentBook === 'BG');
+
+    // 1. Direct Sloka Identification for verification in Firebase Console
+    let slokaNumber = '';
+    let verseReference = '';
+    let fullReferenceHindi = '';
+    let directSlokaUrl = '';
+    let scripture = 'श्रीमद्भागवतम्';
+    let book = 'SB';
+    let canto = this.currentSloka.canto !== undefined ? this.currentSloka.canto : cantoVal;
+    let chapter = this.currentSloka.chapter !== undefined ? this.currentSloka.chapter : chapterVal;
+    let verse = this.currentSloka.verse !== undefined ? this.currentSloka.verse : verseVal;
+    let songNumber = null;
+    let songTitle = '';
+
+    if (isVS) {
+      book = 'VS';
+      scripture = 'वैष्णव पदावली';
+      songNumber = parseInt(document.getElementById('editSongNumber')?.value, 10) || this.currentSloka.songNumber || 1;
+      songTitle = document.getElementById('editVsTitle')?.value?.trim() || this.currentSloka.title || '';
+      slokaNumber = `गीत #${songNumber}`;
+      verseReference = `VS ${songNumber}`;
+      fullReferenceHindi = `वैष्णव पदावली गीत #${songNumber}${songTitle ? ' - ' + songTitle : ''} (VS ${songNumber})`;
+      directSlokaUrl = `#vs/${songNumber}`;
+    } else if (isCC) {
+      book = 'CC';
+      scripture = 'श्री चैतन्य-चरितामृत';
+      const lilaNum = this.currentSloka.lila || this.currentSloka.canto || 1;
       const lilaKey = this.getLilaKey(lilaNum);
-      const ccLilas = getCcLilas();
-      const lilaObj = ccLilas.find(l => l.lila === lilaNum);
-      const chObj = lilaObj?.chapters?.find(ch => ch.chapter === chapter);
-
-      sloka = {
-        id: `cc-${lilaKey}-${chapter}-${verse}`,
-        book: "CC",
-        lila: lilaNum,
-        canto: lilaNum,
-        chapter,
-        verse: parseInt(verse, 10) || verse,
-        verseKey: `${lilaKey}.${chapter}.${verse}`,
-        sanskritDevanagari: sanskrit,
-        sanskritIAST: this.currentSloka?.sanskritIAST || '',
-        wordToWord,
-        hindiTranslation: translation,
-        hindiPurport: purport,
-        category: {
-          book: "श्री चैतन्य-चरितामृत",
-          cantoTitleHindi: lilaObj?.name || lilaKey,
-          chapterTitleHindi: chObj ? `अध्याय ${chapter} - ${chObj.name}` : `अध्याय ${chapter}`
-        },
-        tags: ["श्री चैतन्य-चरितामृत", lilaObj?.name || lilaKey, `अध्याय ${chapter}`]
-      };
+      const lilaName = lilaNum === 1 ? 'आदि-लीला' : (lilaNum === 2 ? 'मध्य-लीला' : 'अन्त्य-लीला');
+      slokaNumber = `${lilaName} ${chapter}.${verse}`;
+      verseReference = `CC ${lilaKey.toUpperCase()} ${chapter}.${verse}`;
+      fullReferenceHindi = `श्री चैतन्य-चरितामृत ${lilaName} अध्याय ${chapter} श्लोक ${verse} (${verseReference})`;
+      directSlokaUrl = `#cc/${lilaKey}/${chapter}/${verse}`;
     } else if (isISO) {
-      const isInv = verseKey === 'inv' || verseKey === '0';
-      sloka = {
-        id: `iso-${verseKey}`,
-        book: "ISO",
-        chapter: 1,
-        verse: isInv ? 0 : parseInt(verseKey, 10),
-        verseKey,
-        sanskritDevanagari: sanskrit,
-        sanskritIAST: this.currentSloka?.sanskritIAST || '',
-        wordToWord,
-        hindiTranslation: translation,
-        hindiPurport: purport,
-        category: {
-          book: "श्री ईशोपनिषद्",
-          cantoTitleHindi: "श्री ईशोपनिषद्",
-          chapterTitleHindi: isInv ? "मंगलाचरण (Invocation)" : `मंत्र ${verseKey}`
-        },
-        tags: ["श्री ईशोपनिषद्", isInv ? "मंगलाचरण" : `मंत्र ${verseKey}`]
-      };
+      book = 'ISO';
+      scripture = 'श्री ईशोपनिषद्';
+      slokaNumber = verseKey === 'inv' ? 'मंगलाचरण' : `मंत्र ${verseKey}`;
+      verseReference = `ISO ${verseKey === 'inv' ? 'Invocation' : verseKey}`;
+      fullReferenceHindi = `श्री ईशोपनिषद् ${slokaNumber} (${verseReference})`;
+      directSlokaUrl = `#iso/${verseKey}`;
     } else if (isBG) {
-      const bgChapters = getBgChapters();
-      const chObj = bgChapters.find(ch => ch.chapter === chapter);
-      sloka = {
-        id: `bg-${chapter}-${verse}`,
-        book: "BG",
-        chapter,
-        verse,
-        verseKey,
-        sanskritDevanagari: sanskrit,
-        sanskritIAST: this.currentSloka?.sanskritIAST || '',
-        wordToWord,
-        hindiTranslation: translation,
-        hindiPurport: purport,
-        category: {
-          book: "श्रीमद्भगवद्गीता",
-          cantoTitleHindi: "श्रीमद्भगवद्गीता यथारूप",
-          chapterTitleHindi: chObj ? `अध्याय ${chapter} - ${chObj.name}` : `अध्याय ${chapter}`
-        },
-        tags: ["श्रीमद्भगवद्गीता", `अध्याय ${chapter}`]
-      };
+      book = 'BG';
+      scripture = 'श्रीमद्भगवद्गीता';
+      slokaNumber = `${chapter}.${verse}`;
+      verseReference = `BG ${chapter}.${verse}`;
+      fullReferenceHindi = `श्रीमद्भगवद्गीता अध्याय ${chapter} श्लोक ${verse} (BG ${chapter}.${verse})`;
+      directSlokaUrl = `#bg/${chapter}/${verse}`;
     } else {
-      const cantos = getCantoStructure();
-      const cantoObj = cantos.find(c => c.canto === canto);
-      const chapterObj = cantoObj?.chapters?.find(ch => ch.chapter === chapter);
-      sloka = {
-        id: `sb-${canto}-${chapter}-${verse}`,
-        book: "SB",
-        canto,
-        chapter,
-        verse,
-        verseKey,
-        sanskritDevanagari: sanskrit,
-        sanskritIAST: this.currentSloka?.sanskritIAST || '',
-        wordToWord,
-        hindiTranslation: translation,
-        hindiPurport: purport,
-        category: {
-          book: "श्रीमद्भागवतम्",
-          cantoTitleHindi: cantoObj?.name || `स्कन्ध ${canto}`,
-          chapterTitleHindi: chapterObj ? `अध्याय ${chapter} - ${chapterObj.name}` : `अध्याय ${chapter}`
-        },
-        tags: this.currentSloka?.tags || [`स्कन्ध ${canto}`, `अध्याय ${chapter}`]
-      };
+      book = 'SB';
+      scripture = 'श्रीमद्भागवतम्';
+      slokaNumber = `${canto}.${chapter}.${verse}`;
+      verseReference = `SB ${canto}.${chapter}.${verse}`;
+      fullReferenceHindi = `श्रीमद्भागवतम् स्कन्ध ${canto} अध्याय ${chapter} श्लोक ${verse} (SB ${canto}.${chapter}.${verse})`;
+      directSlokaUrl = `#sb/${canto}/${chapter}/${verse}`;
     }
 
-    // 1. Send update directly to server API
-    let diskSaved = false;
-    try {
-      const resp = await fetch('/api/save-verse', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(sloka)
+    // 2. Compute DELTA (only fields that were genuinely changed)
+    const changes = [];
+    const changedFieldsNames = [];
+
+    // Helper to format original word-to-word string for fair comparison
+    const origWordsRaw = Array.isArray(this.currentSloka.wordToWord) && this.currentSloka.wordToWord.length > 0
+      ? this.currentSloka.wordToWord.map(w => `${w.sanskrit} — ${w.hindi}`).join(';\n')
+      : '';
+
+    const origSanskrit = (this.currentSloka.sanskritDevanagari || '').trim();
+    const origTranslation = (this.currentSloka.hindiTranslation || '').trim();
+    const origPurport = (this.currentSloka.hindiPurport || this.currentSloka.englishTranslation || '').trim();
+
+    // Sanskrit / Devanagari text
+    if (newSanskrit !== origSanskrit) {
+      changes.push({
+        field: 'sanskritDevanagari',
+        label: isVS ? 'मूल भजन पद (Lyrics)' : 'मूल संस्कृत श्लोक (Sanskrit)',
+        oldText: origSanskrit,
+        newText: newSanskrit
       });
-      if (resp.ok) {
-        const result = await resp.json();
-        if (result.success) diskSaved = true;
-      }
-    } catch (e) {
-      console.warn('Server direct file-save notice:', e);
+      changedFieldsNames.push(isVS ? 'भजन पद' : 'संस्कृत श्लोक');
     }
 
-    // 2. Update in-memory structures
-    this.verseMap.set(sloka.verseKey, sloka);
-    this.verseMap.set(sloka.id, sloka);
-
-    if (isCC) {
-      const lilaKey = this.getLilaKey(sloka.lila || sloka.canto || 1);
-      const chKey = `${lilaKey}-${sloka.chapter}`;
-      this.ccMap.set(`${lilaKey}.${sloka.chapter}.${sloka.verse}`, sloka);
-      this.verseMap.set(`cc ${lilaKey} ${sloka.chapter}.${sloka.verse}`, sloka);
-      this.verseMap.set(`cc-${lilaKey}-${sloka.chapter}-${sloka.verse}`, sloka);
-
-      if (!this.ccChapterMap.has(chKey)) {
-        this.ccChapterMap.set(chKey, []);
+    // Word-to-word meanings
+    if (!isVS && newWordsRaw !== origWordsRaw) {
+      const parsedWords = [];
+      if (newWordsRaw) {
+        const parts = newWordsRaw.split(/[;\n]+/).map(p => p.trim()).filter(p => p.length > 0);
+        parts.forEach(part => {
+          const pair = part.split(/[—\-–:]/).map(s => s.trim());
+          if (pair.length >= 2) {
+            parsedWords.push({ sanskrit: pair[0], hindi: pair.slice(1).join(' - ') });
+          } else if (pair.length === 1 && pair[0]) {
+            parsedWords.push({ sanskrit: pair[0], hindi: '' });
+          }
+        });
       }
-      const chList = this.ccChapterMap.get(chKey);
-      const chIdx = chList.findIndex(s => s.id === sloka.id);
-      if (chIdx >= 0) chList[chIdx] = sloka;
-      else chList.push(sloka);
 
-      const ccIdx = this.ccSlokas.findIndex(s => s.id === sloka.id);
-      if (ccIdx >= 0) this.ccSlokas[ccIdx] = sloka;
-      else this.ccSlokas.push(sloka);
-    } else if (isISO) {
-      const vK = String(sloka.verseKey).toLowerCase();
-      this.isoMap.set(vK, sloka);
-      this.verseMap.set(`iso ${vK}`, sloka);
-      this.verseMap.set(`iso-${vK}`, sloka);
-      const isoIdx = this.isoSlokas.findIndex(s => s.id === sloka.id);
-      if (isoIdx >= 0) this.isoSlokas[isoIdx] = sloka;
-      else this.isoSlokas.push(sloka);
-    } else if (isBG) {
-      this.verseMap.set(`bg-${sloka.chapter}-${sloka.verse}`, sloka);
-      this.verseMap.set(`bg ${sloka.chapter}.${sloka.verse}`, sloka);
-      const chList = this.bgChapterMap.get(chapter);
-      if (chList) {
-        const chIdx = chList.findIndex(s => s.id === sloka.id);
-        if (chIdx >= 0) chList[chIdx] = sloka;
-        else chList.push(sloka);
+      changes.push({
+        field: 'wordToWord',
+        label: 'पदच्छेद एवं शब्दार्थ (Word-to-Word)',
+        oldText: origWordsRaw,
+        newText: newWordsRaw,
+        parsedWords: parsedWords
+      });
+      changedFieldsNames.push('शब्दार्थ');
+    }
+
+    // Hindi translation
+    if (newTranslation !== origTranslation) {
+      changes.push({
+        field: 'hindiTranslation',
+        label: 'हिन्दी अनुवाद (Translation)',
+        oldText: origTranslation,
+        newText: newTranslation
+      });
+      changedFieldsNames.push('हिन्दी अनुवाद');
+    }
+
+    // Purport / English translation
+    if (newPurport !== origPurport) {
+      changes.push({
+        field: 'hindiPurport',
+        label: isVS ? 'अंग्रेजी अनुवाद (English Translation)' : 'श्रील प्रभुपाद तात्पर्य (Purport)',
+        oldText: origPurport,
+        newText: newPurport
+      });
+      changedFieldsNames.push(isVS ? 'अंग्रेजी अनुवाद' : 'तात्पर्य');
+    }
+
+    // Vaishnava Song Title & Author changes
+    if (isVS) {
+      const origTitle = (this.currentSloka.title || '').trim();
+      const newTitle = (document.getElementById('editVsTitle')?.value || '').trim();
+      if (newTitle && newTitle !== origTitle) {
+        changes.push({
+          field: 'title',
+          label: 'गीत शीर्षक (Song Title)',
+          oldText: origTitle,
+          newText: newTitle
+        });
+        changedFieldsNames.push('गीत शीर्षक');
       }
-    } else {
-      const chKey = `${sloka.canto}-${sloka.chapter}`;
-      const chList = this.chapterMap.get(chKey);
-      if (chList) {
-        const chIdx = chList.findIndex(s => s.id === sloka.id);
-        if (chIdx >= 0) chList[chIdx] = sloka;
-        else chList.push(sloka);
+
+      const origAuthor = (this.currentSloka.authorHindi || this.currentSloka.author || '').trim();
+      const newAuthor = (document.getElementById('editVsAuthor')?.value || '').trim();
+      if (newAuthor && newAuthor !== origAuthor) {
+        changes.push({
+          field: 'author',
+          label: 'रचयिता (Author)',
+          oldText: origAuthor,
+          newText: newAuthor
+        });
+        changedFieldsNames.push('रचयिता');
       }
     }
 
-    const idx = this.allSlokas.findIndex(s => s.id === sloka.id);
-    if (idx >= 0) this.allSlokas[idx] = sloka;
-    else this.allSlokas.push(sloka);
-
-    if (window.searchEngine) window.searchEngine.appendIndex([sloka]);
-
-    // 3. Remove localStorage override if disk write was successful
-    if (diskSaved) {
-      const edits = this.getUserCustomEdits();
-      const saveKey = isCC ? `cc-${this.getLilaKey(sloka.lila)}-${chapter}-${verse}` : (isISO ? `iso-${verseKey}` : (isBG ? `bg-${chapter}-${verse}` : verseKey));
-      if (edits[saveKey]) {
-        delete edits[saveKey];
-        localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
-      }
-      this.updateCustomEditsCountBadge();
-      const prefix = isCC ? 'CC' : (isISO ? 'ISO' : (isBG ? 'BG' : 'SB'));
-      this.showToast(`💾 ${prefix} ${verseKey} सीधे JSON फ़ाइल में सुरक्षित हो गया!`);
-    } else {
-      await this.saveUserCustomEdit(sloka);
-      const prefix = isCC ? 'CC' : (isISO ? 'ISO' : (isBG ? 'BG' : 'SB'));
-      this.showToast(`✅ ${prefix} ${verseKey} सुरक्षित हुआ (Local Storage)`);
+    // If nothing was modified, alert user and do not spam Firebase
+    if (changes.length === 0) {
+      this.showToast('ℹ️ कोई बदलाव नहीं पाया गया।');
+      return;
     }
 
-    this.closeAllModals();
-    await this.displaySloka(sloka);
+    // 3. Assemble clean DELTA suggestion payload
+    const payload = {
+      slokaNumber,
+      verseReference,
+      fullReferenceHindi,
+      directSlokaUrl,
+      scripture,
+      book,
+      canto: canto !== undefined ? canto : null,
+      chapter: chapter !== undefined ? chapter : null,
+      verse: verse !== undefined ? verse : null,
+      songNumber: songNumber || null,
+      songTitle: songTitle || '',
+      verseKey: this.currentSloka.verseKey || `${canto}.${chapter}.${verse}`,
+      verseId: this.currentSloka.id || `${book.toLowerCase()}-${canto}-${chapter}-${verse}`,
+      changes,
+      changedFieldsSummary: changedFieldsNames.join(', '),
+      suggesterName,
+      phone: suggesterPhone,
+      notes: suggesterNotes
+    };
+
+    try {
+      this.showToast('⏳ सुधार सुझाव क्लाउड पर भेजा जा रहा है...');
+      if (!window.vedabaseFirebase) {
+        throw new Error('Firebase सेवा लोड नहीं हो सकी। कृपया इंटरनेट जांचें।');
+      }
+
+      await window.vedabaseFirebase.submitDeltaSuggestion(payload);
+
+      // Close modal - Notice: Contributor's local view and localStorage are NOT modified!
+      this.closeAllModals();
+
+      // Show clear confirmation toast
+      this.showToast(`🙏 धन्यवाद! ${verseReference} का सुधार सुझाव समीक्षा हेतु भेज दिया गया है। व्यवस्थापक की स्वीकृति के बाद यह सभी के लिए लाइव होगा।`);
+    } catch (err) {
+      console.error('Error submitting suggestion:', err);
+      this.showToast(`⚠️ त्रुटि: ${err.message || 'सुझाव नहीं भेजा जा सका।'}`);
+    }
+  }
+
+  // =========================================================================
+  // FIREBASE CLOUD REAL-TIME LIVE SYNC
+  // =========================================================================
+
+  initFirebaseIntegration() {
+    if (!window.vedabaseFirebase) return;
+
+    // Listen to real-time approved overrides from Firestore
+    window.vedabaseFirebase.onApprovedOverridesChange(() => {
+      this.applyCloudApprovedOverrides();
+    });
+  }
+
+  // Apply cloud approved overrides across all loaded collections & active view
+  applyCloudApprovedOverrides() {
+    if (!window.vedabaseFirebase) return;
+
+    // Apply to all loaded slokas in memory
+    if (this.verseMap && this.verseMap.size > 0) {
+      for (const sloka of this.verseMap.values()) {
+        const ov = window.vedabaseFirebase.getOverrideForSloka(sloka);
+        if (ov) {
+          Object.assign(sloka, ov, { isCloudApproved: true });
+        }
+      }
+    }
+
+    // If current sloka has an approved override, refresh active view
+    if (this.currentSloka) {
+      const ov = window.vedabaseFirebase.getOverrideForSloka(this.currentSloka);
+      if (ov) {
+        Object.assign(this.currentSloka, ov, { isCloudApproved: true });
+        this.displaySloka(this.currentSloka);
+      }
+    }
   }
 
   // Export Sri Caitanya-caritamrta JSON
