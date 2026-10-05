@@ -127,7 +127,13 @@ while ($listener.IsListening) {
                                 if ($slokaData.body -ne $null) { $s.body = [string]$slokaData.body }
                                 if ($slokaData.firstLine -ne $null) { $s.firstLine = [string]$slokaData.firstLine }
                                 if ($slokaData.hindiTranslation -ne $null) { $s.hindiTranslation = [string]$slokaData.hindiTranslation }
+                                if ($slokaData.hindiTranslations -ne $null) { $s.hindiTranslations = $slokaData.hindiTranslations }
+                                if ($slokaData.sanskritDevanagari -ne $null) { $s.sanskritDevanagari = [string]$slokaData.sanskritDevanagari }
+                                if ($slokaData.hindiDevanagariStanzas -ne $null) { $s.hindiDevanagariStanzas = $slokaData.hindiDevanagariStanzas }
+                                if ($slokaData.englishTranslation -ne $null) { $s.englishTranslation = [string]$slokaData.englishTranslation }
                                 if ($slokaData.hindiPurport -ne $null) { $s.hindiPurport = [string]$slokaData.hindiPurport }
+                                if ($slokaData.isUserEdited -ne $null) { $s.isUserEdited = [bool]$slokaData.isUserEdited }
+                                if ($slokaData.lastEditedAt -ne $null) { $s.lastEditedAt = [string]$slokaData.lastEditedAt }
                                 $found = $true
                                 break
                             }

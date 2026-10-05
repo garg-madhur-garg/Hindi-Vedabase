@@ -2130,12 +2130,17 @@
     }
   };
 
+  const ORIGINAL_CUSTOM_HINDI_SONGS = JSON.parse(JSON.stringify(CUSTOM_HINDI_SONGS));
+
   function normalizeKey(str) {
     if (!str) return '';
     return String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
   }
 
   function initDataset() {
+    for (const key of Object.keys(HINDI_SONGS_BY_KEY)) {
+      delete HINDI_SONGS_BY_KEY[key];
+    }
     for (const [k, meta] of Object.entries(CUSTOM_HINDI_SONGS)) {
       HINDI_SONGS_BY_KEY[k] = meta;
       HINDI_SONGS_BY_KEY['vs-' + k] = meta;
@@ -2144,6 +2149,24 @@
         HINDI_SONGS_BY_KEY[normalizeKey(meta.title)] = meta;
       }
     }
+  }
+
+  function resetCustom(songNumber) {
+    if (songNumber) {
+      const sKey = String(songNumber).replace(/^vs-/, '');
+      if (ORIGINAL_CUSTOM_HINDI_SONGS[sKey]) {
+        CUSTOM_HINDI_SONGS[sKey] = JSON.parse(JSON.stringify(ORIGINAL_CUSTOM_HINDI_SONGS[sKey]));
+      } else {
+        delete CUSTOM_HINDI_SONGS[sKey];
+      }
+      delete CUSTOM_HINDI_SONGS['vs-' + sKey];
+    } else {
+      for (const k of Object.keys(CUSTOM_HINDI_SONGS)) {
+        delete CUSTOM_HINDI_SONGS[k];
+      }
+      Object.assign(CUSTOM_HINDI_SONGS, JSON.parse(JSON.stringify(ORIGINAL_CUSTOM_HINDI_SONGS)));
+    }
+    initDataset();
   }
 
   function getHindiMetadata(songOrId) {
@@ -2155,10 +2178,22 @@
       const sNum = String(s.songNumber || '');
       const sId = String(s.id || '').replace(/^vs-/, '');
 
+      // 1. If song is directly marked as user edited, return its own data immediately
+      if (s.isUserEdited) {
+        return {
+          title: s.title || '',
+          transliterations: Array.isArray(s.hindiDevanagariStanzas) ? s.hindiDevanagariStanzas : [],
+          translations: Array.isArray(s.hindiTranslations) ? s.hindiTranslations : [],
+          isUserEdited: true
+        };
+      }
+
+      // 2. If overridden in CUSTOM_HINDI_SONGS
       if (CUSTOM_HINDI_SONGS[sNum]) return CUSTOM_HINDI_SONGS[sNum];
       if (CUSTOM_HINDI_SONGS[sId]) return CUSTOM_HINDI_SONGS[sId];
       if (CUSTOM_HINDI_SONGS[s.id]) return CUSTOM_HINDI_SONGS[s.id];
 
+      // 3. Built-in dataset lookups
       if (s.songNumber && HINDI_SONGS_BY_KEY[String(s.songNumber)]) return HINDI_SONGS_BY_KEY[String(s.songNumber)];
       if (s.id && HINDI_SONGS_BY_KEY[s.id]) return HINDI_SONGS_BY_KEY[s.id];
       if (s.title && HINDI_SONGS_BY_KEY[s.title]) return HINDI_SONGS_BY_KEY[s.title];
@@ -2177,6 +2212,15 @@
   }
 
   function getHindiTranslation(songOrId, stanzaIndex) {
+    if (typeof songOrId === 'object' && songOrId.isUserEdited) {
+      if (Array.isArray(songOrId.hindiTranslations)) {
+        return songOrId.hindiTranslations[stanzaIndex] || null;
+      }
+      if (typeof songOrId.hindiTranslation === 'string' && songOrId.hindiTranslation.trim()) {
+        return stanzaIndex === 0 ? songOrId.hindiTranslation.trim() : null;
+      }
+      return null;
+    }
     const meta = getHindiMetadata(songOrId);
     if (meta && Array.isArray(meta.translations) && meta.translations[stanzaIndex]) {
       return meta.translations[stanzaIndex];
@@ -2198,6 +2242,7 @@
   global.VsTranslationsHindi = {
     CUSTOM: CUSTOM_HINDI_SONGS,
     init: initDataset,
+    resetCustom: resetCustom,
     getHindiTranslation: getHindiTranslation,
     getHindiMetadata: getHindiMetadata,
     hasHindiTranslation: hasHindiTranslation

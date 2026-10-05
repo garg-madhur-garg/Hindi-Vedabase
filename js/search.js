@@ -291,9 +291,18 @@ class VedabaseSearchEngine {
       }
 
       const textToTokenize = [
+        s.title || '',
+        s.author || '',
+        s.authorHindi || '',
+        s.book || '',
+        s.firstLine || '',
+        s.body || '',
         s.sanskritDevanagari || '',
+        Array.isArray(s.hindiDevanagariStanzas) ? s.hindiDevanagariStanzas.join(' ') : '',
         s.sanskritIAST || '',
         s.hindiTranslation || '',
+        Array.isArray(s.hindiTranslations) ? s.hindiTranslations.join(' ') : '',
+        s.englishTranslation || '',
         (s.wordToWord || []).map(w => `${w.sanskrit} ${w.hindi}`).join(' '),
         s.hindiPurport ? s.hindiPurport.substring(0, 1000) : ''
       ].join(' ');
@@ -671,10 +680,10 @@ class VedabaseSearchEngine {
         score += 120;
       }
 
-      const sanskrit = (s.sanskritDevanagari || s.title || '').toLowerCase();
+      const sanskrit = (s.sanskritDevanagari || s.title || (Array.isArray(s.hindiDevanagariStanzas) ? s.hindiDevanagariStanzas.join(' ') : '')).toLowerCase();
       const iast = (s.sanskritIAST || s.firstLine || s.body || '').toLowerCase();
-      const translation = (s.hindiTranslation || s.authorHindi || s.author || '').toLowerCase();
-      const purport = (s.hindiPurport || s.book || '').toLowerCase();
+      const translation = (s.hindiTranslation || (Array.isArray(s.hindiTranslations) ? s.hindiTranslations.join(' ') : '') || s.authorHindi || s.author || '').toLowerCase();
+      const purport = (s.hindiPurport || s.englishTranslation || s.book || '').toLowerCase();
       const wordMeanings = (s.wordToWord || []).map(w => `${w.sanskrit} ${w.hindi}`).join(' ').toLowerCase();
       const lowQ = trimmedQuery.toLowerCase();
 

@@ -104,12 +104,15 @@ class VedabaseApp {
     sloka.isUserEdited = true;
     sloka.lastEditedAt = new Date().toISOString();
 
-    const isCC = sloka.book === 'CC' || (sloka.id && sloka.id.startsWith('cc-'));
-    const isISO = !isCC && (sloka.book === 'ISO' || (sloka.id && sloka.id.startsWith('iso-')));
-    const isBG = !isCC && !isISO && (sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')));
+    const isVS = sloka.book === 'VS' || (sloka.id && String(sloka.id).startsWith('vs-')) || Boolean(sloka.songNumber) || sloka.scripture === 'VS' || (this.currentBook === 'VS');
+    const isCC = !isVS && (sloka.book === 'CC' || (sloka.id && sloka.id.startsWith('cc-')));
+    const isISO = !isVS && !isCC && (sloka.book === 'ISO' || (sloka.id && sloka.id.startsWith('iso-')));
+    const isBG = !isVS && !isCC && !isISO && (sloka.book === 'BG' || (sloka.id && sloka.id.startsWith('bg-')));
 
     let key;
-    if (isCC) {
+    if (isVS) {
+      key = sloka.id || `vs-${sloka.songNumber}`;
+    } else if (isCC) {
       const lilaKey = this.getLilaKey(sloka.lila || sloka.canto || 1);
       key = `cc-${lilaKey}-${sloka.chapter}-${sloka.verse}`;
     } else if (isISO) {
@@ -126,16 +129,44 @@ class VedabaseApp {
       edits[key] = sloka;
       if (sloka.verseKey) edits[sloka.verseKey] = sloka;
       if (sloka.id) edits[sloka.id] = sloka;
+      if (isVS && sloka.songNumber) {
+        edits[`vs-${sloka.songNumber}`] = sloka;
+        edits[String(sloka.songNumber)] = sloka;
+      }
       localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
     } catch (e) {
       console.warn('LocalStorage save warning:', e);
     }
 
     // 2. Update in-memory structures
-    this.verseMap.set(sloka.verseKey, sloka);
-    this.verseMap.set(sloka.id, sloka);
+    if (sloka.verseKey) this.verseMap.set(sloka.verseKey, sloka);
+    if (sloka.id) this.verseMap.set(sloka.id, sloka);
 
-    if (isCC) {
+    if (isVS) {
+      const songNumber = sloka.songNumber;
+      const songId = sloka.id || `vs-${songNumber}`;
+      if (this.vsMap) {
+        this.vsMap.set(songId, sloka);
+        if (songNumber) {
+          this.vsMap.set(String(songNumber), sloka);
+          this.vsMap.set(`vs ${songNumber}`, sloka);
+          this.vsMap.set(`vs-${songNumber}`, sloka);
+        }
+        if (sloka.title) this.vsMap.set(sloka.title.toLowerCase().trim(), sloka);
+      }
+      if (this.verseMap) {
+        this.verseMap.set(songId, sloka);
+        if (songNumber) {
+          this.verseMap.set(`vs ${songNumber}`, sloka);
+          this.verseMap.set(`vs-${songNumber}`, sloka);
+        }
+      }
+      if (Array.isArray(this.vsSlokas)) {
+        const vsIdx = this.vsSlokas.findIndex(s => s.id === songId || (songNumber && s.songNumber === songNumber));
+        if (vsIdx >= 0) this.vsSlokas[vsIdx] = sloka;
+        else this.vsSlokas.push(sloka);
+      }
+    } else if (isCC) {
       const lilaKey = this.getLilaKey(sloka.lila || sloka.canto || 1);
       const chKey = `${lilaKey}-${sloka.chapter}`;
       this.ccMap.set(`${lilaKey}.${sloka.chapter}.${sloka.verse}`, sloka);
@@ -181,7 +212,7 @@ class VedabaseApp {
       }
     }
 
-    const idx = this.allSlokas.findIndex(s => s.id === sloka.id || s.verseKey === sloka.verseKey);
+    const idx = this.allSlokas.findIndex(s => s.id === sloka.id || (sloka.verseKey && s.verseKey === sloka.verseKey));
     if (idx >= 0) {
       this.allSlokas[idx] = sloka;
     } else {
@@ -198,7 +229,7 @@ class VedabaseApp {
   // Revert a single verse back to its authentic original JSON data
   async revertCurrentVerseToOriginal() {
     if (!this.currentSloka) return;
-    const isVS = this.currentBook === 'VS' || this.currentBook === 'VAISHNAVA_SONGS' || this.currentSloka.book === 'VS' || this.currentSloka.id?.startsWith('vs-');
+    const isVS = this.currentBook === 'VS' || this.currentBook === 'VAISHNAVA_SONGS' || this.currentSloka.book === 'VS' || this.currentSloka.id?.startsWith('vs-') || Boolean(this.currentSloka.songNumber);
     const isCC = !isVS && (this.currentBook === 'CC' || this.currentSloka.book === 'CC' || this.currentSloka.id?.startsWith('cc-'));
     const isISO = !isVS && !isCC && (this.currentBook === 'ISO' || this.currentSloka.book === 'ISO' || this.currentSloka.id?.startsWith('iso-'));
     const isBG = !isVS && !isCC && !isISO && (this.currentBook === 'BG' || this.currentSloka.book === 'BG' || this.currentSloka.id?.startsWith('bg-'));
@@ -241,6 +272,11 @@ class VedabaseApp {
             delete orig.isUserEdited;
             delete orig.lastEditedAt;
             orig.parsed = false;
+            
+            if (window.VsTranslationsHindi && window.VsTranslationsHindi.resetCustom) {
+              window.VsTranslationsHindi.resetCustom(orig.songNumber);
+            }
+
             this.parseSongBody(orig);
 
             const songId = orig.id || `vs-${orig.songNumber}`;
@@ -416,11 +452,20 @@ class VedabaseApp {
     this.ccMap.clear();
     this.ccChapterMap.clear();
     this.ccSlokas = [];
+    this.vsMap.clear();
+    this.vsAuthorMap.clear();
+    this.vsBookMap.clear();
+    this.vsSlokas = [];
     this.allSlokas = [];
     this.loadedCantos.clear();
     this.isBgLoaded = false;
     this.isIsoLoaded = false;
     this.isCcLoaded = false;
+    this.isVsLoaded = false;
+
+    if (window.VsTranslationsHindi && window.VsTranslationsHindi.resetCustom) {
+      window.VsTranslationsHindi.resetCustom();
+    }
 
     if (window.searchEngine) {
       window.searchEngine.clearIndex();
@@ -431,6 +476,7 @@ class VedabaseApp {
     await this.ensureBgLoaded();
     await this.ensureIsoLoaded();
     await this.ensureCcLoaded();
+    await this.ensureVsLoaded();
     const curKey = this.currentSloka ? this.currentSloka.verseKey : '1.1';
     await this.loadVerseByKey(curKey);
     this.updateCustomEditsCountBadge();
@@ -440,7 +486,7 @@ class VedabaseApp {
       this.preloadAllCantosInBackground();
     }, 100);
 
-    this.showToast('✅ सभी श्लोक मूल JSON फाइलों से सफलतापूर्वक रीसेट हो गए!');
+    this.showToast('✅ सभी श्लोक व गीत मूल JSON फाइलों से सफलतापूर्वक रीसेट हो गए!');
   }
 
   // Merge user custom edits onto any incoming slokas array
@@ -448,7 +494,7 @@ class VedabaseApp {
     if (!slokas || slokas.length === 0) return slokas;
     const userEdits = this.getUserCustomEdits();
     return slokas.map(s => {
-      const isVS = s.book === 'VS' || (s.id && String(s.id).startsWith('vs-')) || Boolean(s.songNumber);
+      const isVS = s.book === 'VS' || (s.id && String(s.id).startsWith('vs-')) || Boolean(s.songNumber) || s.scripture === 'VS';
       const isCC = !isVS && (s.book === 'CC' || (s.id && String(s.id).startsWith('cc-')));
       const isISO = !isVS && !isCC && (s.book === 'ISO' || (s.id && String(s.id).startsWith('iso-')));
       const isBG = !isVS && !isCC && !isISO && (s.book === 'BG' || (s.id && String(s.id).startsWith('bg-')));
@@ -467,12 +513,9 @@ class VedabaseApp {
         editKey = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
       }
 
-      const editObj = (editKey && userEdits[editKey]) || (s.verseKey && userEdits[s.verseKey]) || (s.id && userEdits[s.id]);
+      const editObj = (editKey && userEdits[editKey]) || (s.verseKey && userEdits[s.verseKey]) || (s.id && userEdits[s.id]) || (isVS && s.songNumber && (userEdits[`vs-${s.songNumber}`] || userEdits[String(s.songNumber)]));
       if (editObj) {
-        if (isVS && (!editObj.body || !editObj.body.trim() || editObj.body.trim().startsWith('TRANSLATION') || editObj.body.trim().startsWith('\nTRANSLATION') || editObj.body.includes('<div class="vs-song-flow">'))) {
-          return s;
-        }
-        return { ...editObj };
+        return { ...s, ...editObj, isUserEdited: true };
       }
       return s;
     });
@@ -629,7 +672,7 @@ class VedabaseApp {
     const raw = song.body;
     let rawLyrics = '';
     let rawTranslation = '';
-    let rawPurport = '';
+    let rawPurport = song.hindiPurport || song.englishTranslation || '';
 
     // Match TRANSLATION and PURPORT as line headers (not word mentions inside sentences)
     const transMatch = raw.match(/(?:^|\n)\s*TRANSLATION(?:S)?\s*(?:\n|:|$)/i);
@@ -644,14 +687,14 @@ class VedabaseApp {
       rawLyrics = raw.substring(0, transIdx).trim();
       if (purportIdx > transIdx) {
         rawTranslation = raw.substring(transIdx + transLen, purportIdx).trim();
-        rawPurport = raw.substring(purportIdx + purportLen).trim();
+        rawPurport = song.hindiPurport || song.englishTranslation || raw.substring(purportIdx + purportLen).trim();
       } else {
         rawTranslation = raw.substring(transIdx + transLen).trim();
       }
     } else {
       if (purportIdx >= 0) {
         rawLyrics = raw.substring(0, purportIdx).trim();
-        rawPurport = raw.substring(purportIdx + purportLen).trim();
+        rawPurport = song.hindiPurport || song.englishTranslation || raw.substring(purportIdx + purportLen).trim();
       } else {
         rawLyrics = raw.trim();
       }
@@ -662,8 +705,8 @@ class VedabaseApp {
     let stanzas = [];
 
     // Check if transliterations dataset has explicit authentic stanzas
-    const hindiMeta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
-      ? (window.VsTranslationsHindi.getHindiMetadata(song.id) || window.VsTranslationsHindi.getHindiMetadata(song.songNumber) || window.VsTranslationsHindi.getHindiMetadata(song.verseKey) || window.VsTranslationsHindi.getHindiMetadata(song.title))
+    const hindiMeta = (!song.isUserEdited && window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
+      ? (window.VsTranslationsHindi.getHindiMetadata(song) || window.VsTranslationsHindi.getHindiMetadata(song.id) || window.VsTranslationsHindi.getHindiMetadata(song.songNumber) || window.VsTranslationsHindi.getHindiMetadata(song.verseKey) || window.VsTranslationsHindi.getHindiMetadata(song.title))
       : null;
 
     if (normLyrics.match(/(?:^|\n)\s*\(?\d+\)?\s*(?:\n|$)/)) {
@@ -692,14 +735,19 @@ class VedabaseApp {
       });
     }
 
-    // Match or expand stanzas from authentic transliterations metadata if available
-    if (hindiMeta && Array.isArray(hindiMeta.transliterations) && hindiMeta.transliterations.length > 0) {
+    // Match or expand stanzas from authentic transliterations metadata if available (for unedited songs)
+    if (!song.isUserEdited && hindiMeta && Array.isArray(hindiMeta.transliterations) && hindiMeta.transliterations.length > 0) {
       if (stanzas.length === 0 || hindiMeta.transliterations.length > stanzas.length) {
         stanzas = hindiMeta.transliterations.map((t, idx) => ({
           num: String(idx + 1),
           text: (stanzas[idx]?.text && stanzas[idx].text.trim()) ? stanzas[idx].text : t
         }));
       }
+    } else if (song.isUserEdited && Array.isArray(song.hindiDevanagariStanzas) && song.hindiDevanagariStanzas.length > stanzas.length) {
+      stanzas = song.hindiDevanagariStanzas.map((t, idx) => ({
+        num: String(idx + 1),
+        text: (stanzas[idx]?.text && stanzas[idx].text.trim()) ? stanzas[idx].text : t
+      }));
     }
 
     let validStanzas = stanzas.filter(s => s && s.text && s.text.trim() && s.text.trim() !== '\\');
@@ -738,8 +786,8 @@ class VedabaseApp {
 
     // Parse Hindi translations if present directly on song object
     const hindiTransMap = new Map();
-    const rawHindiTrans = song.hindiTranslation || '';
-    if (rawHindiTrans && typeof rawHindiTrans === 'string') {
+    const rawHindiTrans = (typeof song.hindiTranslation === 'string' && !song.hindiTranslation.includes('<div')) ? song.hindiTranslation : '';
+    if (rawHindiTrans) {
       const normHT = rawHindiTrans.replace(/\r\n/g, '\n');
       if (normHT.match(/(?:^|\n)\s*\(?\d+\)?[\.\)]\s*/)) {
         const hParts = normHT.split(/(?:^|\n)\s*\(?(\d+)\)?[\.\)]\s*/);
@@ -817,30 +865,36 @@ class VedabaseApp {
         ${stanzas.map((st, idx) => {
           let transEn = '';
           if (!isTransHindi) {
-            transEn = transMap.get(st.num) || (transList[idx]?.text) || '';
+            transEn = transMap.get(st.num) || (transList[idx]?.text) || (song.englishTranslation && stanzas.length === 1 ? song.englishTranslation : '');
           }
           const hasTransEn = Boolean(transEn && transEn.trim());
 
-          const meta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
-            ? (window.VsTranslationsHindi.getHindiMetadata(song) || window.VsTranslationsHindi.getHindiMetadata(song.id) || window.VsTranslationsHindi.getHindiMetadata(song.songNumber) || window.VsTranslationsHindi.getHindiMetadata(song.verseKey) || window.VsTranslationsHindi.getHindiMetadata(song.title))
-            : null;
-
           let transHi = null;
-          if (hindiTransMap.has(st.num)) {
-            transHi = hindiTransMap.get(st.num);
-          } else if (isTransHindi && (transMap.get(st.num) || transList[idx]?.text)) {
-            transHi = transMap.get(st.num) || transList[idx]?.text;
-          } else if (Array.isArray(song.hindiTranslations) && song.hindiTranslations[idx]) {
-            transHi = song.hindiTranslations[idx];
-          } else if (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiTranslation) {
-            transHi = window.VsTranslationsHindi.getHindiTranslation(song, idx) ||
-                      window.VsTranslationsHindi.getHindiTranslation(song.id, idx) ||
-                      window.VsTranslationsHindi.getHindiTranslation(song.songNumber, idx) ||
-                      window.VsTranslationsHindi.getHindiTranslation(song.verseKey, idx) ||
-                      window.VsTranslationsHindi.getHindiTranslation(song.title, idx);
-          }
-          if (!transHi && rawHindiTrans && stanzas.length === 1) {
-            transHi = rawHindiTrans;
+          if (song.isUserEdited) {
+            if (Array.isArray(song.hindiTranslations)) {
+              transHi = song.hindiTranslations[idx] || null;
+            } else if (typeof song.hindiTranslation === 'string' && song.hindiTranslation.trim() && !song.hindiTranslation.includes('<div')) {
+              transHi = hindiTransMap.get(st.num) || (stanzas.length === 1 ? song.hindiTranslation.trim() : null);
+            } else {
+              transHi = null;
+            }
+          } else {
+            if (hindiTransMap.has(st.num)) {
+              transHi = hindiTransMap.get(st.num);
+            } else if (isTransHindi && (transMap.get(st.num) || transList[idx]?.text)) {
+              transHi = transMap.get(st.num) || transList[idx]?.text;
+            } else if (Array.isArray(song.hindiTranslations) && song.hindiTranslations[idx]) {
+              transHi = song.hindiTranslations[idx];
+            } else if (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiTranslation) {
+              transHi = window.VsTranslationsHindi.getHindiTranslation(song, idx) ||
+                        window.VsTranslationsHindi.getHindiTranslation(song.id, idx) ||
+                        window.VsTranslationsHindi.getHindiTranslation(song.songNumber, idx) ||
+                        window.VsTranslationsHindi.getHindiTranslation(song.verseKey, idx) ||
+                        window.VsTranslationsHindi.getHindiTranslation(song.title, idx);
+            }
+            if (!transHi && rawHindiTrans && stanzas.length === 1) {
+              transHi = rawHindiTrans;
+            }
           }
           const hasTransHi = Boolean(transHi && transHi.trim());
 
@@ -850,10 +904,24 @@ class VedabaseApp {
           const hasWords = effectiveWords.length > 0;
 
           const iastHtml = this.escapeHtml(st.text).replace(/\n/g, '<br>');
-          const authenticDeva = meta?.transliterations?.[idx];
-          const devaText = authenticDeva || ((window.IastTransliteration && window.IastTransliteration.toDevanagari)
-            ? window.IastTransliteration.toDevanagari(st.text)
-            : st.text);
+          
+          let devaText = '';
+          if (song.isUserEdited) {
+            if (Array.isArray(song.hindiDevanagariStanzas) && song.hindiDevanagariStanzas[idx]) {
+              devaText = song.hindiDevanagariStanzas[idx];
+            } else if (song.sanskritDevanagari && !song.sanskritDevanagari.includes('<div') && stanzas.length === 1) {
+              devaText = song.sanskritDevanagari;
+            } else {
+              devaText = (window.IastTransliteration && window.IastTransliteration.toDevanagari)
+                ? window.IastTransliteration.toDevanagari(st.text)
+                : st.text;
+            }
+          } else {
+            const authenticDeva = hindiMeta?.transliterations?.[idx];
+            devaText = authenticDeva || ((window.IastTransliteration && window.IastTransliteration.toDevanagari)
+              ? window.IastTransliteration.toDevanagari(st.text)
+              : st.text);
+          }
           const devaHtml = this.escapeHtml(devaText).replace(/\n/g, '<br>');
 
           const hasAnyTrans = hasTransHi || hasTransEn;
@@ -923,10 +991,15 @@ class VedabaseApp {
     song.stanzas = stanzas;
     song.translations = transList;
     song.formattedStanzasHtml = flowHtml;
-    song.sanskritDevanagari = flowHtml;
+    if (!song.sanskritDevanagari || song.sanskritDevanagari.includes('<div')) {
+      song.sanskritDevanagari = (Array.isArray(song.hindiDevanagariStanzas) && song.hindiDevanagariStanzas.length > 0)
+        ? song.hindiDevanagariStanzas.map((t, idx) => `(${idx + 1})\n${t}`).join('\n\n')
+        : (stanzas.map(st => `(${st.num})\n${st.text}`).join('\n\n'));
+    }
     song.sanskritIAST = ''; // Never duplicate!
-    song.hindiTranslation = '';
-    song.hindiPurport = rawPurport;
+    if (!song.isUserEdited) {
+      song.hindiPurport = rawPurport;
+    }
     if (wordList.length > 0) {
       song.wordToWord = wordList;
     }
@@ -2395,10 +2468,10 @@ class VedabaseApp {
     const sanskritEl = document.getElementById('sanskritDevanagari');
     if (sanskritEl) {
       if (isVS) {
-        if (!sloka.parsed || !sloka.sanskritDevanagari) {
+        if (!sloka.parsed || !sloka.formattedStanzasHtml) {
           this.parseSongBody(sloka);
         }
-        sanskritEl.innerHTML = this.highlightInHtml(sloka.sanskritDevanagari, this.currentHighlightWord) || 'गीत पद उपलब्ध नहीं हैं।';
+        sanskritEl.innerHTML = this.highlightInHtml(sloka.formattedStanzasHtml || sloka.sanskritDevanagari, this.currentHighlightWord) || 'गीत पद उपलब्ध नहीं हैं।';
       } else {
         sanskritEl.innerHTML = this.highlightInText(this.cleanSanskritText(sloka.sanskritDevanagari), this.currentHighlightWord) || 'श्लोक उपलब्ध नहीं है';
       }
@@ -3455,15 +3528,23 @@ class VedabaseApp {
     let stanzas = s.stanzas || [];
     let validStanzas = stanzas.filter(st => st && st.text && st.text.trim() && st.text.trim() !== '\\');
     if (validStanzas.length === 0) {
-      const hindiMeta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
-        ? (window.VsTranslationsHindi.getHindiMetadata(s.id) || window.VsTranslationsHindi.getHindiMetadata(s.songNumber) || window.VsTranslationsHindi.getHindiMetadata(s.verseKey))
-        : null;
-      if (hindiMeta && Array.isArray(hindiMeta.transliterations) && hindiMeta.transliterations.length > 0) {
-        validStanzas = hindiMeta.transliterations.map((t, idx) => ({
+      if (s.isUserEdited && Array.isArray(s.hindiDevanagariStanzas) && s.hindiDevanagariStanzas.length > 0) {
+        validStanzas = s.hindiDevanagariStanzas.map((t, idx) => ({
           num: String(idx + 1),
           text: t
         }));
         s.stanzas = validStanzas;
+      } else {
+        const hindiMeta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
+          ? (window.VsTranslationsHindi.getHindiMetadata(s.id) || window.VsTranslationsHindi.getHindiMetadata(s.songNumber) || window.VsTranslationsHindi.getHindiMetadata(s.verseKey))
+          : null;
+        if (hindiMeta && Array.isArray(hindiMeta.transliterations) && hindiMeta.transliterations.length > 0) {
+          validStanzas = hindiMeta.transliterations.map((t, idx) => ({
+            num: String(idx + 1),
+            text: t
+          }));
+          s.stanzas = validStanzas;
+        }
       }
     }
     stanzas = validStanzas;
@@ -3476,16 +3557,42 @@ class VedabaseApp {
       <div class="pres-vs-slide-container">
         ${stanzas.map((st, idx) => {
           const iastText = st.text;
-          const devaText = (window.IastTransliteration && window.IastTransliteration.toDevanagari)
-            ? window.IastTransliteration.toDevanagari(iastText)
-            : iastText;
+          let devaText = '';
+          if (s.isUserEdited) {
+            if (Array.isArray(s.hindiDevanagariStanzas) && s.hindiDevanagariStanzas[idx]) {
+              devaText = s.hindiDevanagariStanzas[idx];
+            } else if (s.sanskritDevanagari && !s.sanskritDevanagari.includes('<div') && stanzas.length === 1) {
+              devaText = s.sanskritDevanagari;
+            } else {
+              devaText = (window.IastTransliteration && window.IastTransliteration.toDevanagari)
+                ? window.IastTransliteration.toDevanagari(iastText)
+                : iastText;
+            }
+          } else {
+            const hindiMeta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata) ? window.VsTranslationsHindi.getHindiMetadata(s) : null;
+            const authenticDeva = hindiMeta?.transliterations?.[idx];
+            devaText = authenticDeva || ((window.IastTransliteration && window.IastTransliteration.toDevanagari)
+              ? window.IastTransliteration.toDevanagari(iastText)
+              : iastText);
+          }
           const lyricsText = isDeva ? devaText : iastText;
           const lyricsHtml = this.highlightInHtml(this.escapeHtml(lyricsText).replace(/\n/g, '<br>'), this.currentHighlightWord);
 
-          const transEn = transList[idx]?.text || '';
-          const transHi = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiTranslation)
-            ? (window.VsTranslationsHindi.getHindiTranslation(s, idx) || window.VsTranslationsHindi.getHindiTranslation(s.id, idx) || window.VsTranslationsHindi.getHindiTranslation(s.songNumber, idx) || window.VsTranslationsHindi.getHindiTranslation(s.verseKey, idx) || window.VsTranslationsHindi.getHindiTranslation(s.title, idx))
-            : null;
+          const transEn = transList[idx]?.text || (s.englishTranslation && stanzas.length === 1 ? s.englishTranslation : '');
+          let transHi = null;
+          if (s.isUserEdited) {
+            if (Array.isArray(s.hindiTranslations)) {
+              transHi = s.hindiTranslations[idx] || null;
+            } else if (typeof s.hindiTranslation === 'string' && s.hindiTranslation.trim() && !s.hindiTranslation.includes('<div')) {
+              transHi = idx === 0 ? s.hindiTranslation.trim() : null;
+            } else {
+              transHi = null;
+            }
+          } else {
+            transHi = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiTranslation)
+              ? (window.VsTranslationsHindi.getHindiTranslation(s, idx) || window.VsTranslationsHindi.getHindiTranslation(s.id, idx) || window.VsTranslationsHindi.getHindiTranslation(s.songNumber, idx) || window.VsTranslationsHindi.getHindiTranslation(s.verseKey, idx) || window.VsTranslationsHindi.getHindiTranslation(s.title, idx))
+              : null;
+          }
           const activeTrans = isDeva ? transHi : transEn;
           const hasActiveTrans = Boolean(activeTrans && activeTrans.trim());
 
@@ -3626,33 +3733,43 @@ class VedabaseApp {
       }
 
       // Check if we have transliterations from Hindi dataset
-      const hindiMeta = (window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
-        ? (window.VsTranslationsHindi.getHindiMetadata(sloka.id) || window.VsTranslationsHindi.getHindiMetadata(sNum) || window.VsTranslationsHindi.getHindiMetadata(sloka.title))
+      const hindiMeta = (!sloka.isUserEdited && window.VsTranslationsHindi && window.VsTranslationsHindi.getHindiMetadata)
+        ? (window.VsTranslationsHindi.getHindiMetadata(sloka) || window.VsTranslationsHindi.getHindiMetadata(sloka.id) || window.VsTranslationsHindi.getHindiMetadata(sNum) || window.VsTranslationsHindi.getHindiMetadata(sloka.title))
         : null;
 
       let devaLyrics = '';
-      if (Array.isArray(sloka.hindiDevanagariStanzas) && sloka.hindiDevanagariStanzas.length > 0) {
-        devaLyrics = sloka.hindiDevanagariStanzas.map((t, idx) => `(${idx + 1})\n${t}`).join('\n\n');
-      } else if (hindiMeta && Array.isArray(hindiMeta.transliterations) && hindiMeta.transliterations.length > 0) {
-        devaLyrics = hindiMeta.transliterations.map((t, idx) => {
-          const trimmed = String(t).trim();
-          if (trimmed.startsWith('(') || trimmed.startsWith('—')) return trimmed;
-          return `(${idx + 1})\n${trimmed}`;
-        }).join('\n\n');
-      } else if (Array.isArray(sloka.stanzas) && sloka.stanzas.length > 0) {
-        devaLyrics = sloka.stanzas.map((st, idx) => {
-          const authDeva = hindiMeta?.transliterations?.[idx];
-          const dText = authDeva || ((window.IastTransliteration && window.IastTransliteration.toDevanagari)
-            ? window.IastTransliteration.toDevanagari(st.text)
-            : st.text);
-          return `(${st.num})\n${dText}`;
-        }).join('\n\n');
-      } else if (lyrics && !lyrics.includes('<')) {
-        devaLyrics = (window.IastTransliteration && window.IastTransliteration.toDevanagari)
-          ? window.IastTransliteration.toDevanagari(lyrics)
-          : lyrics;
-      } else if (sloka.sanskritDevanagari && !sloka.sanskritDevanagari.includes('<')) {
-        devaLyrics = sloka.sanskritDevanagari.trim();
+      if (sloka.isUserEdited) {
+        if (sloka.sanskritDevanagari && !sloka.sanskritDevanagari.includes('<div')) {
+          devaLyrics = sloka.sanskritDevanagari;
+        } else if (Array.isArray(sloka.hindiDevanagariStanzas) && sloka.hindiDevanagariStanzas.length > 0) {
+          devaLyrics = sloka.hindiDevanagariStanzas.map((t, idx) => `(${idx + 1})\n${t}`).join('\n\n');
+        } else {
+          devaLyrics = '';
+        }
+      } else {
+        if (Array.isArray(sloka.hindiDevanagariStanzas) && sloka.hindiDevanagariStanzas.length > 0) {
+          devaLyrics = sloka.hindiDevanagariStanzas.map((t, idx) => `(${idx + 1})\n${t}`).join('\n\n');
+        } else if (hindiMeta && Array.isArray(hindiMeta.transliterations) && hindiMeta.transliterations.length > 0) {
+          devaLyrics = hindiMeta.transliterations.map((t, idx) => {
+            const trimmed = String(t).trim();
+            if (trimmed.startsWith('(') || trimmed.startsWith('—')) return trimmed;
+            return `(${idx + 1})\n${trimmed}`;
+          }).join('\n\n');
+        } else if (Array.isArray(sloka.stanzas) && sloka.stanzas.length > 0) {
+          devaLyrics = sloka.stanzas.map((st, idx) => {
+            const authDeva = hindiMeta?.transliterations?.[idx];
+            const dText = authDeva || ((window.IastTransliteration && window.IastTransliteration.toDevanagari)
+              ? window.IastTransliteration.toDevanagari(st.text)
+              : st.text);
+            return `(${st.num})\n${dText}`;
+          }).join('\n\n');
+        } else if (lyrics && !lyrics.includes('<')) {
+          devaLyrics = (window.IastTransliteration && window.IastTransliteration.toDevanagari)
+            ? window.IastTransliteration.toDevanagari(lyrics)
+            : lyrics;
+        } else if (sloka.sanskritDevanagari && !sloka.sanskritDevanagari.includes('<')) {
+          devaLyrics = sloka.sanskritDevanagari.trim();
+        }
       }
 
       document.getElementById('editSanskrit').value = devaLyrics;
@@ -3660,17 +3777,30 @@ class VedabaseApp {
       if (vsIastEl) vsIastEl.value = lyrics;
 
       // Extract Hindi Translation
-      if (sloka.hindiTranslation && typeof sloka.hindiTranslation === 'string' && sloka.hindiTranslation.trim() && !sloka.hindiTranslation.includes('<')) {
-        hindiTrans = sloka.hindiTranslation.trim();
-      } else if (Array.isArray(sloka.hindiTranslations) && sloka.hindiTranslations.length > 0) {
-        hindiTrans = sloka.hindiTranslations.map((t, idx) => `${idx + 1}) ${t}`).join('\n\n');
-      } else if (hindiMeta && Array.isArray(hindiMeta.translations) && hindiMeta.translations.length > 0) {
-        hindiTrans = hindiMeta.translations.map((t, idx) => `${idx + 1}) ${t}`).join('\n\n');
+      let finalHindiTrans = '';
+      if (sloka.isUserEdited) {
+        if (typeof sloka.hindiTranslation === 'string' && !sloka.hindiTranslation.includes('<div')) {
+          finalHindiTrans = sloka.hindiTranslation;
+        } else if (Array.isArray(sloka.hindiTranslations) && sloka.hindiTranslations.length > 0) {
+          finalHindiTrans = sloka.hindiTranslations.map((t, idx) => `${idx + 1}) ${t}`).join('\n\n');
+        } else {
+          finalHindiTrans = '';
+        }
+      } else {
+        if (sloka.hindiTranslation && typeof sloka.hindiTranslation === 'string' && sloka.hindiTranslation.trim() && !sloka.hindiTranslation.includes('<')) {
+          finalHindiTrans = sloka.hindiTranslation.trim();
+        } else if (Array.isArray(sloka.hindiTranslations) && sloka.hindiTranslations.length > 0) {
+          finalHindiTrans = sloka.hindiTranslations.map((t, idx) => `${idx + 1}) ${t}`).join('\n\n');
+        } else if (hindiMeta && Array.isArray(hindiMeta.translations) && hindiMeta.translations.length > 0) {
+          finalHindiTrans = hindiMeta.translations.map((t, idx) => `${idx + 1}) ${t}`).join('\n\n');
+        } else {
+          finalHindiTrans = hindiTrans;
+        }
       }
-      document.getElementById('editTranslation').value = hindiTrans;
+      document.getElementById('editTranslation').value = finalHindiTrans;
 
       // English Translation & Purport
-      document.getElementById('editPurport').value = englishTrans || sloka.englishTranslation || purportText || '';
+      document.getElementById('editPurport').value = sloka.englishTranslation || sloka.hindiPurport || englishTrans || purportText || '';
 
       // Word to word
       if (Array.isArray(sloka.wordToWord) && sloka.wordToWord.length > 0) {
@@ -3758,7 +3888,7 @@ class VedabaseApp {
     // Handling for Vaishnava Songs
     if (isVS) {
       const songNumber = parseInt(document.getElementById('editSongNumber').value, 10) || this.currentSloka?.songNumber || 1;
-      const songId = document.getElementById('editSongId').value || `vs-${songNumber}`;
+      const songId = document.getElementById('editSongId').value || this.currentSloka?.id || `vs-${songNumber}`;
       const titleVal = document.getElementById('editVsTitle').value.trim() || this.currentSloka?.title || '';
       const authorVal = document.getElementById('editVsAuthor').value.trim() || this.currentSloka?.author || '';
       const bookVal = document.getElementById('editVsBook').value.trim() || this.currentSloka?.book || 'Songs by Vaishnavas';
@@ -3814,11 +3944,14 @@ class VedabaseApp {
       // Update Custom Hindi Songs Dataset dynamically
       if (!window.VsTranslationsHindi) window.VsTranslationsHindi = {};
       if (!window.VsTranslationsHindi.CUSTOM) window.VsTranslationsHindi.CUSTOM = {};
-      window.VsTranslationsHindi.CUSTOM[String(songNumber)] = {
+      const customEntry = {
         title: titleVal,
-        transliterations: devaStanzasArray.length > 0 ? devaStanzasArray : undefined,
-        translations: hindiTransArray.length > 0 ? hindiTransArray : undefined
+        transliterations: devaStanzasArray,
+        translations: hindiTransArray,
+        isUserEdited: true
       };
+      window.VsTranslationsHindi.CUSTOM[String(songNumber)] = customEntry;
+      window.VsTranslationsHindi.CUSTOM[songId] = customEntry;
       if (typeof window.VsTranslationsHindi.init === 'function') {
         window.VsTranslationsHindi.init();
       }
@@ -3826,26 +3959,31 @@ class VedabaseApp {
       const sloka = {
         id: songId,
         songNumber: songNumber,
-        verseKey: `vs-${songNumber}`,
+        verseKey: `VS ${songNumber}`,
         scripture: "VS",
         book: bookVal,
+        songbook: bookVal,
         title: titleVal,
         author: authorVal,
         authorHindi: authorVal,
         category: this.currentSloka?.category || '',
-        firstLine: (devaLyricsVal || effectiveIast).split('\n')[0]?.trim() || this.currentSloka?.firstLine || '',
+        firstLine: (devaLyricsVal || effectiveIast || this.currentSloka?.firstLine || '').split('\n')[0]?.trim() || '',
         body: updatedBody,
         sanskritDevanagari: devaLyricsVal,
         hindiDevanagariStanzas: devaStanzasArray,
         hindiTranslation: hindiTransVal,
         hindiTranslations: hindiTransArray,
         englishTranslation: englishTransVal,
+        hindiPurport: englishTransVal,
         audioLinks: this.currentSloka?.audioLinks || [],
         isUserEdited: true,
         lastEditedAt: new Date().toISOString()
       };
 
-      // 1. Send update directly to server API
+      // 1. Save in-memory structures & permanent localStorage backup
+      await this.saveUserCustomEdit(sloka);
+
+      // 2. Send update directly to server API
       let diskSaved = false;
       try {
         const resp = await fetch('/api/save-verse', {
@@ -3861,41 +3999,13 @@ class VedabaseApp {
         console.warn('Server direct file-save notice:', e);
       }
 
-      // 2. Update in-memory Vaishnava Songs
+      // 3. Parse song body and re-render
       sloka.parsed = false;
       this.parseSongBody(sloka);
 
-      if (this.vsMap) {
-        this.vsMap.set(songId, sloka);
-        this.vsMap.set(String(songNumber), sloka);
-        this.vsMap.set(titleVal, sloka);
-      }
-      if (this.verseMap) {
-        this.verseMap.set(songId, sloka);
-        this.verseMap.set(`vs ${songNumber}`, sloka);
-        this.verseMap.set(`vs-${songNumber}`, sloka);
-      }
-      if (Array.isArray(this.vsSlokas)) {
-        const vsIdx = this.vsSlokas.findIndex(s => s.id === songId || s.songNumber === songNumber);
-        if (vsIdx >= 0) this.vsSlokas[vsIdx] = sloka;
-        else this.vsSlokas.push(sloka);
-      }
-      if (Array.isArray(this.allSlokas)) {
-        const allIdx = this.allSlokas.findIndex(s => s.id === songId);
-        if (allIdx >= 0) this.allSlokas[allIdx] = sloka;
-        else this.allSlokas.push(sloka);
-      }
-
-      // 3. Save into localStorage / Clear override if disk write was successful
       if (diskSaved) {
-        const edits = this.getUserCustomEdits();
-        delete edits[songId];
-        delete edits[`vs-${songNumber}`];
-        localStorage.setItem('vedabase_user_custom_edits', JSON.stringify(edits));
-        this.updateCustomEditsCountBadge();
-        this.showToast(`💾 वैष्णव गीत #${songNumber} सीधे vaishnava-songs.json में सुरक्षित हो गया!`);
+        this.showToast(`💾 वैष्णव गीत #${songNumber} सीधे vaishnava-songs.json एवं स्टोरेज में सुरक्षित हो गया!`);
       } else {
-        await this.saveUserCustomEdit(sloka);
         this.showToast(`✅ वैष्णव गीत #${songNumber} सुरक्षित हुआ (Local Storage)`);
       }
 
