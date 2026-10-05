@@ -144,8 +144,10 @@
                   keys.forEach(k => {
                     const norm = this.normalizeKey(k);
                     if (norm) {
-                      this.approvedOverrides.set(norm, fieldUpdates);
-                      cacheObj[norm] = fieldUpdates;
+                      const existing = this.approvedOverrides.get(norm) || {};
+                      const merged = { ...existing, ...fieldUpdates };
+                      this.approvedOverrides.set(norm, merged);
+                      cacheObj[norm] = merged;
                     }
                   });
                 }
@@ -156,7 +158,7 @@
                 localStorage.setItem('vedabase_cloud_approved_overrides', JSON.stringify(cacheObj));
               } catch (e) {}
 
-              console.log(`📡 [Firebase] Synced ${snapshot.size} approved edits globally.`);
+              console.log(`📡 [Firebase] Synced ${snapshot.size} approved edits globally (${this.approvedOverrides.size} unique keys).`);
               this.notifyListeners();
             },
             (err) => {
@@ -181,14 +183,17 @@
     // Get any active cloud approved override for a given sloka object
     getOverrideForSloka(sloka) {
       if (!sloka || this.approvedOverrides.size === 0) return null;
+      const b = (sloka.book || (sloka.id && String(sloka.id).startsWith('sb-') ? 'SB' : (sloka.id && String(sloka.id).startsWith('bg-') ? 'BG' : ''))).toUpperCase();
       const candidates = [
         sloka.verseKey,
         sloka.id,
-        sloka.book ? `${sloka.book} ${sloka.verseKey}` : null,
+        b && sloka.verseKey ? `${b} ${sloka.verseKey}` : null,
         sloka.songNumber ? `vs ${sloka.songNumber}` : null,
         sloka.songNumber ? `vs-${sloka.songNumber}` : null,
         (sloka.canto && sloka.chapter && sloka.verse) ? `${sloka.canto}.${sloka.chapter}.${sloka.verse}` : null,
-        (sloka.canto && sloka.chapter && sloka.verse) ? `${sloka.book || 'sb'} ${sloka.canto}.${sloka.chapter}.${sloka.verse}` : null
+        (sloka.canto && sloka.chapter && sloka.verse) ? `${b || 'SB'} ${sloka.canto}.${sloka.chapter}.${sloka.verse}` : null,
+        (sloka.chapter && sloka.verse && !sloka.canto) ? `BG ${sloka.chapter}.${sloka.verse}` : null,
+        (sloka.chapter && sloka.verse && !sloka.canto) ? `${sloka.chapter}.${sloka.verse}` : null
       ];
       for (const c of candidates) {
         if (!c) continue;
@@ -261,6 +266,15 @@
 
         const record = {
           sloka: slokaRef,
+          verseReference: payload.verseReference || slokaRef,
+          verseKey: payload.verseKey || '',
+          verseId: payload.verseId || '',
+          book: payload.book || '',
+          canto: payload.canto !== undefined ? payload.canto : null,
+          chapter: payload.chapter !== undefined ? payload.chapter : null,
+          verse: payload.verse !== undefined ? payload.verse : null,
+          songNumber: payload.songNumber || null,
+          slokaNumber: payload.slokaNumber || '',
           field: ch.label || ch.field,
           fieldKey: ch.field,
           oldText: ch.oldText || '',

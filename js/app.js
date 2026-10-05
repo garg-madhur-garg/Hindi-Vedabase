@@ -4166,6 +4166,15 @@ class VedabaseApp {
       }
     }
 
+    if (Array.isArray(this.chapterSlokas) && this.chapterSlokas.length > 0) {
+      for (const sloka of this.chapterSlokas) {
+        const ov = window.vedabaseFirebase.getOverrideForSloka(sloka);
+        if (ov) {
+          Object.assign(sloka, ov, { isCloudApproved: true });
+        }
+      }
+    }
+
     // If current sloka has an approved override, refresh active view
     if (this.currentSloka) {
       const ov = window.vedabaseFirebase.getOverrideForSloka(this.currentSloka);

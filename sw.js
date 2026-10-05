@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hindi-vedabase-v3.74';
+const CACHE_NAME = 'hindi-vedabase-v3.80';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const ASSETS_TO_CACHE = [
   './js/vs-hindi-raw.js',
   './js/vs-translations-hindi.js',
   './js/search.js',
+  './js/firebase-sync.js',
   './js/app.js',
   './data/bhagavad-gita/bg-manifest.json',
   './data/isopanisad/iso-manifest.json',
