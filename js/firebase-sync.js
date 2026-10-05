@@ -248,6 +248,17 @@
         const docId = `PENDING__${safeRef}${fieldSuffix}_${Date.now()}`;
         const docRef = this.db.collection('vedabase_suggestions').doc(docId);
 
+        const now = new Date();
+        const submittedIso = payload.submittedAt || payload.createdAt || now.toISOString();
+        const submittedFormatted = payload.submittedAtFormatted || now.toLocaleString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+
         const record = {
           sloka: slokaRef,
           field: ch.label || ch.field,
@@ -257,7 +268,11 @@
           name: suggesterName,
           phone: (payload.phone || '').trim(),
           whatChanged: reason,
-          status: 'pending'
+          status: 'pending',
+          createdAt: submittedIso,
+          submittedAt: submittedIso,
+          submittedAtFormatted: submittedFormatted,
+          timestamp: payload.timestamp || now.getTime()
         };
 
         if (ch.field === 'wordToWord' && ch.parsedWords) {

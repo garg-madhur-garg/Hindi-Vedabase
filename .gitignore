@@ -1,0 +1,26 @@
+# Environment variables & secrets
+.env
+.env.*
+*.env
+*secret*
+*credentials*
+serviceAccountKey.json
+*-service-account*.json
+*.key
+*.pem
+
+# Editor and IDE configurations
+.idea/
+.vscode/
+*.suo
+*.user
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak

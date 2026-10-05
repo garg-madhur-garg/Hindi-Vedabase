@@ -277,13 +277,10 @@
         Enter your administrator PIN to review suggestions and manage data.
       </p>
       <input type="password" id="inputPin" style="width: 80%; padding: 0.65rem 1rem; font-size: 1.1rem; text-align: center; background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 8px; color: var(--text-primary); letter-spacing: 4px; margin-bottom: 1rem;" placeholder="••••" autofocus>
-      <div id="pinError" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 1rem; display: none;">Incorrect PIN! Please try again. (Default: 108)</div>
+      <div id="pinError" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 1rem; display: none;">Incorrect PIN! Access denied.</div>
       <button id="btnUnlock" style="width: 85%; padding: 0.75rem; background: var(--accent-gold); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
         🔓 Unlock Portal
       </button>
-      <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);">
-        Default PIN: <strong>108</strong> (Changeable inside the portal)
-      </div>
     </div>
   </div>
 
@@ -341,8 +338,26 @@
       let currentTab = 'pending';
       let allSuggestions = [];
 
-      function getSavedPin() {
-        return localStorage.getItem('vedabase_admin_pin') || '108';
+      // Cryptographic SHA-256 Hasher
+      async function hashPin(pin) {
+        if (!pin) return '';
+        const msgUint8 = new TextEncoder().encode(String(pin));
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      // Default SHA-256 hash (Pre-hashed, no plaintext PIN is in the codebase)
+      const DEFAULT_PIN_HASH = '9537f32ec7599e1ae953af6c9f929fe747ff9dadf79a9beff1f304c550173011';
+
+      async function getSavedPinHash() {
+        const legacyPlain = localStorage.getItem('vedabase_admin_pin');
+        if (legacyPlain) {
+          const legacyHash = await hashPin(legacyPlain);
+          localStorage.setItem('vedabase_admin_pin_hash', legacyHash);
+          localStorage.removeItem('vedabase_admin_pin');
+          return legacyHash;
+        }
+        return localStorage.getItem('vedabase_admin_pin_hash') || DEFAULT_PIN_HASH;
       }
 
       function isAuthed() {
@@ -365,16 +380,41 @@
         }
       }
 
-      // PIN authentication logic
-      document.getElementById('btnUnlock').addEventListener('click', () => {
+      // PIN authentication logic with brute-force protection
+      let failedAttempts = 0;
+      let lockoutUntil = 0;
+
+      document.getElementById('btnUnlock').addEventListener('click', async () => {
+        const now = Date.now();
+        if (now < lockoutUntil) {
+          const remaining = Math.ceil((lockoutUntil - now) / 1000);
+          const pinError = document.getElementById('pinError');
+          pinError.textContent = `Too many failed attempts. Try again in ${remaining}s.`;
+          pinError.style.display = 'block';
+          return;
+        }
+
         const entered = document.getElementById('inputPin').value.trim();
         const pinError = document.getElementById('pinError');
-        if (entered === getSavedPin()) {
+        if (!entered) return;
+
+        const enteredHash = await hashPin(entered);
+        const correctHash = await getSavedPinHash();
+
+        if (enteredHash === correctHash) {
+          failedAttempts = 0;
           sessionStorage.setItem('vedabase_admin_authed', 'true');
           pinError.style.display = 'none';
           checkAuth();
           showToast('Welcome, Administrator!');
         } else {
+          failedAttempts++;
+          if (failedAttempts >= 5) {
+            lockoutUntil = Date.now() + 30000;
+            pinError.textContent = 'Too many failed attempts. Locked for 30s.';
+          } else {
+            pinError.textContent = 'Incorrect PIN! Access denied.';
+          }
           pinError.style.display = 'block';
           document.getElementById('inputPin').value = '';
           document.getElementById('inputPin').focus();
@@ -391,16 +431,24 @@
         showToast('Session ended.');
       });
 
-      document.getElementById('btnChangePin').addEventListener('click', () => {
+      document.getElementById('btnChangePin').addEventListener('click', async () => {
         const current = prompt('Enter current Admin PIN:');
-        if (current !== getSavedPin()) {
+        if (!current) return;
+        const currentHash = await hashPin(current.trim());
+        const expectedHash = await getSavedPinHash();
+
+        if (currentHash !== expectedHash) {
           alert('Incorrect current PIN!');
           return;
         }
-        const newPin = prompt('Enter new Admin PIN (minimum 3 digits):');
-        if (newPin && newPin.trim().length >= 3) {
-          localStorage.setItem('vedabase_admin_pin', newPin.trim());
-          alert('✅ PIN updated successfully!');
+        const newPin = prompt('Enter new Admin PIN (minimum 4 characters/digits):');
+        if (newPin && newPin.trim().length >= 4) {
+          const newHash = await hashPin(newPin.trim());
+          localStorage.setItem('vedabase_admin_pin_hash', newHash);
+          localStorage.removeItem('vedabase_admin_pin');
+          alert('✅ Admin PIN updated successfully! Stored securely.');
+        } else if (newPin !== null) {
+          alert('PIN must be at least 4 characters/digits long.');
         }
       });
 
@@ -709,6 +757,57 @@
         document.getElementById('btnStartImport')?.addEventListener('click', executeImport);
       }
 
+      // Date and Time Formatter (e.g. 05 Oct 2026, 09:18 PM)
+      function formatDateTime(val) {
+        if (!val) return '';
+        try {
+          let date;
+          if (typeof val === 'number') {
+            date = new Date(val);
+          } else if (typeof val === 'string') {
+            if (/^\d{10,13}$/.test(val.trim())) {
+              date = new Date(Number(val.trim()));
+            } else {
+              date = new Date(val);
+            }
+          } else if (val && typeof val.toDate === 'function') {
+            date = val.toDate();
+          } else if (val && val.seconds) {
+            date = new Date(val.seconds * 1000);
+          }
+
+          if (!date || isNaN(date.getTime())) return '';
+
+          return date.toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          });
+        } catch (e) {
+          return '';
+        }
+      }
+
+      function getItemTime(item) {
+        if (item.timestamp && typeof item.timestamp === 'number') return item.timestamp;
+        if (item.createdAt) {
+          const t = new Date(item.createdAt).getTime();
+          if (!isNaN(t)) return t;
+        }
+        if (item.submittedAt) {
+          const t = new Date(item.submittedAt).getTime();
+          if (!isNaN(t)) return t;
+        }
+        if (item._docId) {
+          const match = item._docId.match(/_(\d{10,13})$/);
+          if (match) return Number(match[1]);
+        }
+        return 0;
+      }
+
       // =========================================================================
       // FIRESTORE FETCH & RENDER SUGGESTION CARDS
       // =========================================================================
@@ -729,8 +828,8 @@
             allSuggestions.push(data);
           });
 
-          // Sort by creation / id descending
-          allSuggestions.sort((a, b) => (b.createdAt || b.id || '').localeCompare(a.createdAt || a.id || ''));
+          // Sort by creation timestamp descending (newest on top)
+          allSuggestions.sort((a, b) => getItemTime(b) - getItemTime(a));
 
           updateBadges();
           renderCards();
@@ -789,6 +888,10 @@
           const oldText = item.oldText || (item.changes?.[0]?.oldText) || '—';
           const newText = item.newText || (item.changes?.[0]?.newText) || '—';
 
+          const itemTime = getItemTime(item);
+          const submittedDateStr = item.submittedAtFormatted || formatDateTime(itemTime);
+          const reviewedDateStr = formatDateTime(item.reviewedAt);
+
           const diffResult = computeWordDiff(oldText, newText);
 
           card.innerHTML = `
@@ -797,11 +900,21 @@
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
                   <span class="sloka-badge">${escapeHtml(slokaRef)}</span>
                   <span class="field-tag">📝 ${escapeHtml(fieldName)}</span>
+                  ${submittedDateStr ? `
+                    <span style="font-size: 0.78rem; color: #94a3b8; background: rgba(255, 255, 255, 0.05); padding: 0.2rem 0.55rem; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.08); display: inline-flex; align-items: center; gap: 0.3rem;" title="Submission Date & Time">
+                      <span>📅</span> <span>${escapeHtml(submittedDateStr)}</span>
+                    </span>
+                  ` : ''}
                 </div>
                 <div style="font-size: 0.85rem; color: var(--text-secondary);">
                   <span>👤 Contributor: <strong style="color: var(--text-primary);">${escapeHtml(name)}</strong></span>
                   ${phone ? `<span style="margin: 0 0.35rem;">•</span><span>📱 <a href="https://wa.me/91${phone.replace(/[^0-9]/g, '')}" target="_blank" style="color: #4ade80; text-decoration: none; font-weight: 600;">${escapeHtml(phone)} (WhatsApp)</a></span>` : ''}
                   ${whatChanged ? `<div style="margin-top: 0.3rem; color: var(--accent-gold);">🔍 Change Summary: <em>"${escapeHtml(whatChanged)}"</em></div>` : ''}
+                  ${reviewedDateStr && currentTab !== 'pending' ? `
+                    <div style="margin-top: 0.25rem; font-size: 0.78rem; color: ${currentTab === 'approved' ? '#4ade80' : '#f87171'};">
+                      ${currentTab === 'approved' ? '✅ Approved' : '❌ Rejected'} on: <strong>${escapeHtml(reviewedDateStr)}</strong>
+                    </div>
+                  ` : ''}
                 </div>
               </div>
 
@@ -1018,12 +1131,14 @@
         }
 
         try {
+          const reviewIso = new Date().toISOString();
           await window.vedabaseFirebase.db.collection('vedabase_suggestions').doc(item._docId).update({
             status: newStatus,
-            reviewedAt: new Date().toISOString()
+            reviewedAt: reviewIso
           });
 
           item.status = newStatus;
+          item.reviewedAt = reviewIso;
           updateBadges();
           renderCards();
 

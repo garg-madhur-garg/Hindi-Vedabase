@@ -4083,7 +4083,18 @@ class VedabaseApp {
       return;
     }
 
-    // 3. Assemble clean DELTA suggestion payload
+    // 3. Assemble clean DELTA suggestion payload with submission Date and Time
+    const now = new Date();
+    const submittedIso = now.toISOString();
+    const submittedFormatted = now.toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+
     const payload = {
       slokaNumber,
       verseReference,
@@ -4102,7 +4113,11 @@ class VedabaseApp {
       changedFieldsSummary: changedFieldsNames.join(', '),
       suggesterName,
       phone: suggesterPhone,
-      notes: suggesterNotes
+      notes: suggesterNotes,
+      submittedAt: submittedIso,
+      submittedAtFormatted: submittedFormatted,
+      createdAt: submittedIso,
+      timestamp: now.getTime()
     };
 
     try {

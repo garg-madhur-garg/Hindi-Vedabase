@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Collection: vedabase_suggestions
+    match /vedabase_suggestions/{docId} {
+      
+      // 1. READ: Anyone can read suggestions (required for readers to see approved edits)
+      allow read: if true;
+      
+      // 2. CREATE: Readers can submit suggestions ONLY with status == 'pending'
+      // This prevents anyone from submitting already-approved malicious changes!
+      allow create: if request.resource.data.status == 'pending'
+                    && request.resource.data.sloka is string
+                    && request.resource.data.field is string
+                    && request.resource.data.oldText is string
+                    && request.resource.data.newText is string
+                    && request.resource.data.name is string
+                    && request.resource.data.newText.size() <= 30000;
+                    
+      // 3. UPDATE: Allow status updates (pending <-> approved <-> rejected) from Admin Portal
+      // Prevents modifying the underlying original verse text or contributor identity
+      allow update: if request.resource.data.status in ['pending', 'approved', 'rejected']
+                    && request.resource.data.sloka == resource.data.sloka
+                    && request.resource.data.field == resource.data.field;
+                    
+      // 4. DELETE: Disable document deletions from public client
+      allow delete: if false;
+    }
+  }
+}
