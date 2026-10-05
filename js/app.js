@@ -2405,6 +2405,24 @@ class VedabaseApp {
       else localStorage.setItem('vedabase_last_verse', sloka.verseKey);
     } catch (e) {}
 
+    // Track verse reading in Google Analytics / Firebase Analytics
+    try {
+      if (typeof window.logVedabaseEvent === 'function') {
+        const verseIdentifier = isCC ? `CC ${sloka.verseKey || `${sloka.chapter}.${sloka.verse}`}`
+          : isISO ? `ISO ${sloka.verseKey === 'inv' ? 'मंगलाचरण' : sloka.verseKey}`
+          : isVS ? `VS ${sloka.songNumber || sloka.title || ''}`
+          : isBG ? `BG ${sloka.verseKey}`
+          : `SB ${sloka.verseKey || `${sloka.canto}.${sloka.chapter}.${sloka.verse}`}`;
+
+        window.logVedabaseEvent('page_view', {
+          page_title: verseIdentifier,
+          page_location: window.location.href,
+          scripture: this.currentBook,
+          verse_key: verseIdentifier
+        });
+      }
+    } catch (e) {}
+
     // 1. Badges & Titles
     const keyBadge = document.getElementById('currentVerseKeyBadge');
     if (keyBadge) {
@@ -3069,6 +3087,21 @@ class VedabaseApp {
       speedBadge.textContent = `${res.timeMs} ms`;
     }
 
+    // Debounced search query logging to Google Analytics
+    if (trimmed && trimmed.length >= 2) {
+      clearTimeout(this._searchLogTimer);
+      this._searchLogTimer = setTimeout(() => {
+        try {
+          if (typeof window.logVedabaseEvent === 'function') {
+            window.logVedabaseEvent('search', {
+              search_term: trimmed,
+              results_count: res.results ? res.results.length : 0
+            });
+          }
+        } catch (e) {}
+      }, 1000);
+    }
+
     if (!res.results || res.results.length === 0) {
       list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No verses or songs found for "${this.escapeHtml(trimmed || '')}".</div>`;
       return;
@@ -3148,6 +3181,15 @@ class VedabaseApp {
     this.renderPresentationSlide();
     this.hidePresMenu();
     this.showToast('📽️ Presentation Mode Active (Press ☰ or M for controls)');
+
+    try {
+      if (typeof window.logVedabaseEvent === 'function') {
+        window.logVedabaseEvent('open_presentation_mode', {
+          scripture: this.currentBook,
+          verse_key: this.currentSloka?.verseKey || ''
+        });
+      }
+    } catch (e) {}
   }
 
   closePresentationMode() {
@@ -3635,19 +3677,28 @@ class VedabaseApp {
     this.setTheme(saved);
   }
 
-  setTheme(theme) {
+  setTheme(theme, isUserAction = false) {
     this.currentTheme = theme;
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('vedabase_theme', theme);
 
     const icon = document.getElementById('themeIcon');
     if (icon) icon.textContent = '🌓';
+
+    if (isUserAction && typeof window.logVedabaseEvent === 'function') {
+      try {
+        window.logVedabaseEvent('select_content', {
+          content_type: 'theme',
+          item_id: theme
+        });
+      } catch (e) {}
+    }
   }
 
   toggleNextTheme() {
     const themes = ['dark', 'light', 'sepia'];
     const nextIdx = (themes.indexOf(this.currentTheme) + 1) % themes.length;
-    this.setTheme(themes[nextIdx]);
+    this.setTheme(themes[nextIdx], true);
   }
 
   // Open Edit Modal for current verse / song

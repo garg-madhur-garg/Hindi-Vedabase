@@ -9,6 +9,18 @@
   <meta name="description"
     content="श्रीमद्भगवद्गीता (700 श्लोक), श्री ईशोपनिषद् (19 मंत्र), श्रीमद्भागवतम् (18,000 श्लोक) एवं श्री चैतन्य-चरितामृत (62 अध्याय) - प्रामाणिक श्लोक, पदच्छेद, शब्दार्थ, हिन्दी अनुवाद एवं श्रील प्रभुपाद तात्पर्य सहित उच्च-गति सर्च योग्य वेदबेस">
 
+  <!-- Google Analytics (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6JC6DZZVB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-D6JC6DZZVB', {
+      send_page_view: true,
+      debug_mode: true
+    });
+  </script>
+
   <!-- Main Stylesheet & PWA Manifest -->
   <link rel="stylesheet" href="css/main.css?v=3.80">
   <link rel="manifest" href="manifest.json">
@@ -887,8 +899,9 @@
   <!-- Firebase SDKs & Cloud Sync Engine -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=3.80"></script>
-  <script src="js/app.js?v=3.80"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
+  <script src="js/firebase-sync.js?v=3.81"></script>
+  <script src="js/app.js?v=3.81"></script>
 </body>
 
 </html>

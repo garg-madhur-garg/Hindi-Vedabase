@@ -47,6 +47,17 @@
         }
 
         this.db = firebase.firestore();
+
+        // Initialize Firebase Analytics if available
+        if (typeof firebase.analytics === 'function') {
+          try {
+            this.analytics = firebase.analytics();
+            console.log('✅ [Firebase] Analytics initialized');
+          } catch (analyticsErr) {
+            console.warn('[Firebase] Analytics warning:', analyticsErr);
+          }
+        }
+
         this.isInitialized = true;
         console.log('✅ [Firebase] Connected to Firestore: hindi-vedabase');
 
@@ -298,9 +309,32 @@
         await docRef.set(record);
       }
 
+      try {
+        if (typeof window.logVedabaseEvent === 'function') {
+          window.logVedabaseEvent('suggestion_submitted', {
+            verse: String(slokaRef)
+          });
+        }
+      } catch (err) {}
+
       return true;
     }
   }
+
+  // Global Analytics / Event Logger for Google Analytics (GA4) and Firebase Analytics
+  window.logVedabaseEvent = function (eventName, params = {}) {
+    try {
+      console.log(`📊 [Analytics] Event: ${eventName}`, params);
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', eventName, params);
+      }
+      if (window.vedabaseFirebase && window.vedabaseFirebase.analytics) {
+        window.vedabaseFirebase.analytics.logEvent(eventName, params);
+      }
+    } catch (e) {
+      // Safe fallback if blocked by browser ad-blocker
+    }
+  };
 
   // Global instance
   window.vedabaseFirebase = new FirebaseSyncService();
