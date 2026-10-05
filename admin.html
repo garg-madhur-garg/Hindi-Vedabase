@@ -239,6 +239,44 @@
       filter: brightness(1.1);
       transform: translateY(-1px);
     }
+    .btn-notify-wa {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .btn-notify-wa:hover {
+      background: #22c55e;
+      color: #000;
+      transform: translateY(-1px);
+    }
+    .btn-notify-email {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .btn-notify-email:hover {
+      background: #0284c7;
+      color: #fff;
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <body>
@@ -894,6 +932,16 @@
 
           const diffResult = computeWordDiff(oldText, newText);
 
+          const notif = getNotificationData(item);
+          let contactHtml = '';
+          if (notif && notif.contact) {
+            if (notif.isEmail) {
+              contactHtml = `<span style="margin: 0 0.35rem;">•</span><span>✉️ <a href="javascript:void(0)" class="link-notify-email" style="color: #38bdf8; text-decoration: none; font-weight: 600;" title="Click to send confirmation email via Gmail">${escapeHtml(notif.contact)} (Email)</a></span>`;
+            } else {
+              contactHtml = `<span style="margin: 0 0.35rem;">•</span><span>📱 <a href="${notif.waUrl}" target="_blank" style="color: #4ade80; text-decoration: none; font-weight: 600;" title="Click to chat on WhatsApp">${escapeHtml(notif.contact)} (WhatsApp)</a></span>`;
+            }
+          }
+
           card.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
               <div>
@@ -908,7 +956,7 @@
                 </div>
                 <div style="font-size: 0.85rem; color: var(--text-secondary);">
                   <span>👤 Contributor: <strong style="color: var(--text-primary);">${escapeHtml(name)}</strong></span>
-                  ${phone ? `<span style="margin: 0 0.35rem;">•</span><span>📱 <a href="https://wa.me/91${phone.replace(/[^0-9]/g, '')}" target="_blank" style="color: #4ade80; text-decoration: none; font-weight: 600;">${escapeHtml(phone)} (WhatsApp)</a></span>` : ''}
+                  ${contactHtml}
                   ${whatChanged ? `<div style="margin-top: 0.3rem; color: var(--accent-gold);">🔍 Change Summary: <em>"${escapeHtml(whatChanged)}"</em></div>` : ''}
                   ${reviewedDateStr && currentTab !== 'pending' ? `
                     <div style="margin-top: 0.25rem; font-size: 0.78rem; color: ${currentTab === 'approved' ? '#4ade80' : '#f87171'};">
@@ -921,7 +969,7 @@
               <!-- Action Buttons -->
               <div>
                 ${currentTab === 'pending' ? `
-                  <div style="display: flex; gap: 0.5rem;">
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                     <button class="btn-reject" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.45rem 0.85rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
                       ❌ Reject
                     </button>
@@ -930,9 +978,20 @@
                     </button>
                   </div>
                 ` : (currentTab === 'approved' ? `
-                  <button class="btn-revert" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
-                    ↩️ Revert to Pending
-                  </button>
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    ${notif && notif.contact ? (notif.isEmail ? `
+                      <button class="btn-notify-email" title="Send Confirmation Email to ${escapeHtml(notif.contact)}">
+                        ✉️ Notify via Email
+                      </button>
+                    ` : `
+                      <button class="btn-notify-wa" title="Send WhatsApp Confirmation to ${escapeHtml(notif.contact)}">
+                        📲 Notify via WhatsApp
+                      </button>
+                    `) : ''}
+                    <button class="btn-revert" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.82rem; cursor: pointer;">
+                      ↩️ Revert to Pending
+                    </button>
+                  </div>
                 ` : `
                   <button class="btn-revert" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
                     ↩️ Reconsider
@@ -964,6 +1023,12 @@
           card.querySelector('.btn-approve')?.addEventListener('click', () => updateStatus(item, 'approved'));
           card.querySelector('.btn-reject')?.addEventListener('click', () => updateStatus(item, 'rejected'));
           card.querySelector('.btn-revert')?.addEventListener('click', () => updateStatus(item, 'pending'));
+          card.querySelector('.btn-notify-email')?.addEventListener('click', () => sendNotification(item));
+          card.querySelector('.btn-notify-wa')?.addEventListener('click', () => sendNotification(item));
+          card.querySelector('.link-notify-email')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            sendNotification(item);
+          });
 
           container.appendChild(card);
         });
@@ -1124,6 +1189,76 @@
         };
       }
 
+      function getNotificationData(item) {
+        const contactRaw = (item.email || item.phone || item.contact || '').trim();
+        if (!contactRaw) return null;
+
+        const isEmail = contactRaw.includes('@');
+        const slokaRef = item.sloka || item.verseReference || 'श्लोक';
+        const name = (item.name || item.suggesterName || 'पाठक').trim();
+        const fieldName = item.field || item.fieldName || 'सुधार';
+
+        let directUrl = 'https://garg-madhur-garg.github.io/Hindi-Vedabase/';
+        if (item.directSlokaUrl) {
+          directUrl += (item.directSlokaUrl.startsWith('#') ? item.directSlokaUrl : '#' + item.directSlokaUrl);
+        } else if (item.sloka) {
+          const parts = item.sloka.trim().split(/\s+/);
+          const bk = (parts[0] || '').toLowerCase();
+          const nums = (parts[1] || '').split('.');
+          if (bk === 'sb' && nums.length === 3) {
+            directUrl += `#sb/${nums[0]}/${nums[1]}/${nums[2]}`;
+          } else if (bk === 'bg' && nums.length === 2) {
+            directUrl += `#bg/${nums[0]}/${nums[1]}`;
+          } else if (bk === 'iso' && nums.length >= 1) {
+            directUrl += `#iso/${nums[0]}`;
+          }
+        }
+
+        const msgText = `हरे कृष्ण ${name} जी! 🙏\n\nहिंदी वेदाबेस (Hindi Vedabase) पर आपके द्वारा भेजा गया सुझाव (${slokaRef}) स्वीकृत (Approved) कर दिया गया है और अब वेबसाइट पर सभी पाठकों के लिए लाइव है।\n\n• ग्रंथ व श्लोक: ${slokaRef}\n• सुधार: ${fieldName}\n• स्थिति: स्वीकृत व लाइव (Approved & Live)\n\nश्लोक देखें:\n${directUrl}\n\nइस पावन सेवा के लिए आपका हार्दिक धन्यवाद! 🪔\n\n— हिंदी वेदाबेस (Hindi Vedabase)`;
+
+        if (isEmail) {
+          const subject = `✅ [Approved] हिंदी वेदाबेस: आपका सुझाव स्वीकृत हुआ — ${slokaRef}`;
+          const mailtoUrl = `mailto:${encodeURIComponent(contactRaw)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msgText)}`;
+          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contactRaw)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(msgText)}`;
+          return {
+            isEmail: true,
+            contact: contactRaw,
+            subject,
+            msgText,
+            mailtoUrl,
+            gmailUrl
+          };
+        } else {
+          const cleanPhone = contactRaw.replace(/[^0-9]/g, '');
+          const normalizedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+          const waUrl = `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(msgText)}`;
+          return {
+            isEmail: false,
+            contact: contactRaw,
+            cleanPhone: normalizedPhone,
+            msgText,
+            waUrl
+          };
+        }
+      }
+
+      function sendNotification(item) {
+        const notif = getNotificationData(item);
+        if (!notif || !notif.contact) {
+          alert('No contact details (Email or WhatsApp) found for this suggestion.');
+          return;
+        }
+
+        if (notif.isEmail) {
+          const win = window.open(notif.gmailUrl, '_blank');
+          if (!win || win.closed || typeof win.closed === 'undefined') {
+            window.location.href = notif.mailtoUrl;
+          }
+        } else {
+          window.open(notif.waUrl, '_blank');
+        }
+      }
+
       async function updateStatus(item, newStatus) {
         const actionLabel = newStatus === 'approved' ? 'Approve' : (newStatus === 'rejected' ? 'Reject' : 'Revert to Pending');
         if (!confirm(`Are you sure you want to ${actionLabel} the suggested change for ${item.sloka || 'this verse'}?`)) {
@@ -1144,6 +1279,15 @@
 
           if (newStatus === 'approved') {
             showToast(`✅ ${item.sloka || 'Verse'} edit approved and live for all readers!`);
+            const notif = getNotificationData(item);
+            if (notif && notif.contact) {
+              const channel = notif.isEmail ? 'Email' : 'WhatsApp';
+              setTimeout(() => {
+                if (confirm(`🎉 Edit Approved & Live!\n\nWould you like to send confirmation to ${item.name || 'contributor'} via ${channel} (${notif.contact}) now?`)) {
+                  sendNotification(item);
+                }
+              }, 300);
+            }
           } else {
             showToast(`Suggestion marked as ${newStatus}.`);
           }
