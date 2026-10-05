@@ -46,6 +46,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  // Always bypass cache for admin portal
+  if (event.request.url.includes('admin.html')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
