@@ -241,7 +241,7 @@
       }
 
       const slokaRef = payload.verseReference || payload.slokaNumber || 'verse';
-      const suggesterName = (payload.suggesterName || '').trim() || 'जिज्ञासु पाठक';
+      const suggesterName = (payload.suggesterName || '').trim();
       const reason = (payload.notes || '').trim() || 'सुधार';
       const changes = payload.changes || [];
 

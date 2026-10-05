@@ -924,7 +924,9 @@
           const slokaRef = item.sloka || item.verseReference || 'Verse';
           const fieldName = item.field || item.fieldName || 'Text Edit';
           const whatChanged = item.whatChanged || item.reason || item.notes || '';
-          const name = item.name || item.suggesterName || 'Reader';
+          const rawName = (item.name || item.suggesterName || '').trim();
+          const hasValidName = rawName && rawName !== 'जिज्ञासु पाठक' && rawName !== 'पाठक' && rawName !== 'Reader';
+          const displayName = hasValidName ? escapeHtml(rawName) : '<span style="color: #64748b; font-style: italic;">(नाम नहीं दिया)</span>';
           const phone = item.phone || '';
           const oldText = item.oldText || (item.changes?.[0]?.oldText) || '—';
           const newText = item.newText || (item.changes?.[0]?.newText) || '—';
@@ -958,7 +960,7 @@
                   ` : ''}
                 </div>
                 <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                  <span>👤 Contributor: <strong style="color: var(--text-primary);">${escapeHtml(name)}</strong></span>
+                  <span>👤 Contributor: <strong style="color: var(--text-primary);">${displayName}</strong></span>
                   ${contactHtml}
                   ${whatChanged ? `<div style="margin-top: 0.3rem; color: var(--accent-gold);">🔍 Change Summary: <em>"${escapeHtml(whatChanged)}"</em></div>` : ''}
                   ${reviewedDateStr && currentTab !== 'pending' ? `
@@ -1198,7 +1200,9 @@
 
         const isEmail = contactRaw.includes('@');
         const slokaRef = item.sloka || item.verseReference || 'श्लोक';
-        const name = (item.name || item.suggesterName || 'पाठक').trim();
+        const rawName = (item.name || item.suggesterName || '').trim();
+        const hasValidName = rawName && rawName !== 'जिज्ञासु पाठक' && rawName !== 'पाठक' && rawName !== 'Reader';
+        const greeting = hasValidName ? `Hare Krishna ${rawName} ji! 🙏` : 'Hare Krishna! 🙏';
         const fieldName = item.field || item.fieldName || 'सुधार';
 
         let directUrl = 'https://garg-madhur-garg.github.io/Hindi-Vedabase/';
@@ -1217,10 +1221,10 @@
           }
         }
 
-        const waMessage = `Hare Krishna ${name} ji! 🙏\n\nHindi Vedabase par aapka suggestion (${slokaRef}) approve ho gaya hai aur website par update ho chuka hai.\n\nVerse link:\n${directUrl}\n\nThank you so much for your contribution! 🙏\n— Hindi Vedabase`;
+        const waMessage = `${greeting}\n\nHindi Vedabase par aapka suggestion (${slokaRef}) approve ho gaya hai aur website par update ho chuka hai.\n\nVerse link:\n${directUrl}\n\nThank you so much for your contribution! 🙏\n— Hindi Vedabase`;
 
         const emailSubject = `✅ Suggestion Approved: ${slokaRef} | Hindi Vedabase`;
-        const emailBody = `Hare Krishna ${name} ji! 🙏\n\nHindi Vedabase par aapka suggestion approve ho gaya hai aur website par live ho chuka hai.\n\n• Verse: ${slokaRef}\n• Field: ${fieldName}\n• Status: Approved & Live\n\nAap is link par check kar sakte hain:\n${directUrl}\n\nThank you so much for your contribution! 🙏\n\nRegards,\nHindi Vedabase Team`;
+        const emailBody = `${greeting}\n\nHindi Vedabase par aapka suggestion approve ho gaya hai aur website par live ho chuka hai.\n\n• Verse: ${slokaRef}\n• Field: ${fieldName}\n• Status: Approved & Live\n\nAap is link par check kar sakte hain:\n${directUrl}\n\nThank you so much for your contribution! 🙏\n\nRegards,\nHindi Vedabase Team`;
 
         if (isEmail) {
           const mailtoUrl = `mailto:${encodeURIComponent(contactRaw)}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
@@ -1287,8 +1291,9 @@
             const notif = getNotificationData(item);
             if (notif && notif.contact) {
               const channel = notif.isEmail ? 'Email' : 'WhatsApp';
+              const confirmTarget = (item.name && item.name !== 'जिज्ञासु पाठक' && item.name !== 'पाठक' && item.name !== 'Reader') ? item.name : 'contributor';
               setTimeout(() => {
-                if (confirm(`🎉 Edit Approved & Live!\n\nWould you like to send confirmation to ${item.name || 'contributor'} via ${channel} (${notif.contact}) now?`)) {
+                if (confirm(`🎉 Edit Approved & Live!\n\nWould you like to send confirmation to ${confirmTarget} via ${channel} (${notif.contact}) now?`)) {
                   sendNotification(item);
                 }
               }, 300);

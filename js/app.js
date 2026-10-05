@@ -3905,7 +3905,7 @@ class VedabaseApp {
       return;
     }
 
-    const suggesterName = document.getElementById('editSuggesterName')?.value?.trim() || 'जिज्ञासु पाठक';
+    const suggesterName = document.getElementById('editSuggesterName')?.value?.trim() || '';
     const suggesterPhone = document.getElementById('editSuggesterPhone')?.value?.trim() || '';
     const suggesterNotes = document.getElementById('editSuggesterNotes')?.value?.trim() || '';
 
