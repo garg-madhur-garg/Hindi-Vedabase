@@ -140,11 +140,75 @@
     });
   }
 
+  const DEVA_VOWELS = {
+    'अ': 'a', 'आ': 'ā', 'इ': 'i', 'ई': 'ī', 'उ': 'u', 'ऊ': 'ū',
+    'ऋ': 'ṛ', 'ॠ': 'ṝ', 'ऌ': 'ḷ', 'ॡ': 'ḹ', 'ए': 'e', 'ऐ': 'ai',
+    'ओ': 'o', 'औ': 'au'
+  };
+
+  const DEVA_MATRAS = {
+    'ा': 'ā', 'ि': 'i', 'ी': 'ī', 'ु': 'u', 'ू': 'ū',
+    'ृ': 'ṛ', 'ॄ': 'ṝ', 'ॢ': 'ḷ', 'ॣ': 'ḹ', 'े': 'e', 'ै': 'ai',
+    'ो': 'o', 'ौ': 'au'
+  };
+
+  const DEVA_CONSONANTS = {
+    'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'ṅ',
+    'च': 'c', 'छ': 'ch', 'ज': 'j', 'झ': 'jh', 'ञ': 'ñ',
+    'ट': 'ṭ', 'ठ': 'ṭh', 'ड': 'ḍ', 'ढ': 'ḍh', 'ण': 'ṇ',
+    'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n',
+    'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm',
+    'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v',
+    'श': 'ś', 'ष': 'ṣ', 'स': 's', 'ह': 'h',
+    'क़': 'q', 'ख़': 'kh', 'ग़': 'ġ', 'ज़': 'z', 'ड़': 'ṛ', 'ढ़': 'ṛh', 'फ़': 'f', 'ळ': 'ḷ'
+  };
+
+  const DEVA_SPECIAL = {
+    'ं': 'ṁ', 'ँ': 'm̐', 'ः': 'ḥ', 'ऽ': "'",
+    '।': '|', '॥': '||', 'ॐ': 'oṁ'
+  };
+
+  function toIast(text) {
+    if (!text) return '';
+    let res = '';
+    const len = text.length;
+    for (let i = 0; i < len; i++) {
+      const ch = text[i];
+      const next = i + 1 < len ? text[i + 1] : '';
+
+      if (DEVA_SPECIAL[ch]) {
+        res += DEVA_SPECIAL[ch];
+        continue;
+      }
+      if (DEVA_VOWELS[ch]) {
+        res += DEVA_VOWELS[ch];
+        continue;
+      }
+      if (DEVA_CONSONANTS[ch]) {
+        const c = DEVA_CONSONANTS[ch];
+        if (next === '्') {
+          res += c;
+          i++; // skip halant
+        } else if (DEVA_MATRAS[next]) {
+          res += c + DEVA_MATRAS[next];
+          i++; // skip matra
+        } else {
+          res += c + 'a';
+        }
+        continue;
+      }
+      res += ch;
+    }
+    return res;
+  }
+
   global.IastTransliteration = {
-    toDevanagari: toDevanagari
+    toDevanagari: toDevanagari,
+    toIast: toIast
   };
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { toDevanagari };
+    module.exports = { toDevanagari, toIast };
   }
 })(typeof window !== 'undefined' ? window : globalThis);
+

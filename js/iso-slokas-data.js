@@ -1,4 +1,8 @@
-﻿[
+﻿/**
+ * Sri Isopanisad - Prebundled Full Mantras (19 Mantras)
+ * Instant offline loading and search
+ */
+window.ISO_SLOKAS_DATA = [
     {
         "id":  "iso-0",
         "book":  "ISO",
@@ -1614,4 +1618,4 @@
                  ],
         "englishTranslation":  "O my Lord, as powerful as fire, O omnipotent one, now I offer You all obeisances, falling on the ground at Your feet. O my Lord, please lead me on the right path to reach You, and since You know all that I have done in the past, please free me from the reactions to my past sins, so that there will be no hindrance to my progress."
     }
-]
+];

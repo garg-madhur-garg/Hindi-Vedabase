@@ -621,6 +621,43 @@ class VedabaseApp {
   // Ensure Sri Isopanisad JSON is loaded
   async ensureIsoLoaded() {
     if (this.isIsoLoaded) return true;
+
+    // Instant zero-latency load from prebundled window.ISO_SLOKAS_DATA if available
+    if (window.ISO_SLOKAS_DATA && Array.isArray(window.ISO_SLOKAS_DATA) && window.ISO_SLOKAS_DATA.length > 0) {
+      let mantras = this.applyUserCustomEdits(window.ISO_SLOKAS_DATA);
+      this.isoSlokas = mantras;
+
+      for (let i = 0; i < mantras.length; i++) {
+        const m = mantras[i];
+        m.book = 'ISO';
+        const vK = String(m.verseKey || m.verse).toLowerCase();
+        const id = m.id || `iso-${vK}`;
+
+        this.isoMap.set(vK, m);
+        this.verseMap.set(`iso ${vK}`, m);
+        this.verseMap.set(`iso-${vK}`, m);
+        this.verseMap.set(id, m);
+
+        if (vK === 'inv' || vK === '0') {
+          this.isoMap.set('inv', m);
+          this.isoMap.set('0', m);
+          this.verseMap.set('iso 0', m);
+          this.verseMap.set('iso inv', m);
+        }
+
+        const existsIdx = this.allSlokas.findIndex(x => x.id === id);
+        if (existsIdx >= 0) this.allSlokas[existsIdx] = m;
+        else this.allSlokas.push(m);
+      }
+
+      if (window.searchEngine) {
+        window.searchEngine.appendIndex(mantras);
+      }
+
+      this.isIsoLoaded = true;
+      return true;
+    }
+
     if (this.loadingIso) return await this.loadingIso;
 
     this.loadingIso = (async () => {
@@ -3293,7 +3330,14 @@ class VedabaseApp {
         if (!this.isBgLoaded) await this.ensureBgLoaded();
       }
       if (currentScripture === 'ISO' || currentScripture === 'all') {
-        if (!this.isIsoLoaded && !this.loadingIso) this.ensureIsoLoaded().catch(() => {});
+        if (!this.isIsoLoaded) await this.ensureIsoLoaded();
+      }
+      if (currentScripture === 'SB' || (currentScripture === 'all' && (trimmed.toLowerCase().startsWith('sb') || /^\d+\.\d+\.\d+/.test(trimmed)))) {
+        const m = trimmed.match(/^(?:sb\s*)?(\d+)/i);
+        const cNum = m ? parseInt(m[1], 10) : 1;
+        if (cNum >= 1 && cNum <= 12 && !this.loadedCantos.has(cNum)) {
+          await this.ensureCantoLoaded(cNum);
+        }
       }
       if (currentScripture === 'CC' || currentScripture === 'all') {
         if (!this.isCcLoaded && !this.loadingCc) this.ensureCcLoaded().catch(() => {});

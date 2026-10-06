@@ -27,3 +27,8 @@ desktop.ini
 
 # Raw data sources (Master files > 60MB, not used by frontend)
 data/raw-sources/
+
+# Scratch & test scripts
+scratch/
+test_*.html
+

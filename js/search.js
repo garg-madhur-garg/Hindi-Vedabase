@@ -951,6 +951,7 @@ class VedabaseSearchEngine {
 
               const inSanskrit = sanskrit.includes(qt) || (devQt && sanskrit.includes(devQt)) || (normDevQt && normDevQt.length >= 2 && normSanskrit.includes(normDevQt));
               const inIast = iast.includes(qt) || (normQt.length >= 2 && iastNorm.includes(normQt));
+              const inEnglish = english.includes(qt);
               let inWords = false;
               let inTrans = false;
               let inPurport = false;
@@ -1072,3 +1073,9 @@ window.searchEngine = new VedabaseSearchEngine();
 if (typeof window !== 'undefined' && window.BG_SLOKAS_DATA && Array.isArray(window.BG_SLOKAS_DATA)) {
   window.searchEngine.appendIndex(window.BG_SLOKAS_DATA);
 }
+
+// Auto-index prebundled Sri Isopanisad immediately (< 1ms startup)
+if (typeof window !== 'undefined' && window.ISO_SLOKAS_DATA && Array.isArray(window.ISO_SLOKAS_DATA)) {
+  window.searchEngine.appendIndex(window.ISO_SLOKAS_DATA);
+}
+
