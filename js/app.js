@@ -4527,6 +4527,30 @@ class VedabaseApp {
     document.getElementById('btnOpenManager')?.addEventListener('click', () => this.openModal('managerModal'));
     document.getElementById('btnThemeToggle')?.addEventListener('click', () => this.toggleNextTheme());
 
+    // Feedback & Queries Modal Controls
+    document.getElementById('btnOpenFeedback')?.addEventListener('click', () => {
+      this.openModal('feedbackModal');
+    });
+    document.getElementById('btnCloseFeedbackModal')?.addEventListener('click', () => {
+      this.closeAllModals();
+    });
+    document.getElementById('btnCopyFeedbackEmail')?.addEventListener('click', () => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText('hindivedabase@gmail.com').then(() => {
+          this.showToast('📋 Copied: hindivedabase@gmail.com');
+        }).catch(() => {
+          this.showToast('📋 hindivedabase@gmail.com');
+        });
+      } else {
+        this.showToast('📋 hindivedabase@gmail.com');
+      }
+    });
+    document.getElementById('feedbackModal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'feedbackModal') {
+        this.closeAllModals();
+      }
+    });
+
     // Auto-close mobile sidebar when clicking a chapter button inside sidebar
     const appSidebarEl = document.getElementById('appSidebar') || document.querySelector('.sidebar');
     if (appSidebarEl) {
