@@ -37,6 +37,7 @@
     'm': 'म',
     'y': 'य', 'r': 'र', 'l': 'ल', 'v': 'व', 'w': 'व',
     'ś': 'श', 'ṣ': 'ष', 's': 'स', 'h': 'ह',
+    'kṣ': 'क्ष', 'ks': 'क्ष', 'jñ': 'ज्ञ', 'tr': 'त्र',
     'ẏ': 'य'
   };
 
@@ -63,6 +64,16 @@
         res += SPECIAL[c1];
         prevWasConsonant = false;
         i++;
+        continue;
+      }
+
+      // 3-letter conjuncts
+      const c3 = i + 2 < len ? word.substr(i, 3) : '';
+      if (c3 && c3 === 'ksh') {
+        if (prevWasConsonant) res += '्';
+        res += 'क्ष';
+        prevWasConsonant = true;
+        i += 3;
         continue;
       }
 

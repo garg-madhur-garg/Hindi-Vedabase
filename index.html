@@ -22,7 +22,7 @@
   </script>
 
   <!-- Main Stylesheet & PWA Manifest -->
-  <link rel="stylesheet" href="css/main.css?v=3.95">
+  <link rel="stylesheet" href="css/main.css?v=4.01">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#fbf9f5">
   <link rel="icon"
@@ -45,7 +45,9 @@
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => { });
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          reg.update();
+        }).catch(() => { });
       });
     }
   </script>
@@ -371,12 +373,22 @@
         <button class="btn-close-modal" id="btnCloseSearch">✕</button>
       </div>
       <div class="modal-body">
-        <div class="search-input-group" style="margin-bottom: 1rem;">
+        <div class="search-input-group" style="margin-bottom: 0.65rem;">
           <span class="search-icon">🔍</span>
           <input type="text" class="search-input" id="modalSearchInput"
-            placeholder="Enter verse (e.g. 1.1.1, BG 2.13)..."
+            placeholder="Enter verse (e.g. 1.1.1, BG 2.13, dhimata)..."
             autocomplete="off">
           <span class="kbd-shortcut" id="searchSpeedBadge">0 ms</span>
+        </div>
+
+        <!-- Scripture Filter Pills Bar -->
+        <div class="search-filter-pills" id="searchScriptureFilterBar" role="tablist" aria-label="Filter by Scripture">
+          <button type="button" class="search-pill active" data-scripture="all" id="pillSearchAll">All (सभी)</button>
+          <button type="button" class="search-pill" data-scripture="BG" id="pillSearchBg">🕉️ Bhagvad Gita</button>
+          <button type="button" class="search-pill" data-scripture="SB" id="pillSearchSb">📖 Bhagvatam</button>
+          <button type="button" class="search-pill" data-scripture="ISO" id="pillSearchIso">🪔 Iso</button>
+          <button type="button" class="search-pill" data-scripture="CC" id="pillSearchCc">🌺 CC</button>
+          <button type="button" class="search-pill" data-scripture="VS" id="pillSearchVs">🎵 Vaishnav Song</button>
         </div>
 
         <!-- Search Results Container -->
@@ -977,21 +989,22 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- JavaScript Modules (Direct JSON Architecture) -->
-  <script src="js/bg-chapters-data.js?v=3.74"></script>
-  <script src="js/iso-chapters-data.js?v=3.74"></script>
-  <script src="js/cc-chapters-data.js?v=3.74"></script>
-  <script src="js/sb-chapters-data.js?v=3.74"></script>
-  <script src="js/vs-chapters-data.js?v=3.74"></script>
-  <script src="js/transliterate.js?v=3.74"></script>
-  <script src="js/vs-hindi-raw.js?v=3.74"></script>
-  <script src="js/vs-translations-hindi.js?v=3.74"></script>
-  <script src="js/search.js?v=3.75"></script>
+  <script src="js/bg-chapters-data.js?v=4.00"></script>
+  <script src="js/bg-slokas-data.js?v=4.04"></script>
+  <script src="js/iso-chapters-data.js?v=4.00"></script>
+  <script src="js/cc-chapters-data.js?v=4.00"></script>
+  <script src="js/sb-chapters-data.js?v=4.00"></script>
+  <script src="js/vs-chapters-data.js?v=4.00"></script>
+  <script src="js/transliterate.js?v=4.01"></script>
+  <script src="js/vs-hindi-raw.js?v=4.00"></script>
+  <script src="js/vs-translations-hindi.js?v=4.00"></script>
+  <script src="js/search.js?v=4.04"></script>
   <!-- Firebase SDKs & Cloud Sync Engine -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
-  <script src="js/firebase-sync.js?v=3.81"></script>
-  <script src="js/app.js?v=3.97"></script>
+  <script src="js/firebase-sync.js?v=4.00"></script>
+  <script src="js/app.js?v=4.04"></script>
 </body>
 
 </html>

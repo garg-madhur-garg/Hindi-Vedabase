@@ -27,6 +27,7 @@ function getCcLilas() {
 class VedabaseApp {
   constructor() {
     this.currentBook = 'BG';    // 'BG', 'ISO', 'CC', or 'SB'
+    this.currentSearchScripture = 'all'; // 'all', 'BG', 'SB', 'ISO', 'CC', 'VS'
     this.currentSloka = null;
     this.currentCanto = 1;      // for SB
     this.currentLila = 1;       // for CC (1=Adi, 2=Madhya, 3=Antya)
@@ -1254,11 +1255,46 @@ class VedabaseApp {
   // Ensure Srimad Bhagavad Gita JSON is loaded
   async ensureBgLoaded() {
     if (this.isBgLoaded) return true;
+
+    // Instant zero-latency load from prebundled window.BG_SLOKAS_DATA if available
+    if (window.BG_SLOKAS_DATA && Array.isArray(window.BG_SLOKAS_DATA) && window.BG_SLOKAS_DATA.length > 0) {
+      let slokas = this.applyUserCustomEdits(window.BG_SLOKAS_DATA);
+      for (let i = 0; i < slokas.length; i++) {
+        const s = slokas[i];
+        s.book = 'BG';
+        const key = s.verseKey || `${s.chapter}.${s.verse}`;
+        const id = s.id || `bg-${s.chapter}-${s.verse}`;
+
+        this.verseMap.set(key, s);
+        this.verseMap.set(id, s);
+        this.verseMap.set(`bg-${s.chapter}-${s.verse}`, s);
+        this.verseMap.set(`bg.${s.chapter}.${s.verse}`, s);
+        this.verseMap.set(`bg ${s.chapter}.${s.verse}`, s);
+
+        const chNum = Number(s.chapter);
+        if (!this.bgChapterMap.has(chNum)) {
+          this.bgChapterMap.set(chNum, []);
+        }
+        this.bgChapterMap.get(chNum).push(s);
+
+        const existsIdx = this.allSlokas.findIndex(x => x.id === id);
+        if (existsIdx >= 0) this.allSlokas[existsIdx] = s;
+        else this.allSlokas.push(s);
+      }
+
+      if (window.searchEngine) {
+        window.searchEngine.appendIndex(slokas);
+      }
+
+      this.isBgLoaded = true;
+      return true;
+    }
+
     if (this.loadingBg) return await this.loadingBg;
 
     this.loadingBg = (async () => {
       try {
-        const resp = await fetch('data/bhagavad-gita/bhagavad-gita.json');
+        const resp = await fetch('data/bhagavad-gita/bhagavad-gita.json?v=4.00');
         if (resp.ok) {
           let slokas = await resp.json();
           slokas = this.applyUserCustomEdits(slokas);
@@ -2111,22 +2147,149 @@ class VedabaseApp {
     this.highlightActiveSidebar();
   }
 
+  // Flexible regex builder for Roman English / Sanskrit with diacritics
+  buildDiacriticRegex(keyword) {
+    if (!keyword || typeof keyword !== 'string') return null;
+    const trimmed = keyword.trim();
+    if (trimmed.length < 2) return null;
+
+    const diacriticMap = {
+      'a': '[aāAĀ]',
+      'i': '[iīIĪ]',
+      'u': '[uūUŪ]',
+      'r': '[rṛṝRṚṜ]',
+      'l': '[lḷḹLḶḸ]',
+      'm': '[mṁṃMṀṂ]',
+      'h': '[hḥHḤ]',
+      'n': '[nñṇṅNÑṆṄ]',
+      's': '(?:sh|[sśṣSŚṢ])',
+      't': '[tṭTṬ]',
+      'd': '[dḍDḌ]'
+    };
+
+    let pattern = '';
+    const lower = trimmed.toLowerCase();
+    for (let i = 0; i < lower.length; i++) {
+      if (lower[i] === 's' && lower[i + 1] === 'h') {
+        pattern += '(?:sh|[śṣsŚṢS])';
+        i++;
+        continue;
+      }
+      const ch = lower[i];
+      if (diacriticMap[ch]) {
+        pattern += diacriticMap[ch];
+      } else {
+        pattern += ch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      }
+    }
+    try {
+      return new RegExp(`(${pattern})`, 'gi');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  buildDevanagariPattern(token) {
+    if (!token || typeof token !== 'string') return null;
+    const trimmed = token.trim();
+    if (trimmed.length < 2) return null;
+
+    let devWord = window.searchEngine ? window.searchEngine.transliterateSimple(trimmed) : null;
+    const target = (devWord && devWord !== trimmed) ? devWord : trimmed;
+
+    // Check if target contains Devanagari characters
+    if (!/[\u0900-\u097F]/.test(target)) return null;
+
+    const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let basePattern = escapeRegex(target);
+
+    // If token ends with 'm'/'ṁ'/'ṃ' and target ends with 'म' (e.g. balam -> बलम)
+    // or target ends with anusvara 'ं'
+    if ((/[mṁṃ]$/i.test(trimmed) && target.endsWith('म')) || target.endsWith('ं')) {
+      const stem = target.endsWith('म') ? target.slice(0, -1) : target.slice(0, -1);
+      if (stem.length >= 1) {
+        const escapedStem = escapeRegex(stem);
+        // Flexible match: stem with anusvara (बलं), halant-m (बलम्), full-m (बलम), or stem (बल)
+        basePattern = `(?:${escapedStem}[ंँ]|${escapedStem}म्|${escapeRegex(target)}|${escapedStem})`;
+      }
+    } else {
+      // Optional anusvara or visarga at end of noun stem
+      basePattern = `${basePattern}[ंँः]?`;
+    }
+
+    // Flexible matras: i/ī and u/ū
+    basePattern = basePattern
+      .replace(/[िी]/g, '[िी]')
+      .replace(/[ुू]/g, '[ुू]');
+
+    return basePattern;
+  }
+
+  highlightSingleToken(html, token) {
+    if (!html || !token || token.length < 2) return html;
+
+    let matched = false;
+
+    // 1. Devanagari transliteration and inflection match (e.g. balam -> बलं / बलम्, pandavas -> पाण्डव, bhi -> भी/भि)
+    try {
+      const devPattern = this.buildDevanagariPattern(token);
+      if (devPattern) {
+        const devRegex = new RegExp(`(?![^<]*>)(${devPattern})`, 'gi');
+        if (devRegex.test(html)) {
+          html = html.replace(devRegex, '<mark class="search-highlight">$1</mark>');
+          matched = true;
+        }
+      }
+    } catch (e) {}
+
+    // 2. Diacritic match for Roman IAST (e.g. sarva -> sarva, sarvā, balam -> balaṁ, pandavas -> pāṇḍavaś)
+    try {
+      const dRegex = this.buildDiacriticRegex(token);
+      if (dRegex) {
+        const dPattern = dRegex.source;
+        const safeRegex = new RegExp(`(?![^<]*>)${dPattern}`, 'gi');
+        if (safeRegex.test(html)) {
+          html = html.replace(safeRegex, '<mark class="search-highlight">$1</mark>');
+          matched = true;
+        }
+      }
+    } catch (e) {}
+
+    // 3. Exact token match fallback (only if neither Devanagari nor Diacritic matched)
+    if (!matched) {
+      try {
+        const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const exactRegex = new RegExp(`(?![^<]*>)(${escaped})`, 'gi');
+        html = html.replace(exactRegex, '<mark class="search-highlight">$1</mark>');
+      } catch (e) {}
+    }
+
+    return html;
+  }
+
+  applyHighlight(html, keyword) {
+    if (!html || !keyword || keyword.trim().length < 2) return html;
+    const trimmed = keyword.trim();
+    const tokens = trimmed.split(/[\s,;]+/).filter(t => t.length >= 2);
+
+    // Highlight each unique token (sorted by descending length)
+    const uniqueTokens = [...new Set(tokens)].sort((a, b) => b.length - a.length);
+    for (const token of uniqueTokens) {
+      html = this.highlightSingleToken(html, token);
+    }
+    return html;
+  }
+
   // Highlight helpers for keyword search
   highlightInText(text, keyword) {
     if (!text) return '';
     const safeText = this.escapeHtml(text);
-    if (!keyword || keyword.length < 2) return safeText;
-    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(${escaped})`, 'gi');
-    return safeText.replace(regex, '<mark class="search-highlight">$1</mark>');
+    return this.applyHighlight(safeText, keyword);
   }
 
   highlightInHtml(htmlContent, keyword) {
     if (!htmlContent) return '';
-    if (!keyword || keyword.length < 2) return htmlContent;
-    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(?![^<]*>)(${escaped})`, 'gi');
-    return htmlContent.replace(regex, '<mark class="search-highlight">$1</mark>');
+    return this.applyHighlight(htmlContent, keyword);
   }
 
   triggerHighlightFadeTimer() {
@@ -3065,7 +3228,9 @@ class VedabaseApp {
     const isISO = !isCC && (this.currentBook === 'ISO' || s.book === 'ISO' || s.id?.startsWith('iso-'));
     const isVS = !isCC && !isISO && (this.currentBook === 'VS' || s.book === 'VS' || s.id?.startsWith('vs-'));
     const isBG = !isCC && !isISO && !isVS && (this.currentBook === 'BG' || s.book === 'BG' || s.id?.startsWith('bg-'));
-    const wordMeaningsText = (s.wordToWord || []).map(w => `${w.sanskrit} — ${w.hindi}`).join('; ');
+    const wordMeaningsText = Array.isArray(s.wordToWord)
+      ? s.wordToWord.map(w => (w ? `${w.sanskrit || ''} — ${w.hindi || ''}` : '')).join('; ')
+      : (typeof s.wordToWord === 'string' ? s.wordToWord : '');
 
     let titlePrefix;
     if (isCC) {
@@ -3095,49 +3260,73 @@ class VedabaseApp {
   }
 
   // Live Instant Search Execution (< 2ms)
+  // Live Instant Search Execution (< 2ms)
   async executeSearch(query) {
     const list = document.getElementById('searchResultsList');
     const speedBadge = document.getElementById('searchSpeedBadge');
     if (!list) return;
 
-    const trimmed = (query || '').trim();
+    try {
+      const trimmed = (query || '').trim();
+      const currentScripture = this.currentSearchScripture || 'all';
 
-    if (!trimmed) {
-      if (speedBadge) speedBadge.textContent = '0 ms';
-      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem;">Type a verse number above (e.g. 1.1.1, BG 2.13)...</div>`;
-      return;
-    }
+      if (!trimmed) {
+        if (speedBadge) speedBadge.textContent = '0 ms';
+        let placeholderMsg = 'Type a verse number above (e.g. 1.1.1, BG 2.13, dhimata)...';
+        if (currentScripture === 'BG') {
+          placeholderMsg = 'Search in Bhagavad Gita (e.g. 1.3, 2.13, 18.66, dhimata)...';
+        } else if (currentScripture === 'SB') {
+          placeholderMsg = 'Search in Srimad Bhagavatam (e.g. 1.1.1, 10.14.8, satyam param)...';
+        } else if (currentScripture === 'ISO') {
+          placeholderMsg = 'Search in Sri Isopanisad (e.g. 1, 18, inv, isavasya)...';
+        } else if (currentScripture === 'CC') {
+          placeholderMsg = 'Search in Caitanya-caritamrta (e.g. Adi 1.1, Madhya 20.108, cetodarpana)...';
+        } else if (currentScripture === 'VS') {
+          placeholderMsg = 'Search in Vaishnav Songs (e.g. 46, jaya radha madhava)...';
+        }
+        list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem;">${placeholderMsg}</div>`;
+        return;
+      }
 
-    await this.ensureBgLoaded();
-    await this.ensureIsoLoaded();
-    await this.ensureCcLoaded();
-    await this.ensureVsLoaded();
+      // Ensure appropriate scriptures are loaded for instant search (< 2ms)
+      if (currentScripture === 'BG' || currentScripture === 'all') {
+        if (!this.isBgLoaded) await this.ensureBgLoaded();
+      }
+      if (currentScripture === 'ISO' || currentScripture === 'all') {
+        if (!this.isIsoLoaded && !this.loadingIso) this.ensureIsoLoaded().catch(() => {});
+      }
+      if (currentScripture === 'CC' || currentScripture === 'all') {
+        if (!this.isCcLoaded && !this.loadingCc) this.ensureCcLoaded().catch(() => {});
+      }
+      if (currentScripture === 'VS' || currentScripture === 'all') {
+        if (!this.isVsLoaded && !this.loadingVs) this.ensureVsLoaded().catch(() => {});
+      }
 
-    const res = window.searchEngine ? window.searchEngine.search(trimmed) : { results: [], timeMs: 0 };
+      const res = window.searchEngine ? window.searchEngine.search(trimmed, null, 50, currentScripture) : { results: [], timeMs: 0 };
 
-    if (speedBadge) {
-      speedBadge.textContent = `${res.timeMs} ms`;
-    }
+      if (speedBadge) {
+        speedBadge.textContent = `${res.timeMs} ms`;
+      }
 
-    // Debounced search query logging to Google Analytics
-    if (trimmed && trimmed.length >= 2) {
-      clearTimeout(this._searchLogTimer);
-      this._searchLogTimer = setTimeout(() => {
-        try {
-          if (typeof window.logVedabaseEvent === 'function') {
-            window.logVedabaseEvent('search', {
-              search_term: trimmed,
-              results_count: res.results ? res.results.length : 0
-            });
-          }
-        } catch (e) {}
-      }, 1000);
-    }
+      // Debounced search query logging to Google Analytics
+      if (trimmed && trimmed.length >= 2) {
+        clearTimeout(this._searchLogTimer);
+        this._searchLogTimer = setTimeout(() => {
+          try {
+            if (typeof window.logVedabaseEvent === 'function') {
+              window.logVedabaseEvent('search', {
+                search_term: trimmed,
+                results_count: res.results ? res.results.length : 0
+              });
+            }
+          } catch (e) {}
+        }, 1000);
+      }
 
-    if (!res.results || res.results.length === 0) {
-      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No verses found for "${this.escapeHtml(trimmed)}".</div>`;
-      return;
-    }
+      if (!res.results || res.results.length === 0) {
+        list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No verses found for "${this.escapeHtml(trimmed)}".</div>`;
+        return;
+      }
 
     const highlightWord = trimmed;
 
@@ -3175,8 +3364,52 @@ class VedabaseApp {
         targetKey = `bg ${s.verseKey}`;
       }
 
-      const sanskritFirstLine = this.cleanSanskritText(s.sanskritDevanagari || s.title || s.firstLine || '').split('\n')[0];
+      const rawSanskrit = this.cleanSanskritText(s.sanskritDevanagari || s.title || s.firstLine || '');
+      const sanskritLines = rawSanskrit.split('\n').map(l => l.trim()).filter(Boolean);
+      let displaySanskrit = '';
+      if (sanskritLines.length <= 2) {
+        displaySanskrit = sanskritLines.join(' ');
+      } else {
+        const devWord = window.searchEngine ? window.searchEngine.transliterateSimple(highlightWord) : '';
+        const matchingIdx = sanskritLines.findIndex(line => {
+          if (highlightWord && line.toLowerCase().includes(highlightWord.toLowerCase())) return true;
+          if (devWord && devWord !== highlightWord && line.includes(devWord)) return true;
+          if (window.searchEngine && window.searchEngine.normalizeDevanagari) {
+            const normL = window.searchEngine.normalizeDevanagari(line);
+            const normQ = window.searchEngine.normalizeDevanagari(devWord || highlightWord);
+            if (normQ && normQ.length >= 2 && normL.includes(normQ)) return true;
+          }
+          return false;
+        });
+        if (matchingIdx >= 0) {
+          displaySanskrit = sanskritLines.slice(matchingIdx, matchingIdx + 2).join(' ');
+        } else {
+          displaySanskrit = sanskritLines.slice(0, 2).join(' ');
+        }
+      }
+
       const subtitleText = isVS ? `${s.authorHindi || s.author || ''} • ${s.book || ''}` : (s.category?.chapterTitleHindi || '');
+
+      // Check for matching line in Roman IAST transliteration
+      let matchedIastLine = '';
+      if (s.sanskritIAST) {
+        const iastLines = s.sanskritIAST.split('\n').map(l => l.trim()).filter(Boolean);
+        const diacriticRegex = this.buildDiacriticRegex(highlightWord);
+        let matched = iastLines.find(l => diacriticRegex && diacriticRegex.test(l));
+        if (!matched && highlightWord && highlightWord.includes(' ')) {
+          const tokens = highlightWord.trim().split(/\s+/).filter(t => t.length >= 2);
+          for (const t of tokens) {
+            const tr = this.buildDiacriticRegex(t);
+            matched = iastLines.find(l => tr && tr.test(l));
+            if (matched) break;
+          }
+        }
+        matchedIastLine = matched || (iastLines.length > 0 ? iastLines[0] : '');
+      }
+
+      const highlightedIast = matchedIastLine ? this.highlightInText(matchedIastLine, highlightWord) : '';
+      const highlightedSanskrit = this.highlightInText(displaySanskrit, highlightWord);
+      const highlightedTrans = this.highlightInText(s.hindiTranslation || s.firstLine || '', highlightWord);
 
       return `
         <div class="search-result-item" onclick="window.app.selectVerseFromSearch('${targetKey}', '${this.escapeHtml(highlightWord)}')">
@@ -3184,12 +3417,17 @@ class VedabaseApp {
             <span class="search-res-key" style="${badgeStyle}">${prefix} ${displayKey}</span>
             <span style="font-size: 0.8rem; color: var(--accent-gold); font-weight: 600;">${this.escapeHtml(subtitleText)}</span>
           </div>
-          <div class="search-res-sanskrit">${this.highlightInText(sanskritFirstLine, highlightWord)}</div>
-          <div class="search-res-translation">${this.highlightInText(s.hindiTranslation || s.firstLine || '', highlightWord)}</div>
+          <div class="search-res-sanskrit">${highlightedSanskrit}</div>
+          ${highlightedIast ? `<div class="search-res-iast">${highlightedIast}</div>` : ''}
+          <div class="search-res-translation">${highlightedTrans}</div>
         </div>
       `;
     }).join('');
+  } catch (err) {
+    console.error('executeSearch error:', err);
+    list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">Search error occurred.</div>`;
   }
+}
 
   selectVerseFromSearch(verseKey, highlightWord = null) {
     this.closeAllModals();
@@ -4499,8 +4737,11 @@ class VedabaseApp {
 
     const modalSearchInput = document.getElementById('modalSearchInput');
     if (modalSearchInput) {
-      modalSearchInput.addEventListener('input', (e) => {
-        this.executeSearch(e.target.value);
+      modalSearchInput.addEventListener('input', () => {
+        clearTimeout(this._searchDebounceTimer);
+        this._searchDebounceTimer = setTimeout(() => {
+          this.executeSearch(modalSearchInput.value);
+        }, 50);
       });
 
       modalSearchInput.addEventListener('keydown', (e) => {
@@ -4509,16 +4750,18 @@ class VedabaseApp {
           const query = e.target.value.trim();
           if (!query) return;
 
-          const res = window.searchEngine ? window.searchEngine.search(query) : { results: [] };
+          const res = window.searchEngine ? window.searchEngine.search(query, null, 50, this.currentSearchScripture || 'all') : { results: [] };
           if (res.results && res.results.length > 0) {
             const first = res.results[0];
             const isCC = first.book === 'CC' || first.id?.startsWith('cc-');
             const isISO = !isCC && (first.book === 'ISO' || first.id?.startsWith('iso-'));
-            const isBG = !isCC && !isISO && (first.book === 'BG' || first.id?.startsWith('bg-'));
+            const isVS = !isCC && !isISO && (first.book === 'VS' || first.id?.startsWith('vs-'));
+            const isBG = !isCC && !isISO && !isVS && (first.book === 'BG' || first.id?.startsWith('bg-') || !first.canto);
 
             let targetKey = first.verseKey;
             if (isCC) targetKey = `cc ${first.verseKey}`;
             else if (isISO) targetKey = `iso ${first.verseKey}`;
+            else if (isVS) targetKey = `vs ${first.songNumber || first.id}`;
             else if (isBG) targetKey = `bg ${first.verseKey}`;
 
             this.selectVerseFromSearch(targetKey, query);
@@ -4526,6 +4769,21 @@ class VedabaseApp {
         }
       });
     }
+
+    // Scripture Filter Pills in Search Modal
+    const searchPills = document.querySelectorAll('.search-pill');
+    searchPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        searchPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.currentSearchScripture = pill.getAttribute('data-scripture') || 'all';
+        
+        const modalSearchInput = document.getElementById('modalSearchInput');
+        const q = modalSearchInput ? modalSearchInput.value : '';
+        this.executeSearch(q);
+        if (modalSearchInput) modalSearchInput.focus();
+      });
+    });
 
     // Header Actions & Mobile Drawer Toggle
     document.getElementById('logoHome')?.addEventListener('click', () => this.loadVerseByKey('bg 1.1'));

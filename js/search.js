@@ -108,12 +108,17 @@ class VedabaseSearchEngine {
         });
       }
 
-      // Index words from Sanskrit/Bengali, Word meanings, Hindi translation, Purport
+      // Index words from Sanskrit/Bengali, Word meanings, Hindi translation, English translation, Purport
+      const wordMeaningsText = Array.isArray(s.wordToWord)
+        ? s.wordToWord.map(w => (w ? `${w.sanskrit || ''} ${w.hindi || ''}` : '')).join(' ')
+        : (typeof s.wordToWord === 'string' ? s.wordToWord : '');
+
       const textToTokenize = [
         s.sanskritDevanagari || '',
         s.sanskritIAST || '',
         s.hindiTranslation || '',
-        (s.wordToWord || []).map(w => `${w.sanskrit} ${w.hindi}`).join(' '),
+        s.englishTranslation || '',
+        wordMeaningsText,
         s.hindiPurport ? s.hindiPurport.substring(0, 1000) : ''
       ].join(' ');
 
@@ -303,7 +308,7 @@ class VedabaseSearchEngine {
         s.hindiTranslation || '',
         Array.isArray(s.hindiTranslations) ? s.hindiTranslations.join(' ') : '',
         s.englishTranslation || '',
-        (s.wordToWord || []).map(w => `${w.sanskrit} ${w.hindi}`).join(' '),
+        Array.isArray(s.wordToWord) ? s.wordToWord.map(w => (w ? `${w.sanskrit || ''} ${w.hindi || ''}` : '')).join(' ') : (typeof s.wordToWord === 'string' ? s.wordToWord : ''),
         s.hindiPurport ? s.hindiPurport.substring(0, 1000) : ''
       ].join(' ');
 
@@ -319,19 +324,91 @@ class VedabaseSearchEngine {
     this.isIndexed = true;
   }
 
+  // Strip Sanskrit IAST diacritics for flexible fuzzy matching
+  stripDiacritics(str) {
+    if (!str) return '';
+    return str
+      .replace(/[āĀ]/g, 'a')
+      .replace(/[īĪ]/g, 'i')
+      .replace(/[ūŪ]/g, 'u')
+      .replace(/[ṛṝṚṜ]/g, 'r')
+      .replace(/[ḷḹLḶḸ]/g, 'l')
+      .replace(/[ññṇṅNÑṆṄ]/g, 'n')
+      .replace(/[ṁṃMṀṂ]/g, 'm')
+      .replace(/[śṣSŚṢ]/g, 's')
+      .replace(/[ṭṬ]/g, 't')
+      .replace(/[ḍḌ]/g, 'd')
+      .replace(/[ḥḤ]/g, 'h');
+  }
+
   // Text normalization and tokenization
   tokenize(text) {
     if (!text) return [];
-    return text
+    const base = text
       .toLowerCase()
       .replace(/[।,;:\-\—\–\(\)\[\]\{\}\"\'\?\!\/\\\|\*\+\=\>\<]/g, ' ')
       .split(/\s+/)
       .filter(t => t.length >= 1);
+    
+    const extra = [];
+    base.forEach(t => {
+      const stripped = this.stripDiacritics(t);
+      if (stripped && stripped !== t) {
+        extra.push(stripped);
+      }
+    });
+    return [...base, ...extra];
   }
 
   // Parse reference queries like "CC Adi 1.1", "CC Madhya 20.108", "CC Antya 20.12", "CC 1.1.1", "ISO 1", "BG 2.13", "18.66", "1.1.1"
-  parseReferenceQuery(query) {
+  parseReferenceQuery(query, scriptureFilter = null) {
     const trimmed = query.trim().toLowerCase();
+
+    // If specific scripture filter is active, check book-specific shortcuts first
+    if (scriptureFilter === 'ISO') {
+      if (trimmed === 'inv' || trimmed === 'invocation' || trimmed === '0' || trimmed === 'मंगलाचरण') {
+        return { book: 'ISO', verse: 'inv', verseNum: 0 };
+      }
+      const isoNum = trimmed.match(/^(?:iso\s*)?(\d+)$/i);
+      if (isoNum) {
+        const vNum = parseInt(isoNum[1], 10);
+        if (vNum >= 1 && vNum <= 18) {
+          return { book: 'ISO', verse: String(vNum), verseNum: vNum };
+        }
+      }
+    }
+
+    if (scriptureFilter === 'VS') {
+      const vsNum = trimmed.match(/^(?:vs\s*|song\s*)?(\d+)$/i);
+      if (vsNum) {
+        return { book: 'VS', songNumber: parseInt(vsNum[1], 10) };
+      }
+    }
+
+    if (scriptureFilter === 'BG') {
+      const bgTwoPart = trimmed.match(/^(?:bg\s*)?(\d+)[.\-:\s]+(\d+[\-\d]*)$/i);
+      if (bgTwoPart) {
+        return { book: 'BG', chapter: parseInt(bgTwoPart[1], 10), verse: bgTwoPart[2] };
+      }
+      const bgSingle = trimmed.match(/^(?:bg\s*)?(\d+)$/i);
+      if (bgSingle) {
+        const chNum = parseInt(bgSingle[1], 10);
+        if (chNum >= 1 && chNum <= 18) {
+          return { book: 'BG', chapter: chNum, isChapter: true };
+        }
+      }
+    }
+
+    if (scriptureFilter === 'SB') {
+      const sbThreePart = trimmed.match(/^(?:sb\s*)?(\d+)[.\-:\s]+(\d+)[.\-:\s]+(\d+[\-\d]*)$/i);
+      if (sbThreePart) {
+        return { book: 'SB', canto: parseInt(sbThreePart[1], 10), chapter: parseInt(sbThreePart[2], 10), verse: sbThreePart[3] };
+      }
+      const sbTwoPart = trimmed.match(/^(?:sb\s*)?(\d+)[.\-:\s]+(\d+)$/i);
+      if (sbTwoPart) {
+        return { book: 'SB', canto: parseInt(sbTwoPart[1], 10), chapter: parseInt(sbTwoPart[2], 10), isChapter: true };
+      }
+    }
 
     // Pattern 0A: Sri Caitanya-caritamrta with named lila: "cc adi 1.1", "cc madhya 20.108", "cc antya 20.12", "adi 1.1", "madhya 20.108"
     const ccNamedMatch = trimmed.match(/^(?:cc\s*)?(adi|madhya|antya|आदि|मध्य|अन्त्य)[\s.\-:]*(\d+)[.\-:\s]+(\d+[\-\d]*)$/i);
@@ -428,9 +505,13 @@ class VedabaseSearchEngine {
       const p2 = twoPartMatch[2];
       const p2Num = parseInt(p2, 10);
 
-      // If in BG mode or p2 > 30, it's overwhelmingly Bhagavad Gita verse!
-      if (window.app && window.app.currentBook === 'BG') {
+      // If in BG mode or scriptureFilter is BG, it's Bhagavad Gita verse
+      if (scriptureFilter === 'BG' || (window.app && window.app.currentBook === 'BG' && !scriptureFilter)) {
         return { book: 'BG', chapter: p1, verse: p2 };
+      }
+
+      if (scriptureFilter === 'SB') {
+        return { book: 'SB', canto: p1, chapter: p2Num, isChapter: true };
       }
 
       if (p1 >= 1 && p1 <= 18) {
@@ -451,15 +532,78 @@ class VedabaseSearchEngine {
     return null;
   }
 
+  // Normalize Devanagari matras and ligatures for flexible fuzzy search
+  normalizeDevanagari(text) {
+    if (!text) return '';
+    return text
+      .replace(/ी/g, 'ि')
+      .replace(/ू/g, 'ु')
+      .replace(/ा/g, '')
+      .replace(/[ंँ]/g, 'म')
+      .replace(/ः/g, '')
+      .replace(/्/g, '');
+  }
+
   // Transliteration helper: Convert common Roman/IAST queries to Devanagari search terms
   transliterateSimple(roman) {
+    if (!roman) return '';
+    const low = roman.toLowerCase().trim();
     const map = {
+      'dhimata': 'धीमता',
+      'dhiman': 'धीमान्',
+      'dhimatam': 'धीमताम्',
+      'dhimat': 'धीमत्',
+      'dheemat': 'धीमत्',
+      'dheemata': 'धीमता',
+      'drupada': 'द्रुपद',
+      'acarya': 'आचार्य',
+      'acharya': 'आचार्य',
+      'pandava': 'पाण्डव',
+      'pandav': 'पाण्डव',
+      'pandavas': 'पाण्डव',
+      'pandavah': 'पाण्डव',
+      'pandavanam': 'पाण्डव',
+      'pandavebhyah': 'पाण्डव',
+      'caiva': 'चैव',
+      'chaiva': 'चैव',
+      'vaiva': 'वैव',
+      'naiva': 'नैव',
+      'tathaiva': 'तथैव',
+      'yathaiva': 'यथैव',
+      'sarvaiva': 'सर्वैव',
+      'evaite': 'एवैते',
+      'eva': 'एव',
+      'evam': 'एवं',
+      'ca': 'च',
+      'cha': 'च',
+      'api': 'अपि',
+      'iti': 'इति',
+      'hi': 'हि',
+      'tu': 'तु',
+      'karmanye': 'कर्मण्य',
+      'karmanya': 'कर्मण्य',
+      'karmany': 'कर्मण्य',
+      'karmanyeva': 'कर्मण्येव',
+      'sarvadharman': 'सर्वधर्मान्',
+      'sarva dharman': 'सर्वधर्मान्',
+      'sarva': 'सर्व',
+      'sarvam': 'सर्वं',
+      'sarvas': 'सर्व',
+      'sarvah': 'सर्व',
+      'sarve': 'सर्व',
+      'yada yada': 'यदा यदा',
+      'yadayada': 'यदायदा',
+      'manmana': 'मन्मना',
+      'sambhavami': 'सम्भवामि',
       'om': 'ॐ',
       'namo': 'नमो',
       'bhagavate': 'भगवते',
       'vasudevaya': 'वासुदेवाय',
       'krishna': 'कृष्ण',
       'krsna': 'कृष्ण',
+      'krishnas': 'कृष्ण',
+      'krishnah': 'कृष्ण',
+      'krishnam': 'कृष्णं',
       'caitanya': 'चैतन्य',
       'chaitanya': 'चैतन्य',
       'mahaprabhu': 'महाप्रभु',
@@ -467,273 +611,464 @@ class VedabaseSearchEngine {
       'advaita': 'अद्वैत',
       'pancatattva': 'पंचतत्त्व',
       'arjuna': 'अर्जुन',
+      'arjun': 'अर्जुन',
+      'arjunas': 'अर्जुन',
+      'arjunah': 'अर्जुन',
+      'arjunam': 'अर्जुनं',
+      'duryodhana': 'दुर्योधन',
+      'duryodhan': 'दुर्योधन',
+      'duryodhanas': 'दुर्योधन',
+      'duryodhanah': 'दुर्योधन',
+      'bhisma': 'भीष्म',
+      'bhishma': 'भीष्म',
+      'bhismas': 'भीष्म',
+      'bhishmas': 'भीष्म',
+      'bhismam': 'भीष्मं',
+      'drona': 'द्रोण',
+      'dronam': 'द्रोण',
+      'sanjaya': 'सञ्जय',
+      'sanjay': 'सञ्जय',
+      'sanjayas': 'सञ्जय',
+      'dhritarashtra': 'धृतराष्ट्र',
+      'madhava': 'माधव',
+      'madhavah': 'माधव',
+      'keshava': 'केशव',
+      'keshavah': 'केशव',
+      'govinda': 'गोविन्द',
+      'govindah': 'गोविन्द',
       'isavasya': 'ईशावास्य',
       'isopanisad': 'ईशोपनिषद्',
       'purnam': 'पूर्णम्',
       'hiranmayena': 'हिरण्मयेन',
       'agne': 'अग्ने',
       'rama': 'राम',
-      'govinda': 'गोविन्द',
       'dharma': 'धर्म',
+      'dharmam': 'धर्मं',
       'bhakti': 'भक्ति',
       'karma': 'कर्म',
       'jnana': 'ज्ञान',
+      'gyan': 'ज्ञान',
       'yoga': 'योग',
       'gita': 'गीता',
       'janma': 'जन्म',
       'satyam': 'सत्यं',
       'param': 'परं',
+      'balam': 'बलं',
+      'bala': 'बल',
+      'balas': 'बल',
+      'balah': 'बल',
+      'kuruksetre': 'कुरुक्षेत्रे',
+      'kurukshetre': 'कुरुक्षेत्रे',
+      'kuruksetra': 'कुरुक्षेत्र',
+      'kurukshetra': 'कुरुक्षेत्र',
       'dhimahi': 'धीमहि',
       'siksastaka': 'शिक्षाष्टक',
       'cetodarpana': 'चेतोदर्पण'
     };
-    return map[roman.toLowerCase()] || roman;
+    if (map[low]) return map[low];
+
+    // Check Sanskrit case endings and sandhi stems:
+    if (low.length > 3) {
+      if (low.endsWith('s') || low.endsWith('h') || low.endsWith('m') || low.endsWith('o')) {
+        const stem = low.slice(0, -1);
+        if (map[stem]) return map[stem];
+      }
+      if (low.endsWith('as') || low.endsWith('ah')) {
+        const stem = low.slice(0, -2) + 'a';
+        if (map[stem]) return map[stem];
+      }
+      if (low.endsWith('anam') || low.endsWith('inam')) {
+        const stem = low.slice(0, -4) + 'a';
+        if (map[stem]) return map[stem];
+      }
+      if (low.endsWith('ena')) {
+        const stem = low.slice(0, -3) + 'a';
+        if (map[stem]) return map[stem];
+      }
+      if (low.endsWith('asya')) {
+        const stem = low.slice(0, -4) + 'a';
+        if (map[stem]) return map[stem];
+      }
+    }
+
+    // Pre-normalize common double vowels: ee -> ī, oo -> ū
+    const normalizedRoman = low.replace(/ee/g, 'ī').replace(/oo/g, 'ū');
+
+    if (typeof window !== 'undefined' && window.IastTransliteration && typeof window.IastTransliteration.toDevanagari === 'function') {
+      try {
+        const converted = window.IastTransliteration.toDevanagari(normalizedRoman);
+        if (converted && converted !== normalizedRoman) return converted;
+      } catch (e) {}
+    }
+
+    return roman;
   }
 
   // Main high-speed Search Method (< 2ms)
-  search(query, filterTag = null, limit = 50) {
+  search(query, filterTag = null, limit = 50, scriptureFilter = null) {
     const startTime = performance.now();
-    if (!query && !filterTag) {
-      return { results: [], totalCount: 0, timeMs: 0, isRefMatch: false };
-    }
+    try {
+      if (!query && !filterTag) {
+        return { results: [], totalCount: 0, timeMs: 0, isRefMatch: false };
+      }
 
-    const trimmedQuery = (query || '').trim();
+      const trimmedQuery = (query || '').trim();
 
-    // 1. Check for Exact Reference Query (e.g. CC Adi 1.1, ISO 1, BG 2.13, 18.66, SB 1.1.1)
-    const ref = this.parseReferenceQuery(trimmedQuery);
-    if (ref) {
-      if (ref.book === 'CC' && !ref.isChapter) {
-        const ccKey = `${ref.lilaKey}.${ref.chapter}.${ref.verse}`;
-        const exactMatch = this.verseMap.get(`cc ${ccKey}`) ||
-                           this.verseMap.get(`cc-${ref.lilaKey}-${ref.chapter}-${ref.verse}`) ||
-                           this.verseMap.get(ccKey) ||
-                           (window.app && window.app.ccMap && window.app.ccMap.get(ccKey));
+      // 1. Check for Exact Reference Query (e.g. CC Adi 1.1, ISO 1, BG 2.13, 18.66, SB 1.1.1)
+      const ref = this.parseReferenceQuery(trimmedQuery, scriptureFilter);
+      if (ref && (!scriptureFilter || scriptureFilter === 'all' || ref.book === scriptureFilter)) {
+        if (ref.book === 'CC' && !ref.isChapter) {
+          const ccKey = `${ref.lilaKey}.${ref.chapter}.${ref.verse}`;
+          const exactMatch = this.verseMap.get(`cc ${ccKey}`) ||
+                             this.verseMap.get(`cc-${ref.lilaKey}-${ref.chapter}-${ref.verse}`) ||
+                             this.verseMap.get(ccKey) ||
+                             (window.app && window.app.ccMap && window.app.ccMap.get(ccKey));
 
-        if (exactMatch) {
-          const timeMs = (performance.now() - startTime).toFixed(2);
-          return {
-            results: [exactMatch],
-            totalCount: 1,
-            timeMs,
-            isRefMatch: true,
-            exactVerseKey: `CC ${ref.lilaKey.toUpperCase()} ${ref.chapter}.${ref.verse}`,
-            book: 'CC'
-          };
-        }
-      } else if (ref.book === 'ISO') {
-        const isoKey = `iso ${ref.verse}`;
-        const exactMatch = this.verseMap.get(isoKey) ||
-                           this.verseMap.get(`iso-${ref.verse}`) ||
-                           (window.app && window.app.isoMap && window.app.isoMap.get(ref.verse));
-
-        if (exactMatch) {
-          const timeMs = (performance.now() - startTime).toFixed(2);
-          return {
-            results: [exactMatch],
-            totalCount: 1,
-            timeMs,
-            isRefMatch: true,
-            exactVerseKey: `ISO ${ref.verse === 'inv' ? 'मंगलाचरण' : ref.verse}`,
-            book: 'ISO'
-          };
-        }
-      } else if (ref.book === 'VS') {
-        const exactMatch = (window.app && window.app.vsSlokas && window.app.vsSlokas.find(s => s.songNumber === ref.songNumber)) ||
-                           this.verseMap.get(`vs ${ref.songNumber}`) ||
-                           this.verseMap.get(`vs-${ref.songNumber}`);
-        if (exactMatch) {
-          const timeMs = (performance.now() - startTime).toFixed(2);
-          return {
-            results: [exactMatch],
-            totalCount: 1,
-            timeMs,
-            isRefMatch: true,
-            exactVerseKey: `VS ${ref.songNumber} - ${exactMatch.title || ''}`,
-            book: 'VS'
-          };
-        }
-      } else if (ref.book === 'BG' && !ref.isChapter) {
-        const bgKey = `${ref.chapter}.${ref.verse}`;
-        const exactMatch = this.verseMap.get(`bg-${ref.chapter}-${ref.verse}`) ||
-                           this.verseMap.get(bgKey) ||
-                           (window.app && window.app.verseMap && (window.app.verseMap.get(`bg-${ref.chapter}-${ref.verse}`) || window.app.verseMap.get(bgKey)));
-
-        if (exactMatch) {
-          const timeMs = (performance.now() - startTime).toFixed(2);
-          return {
-            results: [exactMatch],
-            totalCount: 1,
-            timeMs,
-            isRefMatch: true,
-            exactVerseKey: bgKey,
-            book: 'BG'
-          };
-        }
-      } else if (ref.book === 'SB' && !ref.isChapter) {
-        const sbKey = `${ref.canto}.${ref.chapter}.${ref.verse}`;
-        const exactMatch = this.verseMap.get(`sb-${ref.canto}-${ref.chapter}-${ref.verse}`) ||
-                           this.verseMap.get(sbKey) ||
-                           (window.app && window.app.verseMap && (window.app.verseMap.get(`sb-${ref.canto}-${ref.chapter}-${ref.verse}`) || window.app.verseMap.get(sbKey)));
-
-        if (exactMatch) {
-          const timeMs = (performance.now() - startTime).toFixed(2);
-          return {
-            results: [exactMatch],
-            totalCount: 1,
-            timeMs,
-            isRefMatch: true,
-            exactVerseKey: sbKey,
-            book: 'SB'
-          };
-        }
-      } else if (ref.isChapter) {
-        if (ref.book === 'CC') {
-          const chKey = `${ref.lilaKey}-${ref.chapter}`;
-          const chVerses = (window.app && window.app.ccChapterMap && window.app.ccChapterMap.get(chKey)) || [];
-          if (chVerses.length > 0) {
+          if (exactMatch) {
             const timeMs = (performance.now() - startTime).toFixed(2);
             return {
-              results: chVerses.slice(0, limit),
-              totalCount: chVerses.length,
+              results: [exactMatch],
+              totalCount: 1,
               timeMs,
               isRefMatch: true,
-              exactVerseKey: `CC ${ref.lilaKey.toUpperCase()} ${ref.chapter}.1`,
+              exactVerseKey: `CC ${ref.lilaKey.toUpperCase()} ${ref.chapter}.${ref.verse}`,
               book: 'CC'
             };
           }
-        } else if (ref.book === 'BG') {
-          const chVerses = (window.app && window.app.bgChapterMap && window.app.bgChapterMap.get(ref.chapter)) || [];
-          if (chVerses.length > 0) {
+        } else if (ref.book === 'ISO') {
+          const isoKey = `iso ${ref.verse}`;
+          const exactMatch = this.verseMap.get(isoKey) ||
+                             this.verseMap.get(`iso-${ref.verse}`) ||
+                             (window.app && window.app.isoMap && window.app.isoMap.get(ref.verse));
+
+          if (exactMatch) {
             const timeMs = (performance.now() - startTime).toFixed(2);
             return {
-              results: chVerses.slice(0, limit),
-              totalCount: chVerses.length,
+              results: [exactMatch],
+              totalCount: 1,
               timeMs,
               isRefMatch: true,
-              exactVerseKey: `${ref.chapter}.1`,
+              exactVerseKey: `ISO ${ref.verse === 'inv' ? 'मंगलाचरण' : ref.verse}`,
+              book: 'ISO'
+            };
+          }
+        } else if (ref.book === 'VS') {
+          const exactMatch = (window.app && window.app.vsSlokas && window.app.vsSlokas.find(s => s.songNumber === ref.songNumber)) ||
+                             this.verseMap.get(`vs ${ref.songNumber}`) ||
+                             this.verseMap.get(`vs-${ref.songNumber}`);
+          if (exactMatch) {
+            const timeMs = (performance.now() - startTime).toFixed(2);
+            return {
+              results: [exactMatch],
+              totalCount: 1,
+              timeMs,
+              isRefMatch: true,
+              exactVerseKey: `VS ${ref.songNumber} - ${exactMatch.title || ''}`,
+              book: 'VS'
+            };
+          }
+        } else if (ref.book === 'BG' && !ref.isChapter) {
+          const bgKey = `${ref.chapter}.${ref.verse}`;
+          const exactMatch = this.verseMap.get(`bg-${ref.chapter}-${ref.verse}`) ||
+                             this.verseMap.get(bgKey) ||
+                             (window.app && window.app.verseMap && (window.app.verseMap.get(`bg-${ref.chapter}-${ref.verse}`) || window.app.verseMap.get(bgKey)));
+
+          if (exactMatch) {
+            const timeMs = (performance.now() - startTime).toFixed(2);
+            return {
+              results: [exactMatch],
+              totalCount: 1,
+              timeMs,
+              isRefMatch: true,
+              exactVerseKey: bgKey,
               book: 'BG'
             };
           }
-        } else {
-          const chKey = `${ref.canto}-${ref.chapter}`;
-          const chVerses = (window.app && window.app.chapterMap && window.app.chapterMap.get(chKey)) || [];
-          if (chVerses.length > 0) {
+        } else if (ref.book === 'SB' && !ref.isChapter) {
+          const sbKey = `${ref.canto}.${ref.chapter}.${ref.verse}`;
+          const exactMatch = this.verseMap.get(`sb-${ref.canto}-${ref.chapter}-${ref.verse}`) ||
+                             this.verseMap.get(sbKey) ||
+                             (window.app && window.app.verseMap && (window.app.verseMap.get(`sb-${ref.canto}-${ref.chapter}-${ref.verse}`) || window.app.verseMap.get(sbKey)));
+
+          if (exactMatch) {
             const timeMs = (performance.now() - startTime).toFixed(2);
             return {
-              results: chVerses.slice(0, limit),
-              totalCount: chVerses.length,
+              results: [exactMatch],
+              totalCount: 1,
               timeMs,
               isRefMatch: true,
-              exactVerseKey: `${ref.canto}.${ref.chapter}.1`,
+              exactVerseKey: sbKey,
               book: 'SB'
             };
           }
-        }
-      }
-    }
-
-    // 2. Perform Keyword Search & Scoring across full corpus
-    const tokens = this.tokenize(trimmedQuery);
-    const transliterated = this.transliterateSimple(trimmedQuery);
-    const altTokens = transliterated !== trimmedQuery ? this.tokenize(transliterated) : [];
-    const allTokens = [...new Set([...tokens, ...altTokens])];
-
-    const results = [];
-    const normFilterTag = filterTag ? filterTag.toLowerCase() : null;
-    const searchPool = (this.slokas && this.slokas.length > 0) ? this.slokas : ((window.app && window.app.allSlokas) || []);
-
-    for (let i = 0; i < searchPool.length; i++) {
-      const s = searchPool[i];
-      const isCC = s.book === 'CC' || (s.id && s.id.startsWith('cc-'));
-      const isISO = !isCC && (s.book === 'ISO' || (s.id && s.id.startsWith('iso-')));
-      const isVS = !isCC && !isISO && (s.book === 'VS' || (s.id && s.id.startsWith('vs-')));
-      const isBG = !isCC && !isISO && !isVS && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')));
-
-      // Check Tag filter if specified
-      if (normFilterTag) {
-        const hasTag = (s.tags || []).some(t => t.toLowerCase() === normFilterTag);
-        if (!hasTag) continue;
-      }
-
-      if (allTokens.length === 0) {
-        results.push({ sloka: s, score: 1 });
-        continue;
-      }
-
-      let score = 0;
-      let key;
-      if (isCC) {
-        const lilaKey = this.getLilaKey(s.lila || s.canto || 1);
-        key = `cc ${lilaKey} ${s.chapter}.${s.verse}`;
-      } else if (isISO) {
-        key = `iso ${s.verseKey || s.verse}`;
-      } else if (isVS) {
-        key = `vs ${s.songNumber || s.id} ${s.title || ''}`;
-      } else if (isBG) {
-        key = s.verseKey || `${s.chapter}.${s.verse}`;
-      } else {
-        key = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
-      }
-
-      // Boost if query matches verseKey or title
-      if (key.toLowerCase().includes(trimmedQuery.toLowerCase())) {
-        score += 120;
-      }
-
-      const sanskrit = (s.sanskritDevanagari || s.title || (Array.isArray(s.hindiDevanagariStanzas) ? s.hindiDevanagariStanzas.join(' ') : '')).toLowerCase();
-      const iast = (s.sanskritIAST || s.firstLine || s.body || '').toLowerCase();
-      const translation = (s.hindiTranslation || (Array.isArray(s.hindiTranslations) ? s.hindiTranslations.join(' ') : '') || s.authorHindi || s.author || '').toLowerCase();
-      const purport = (s.hindiPurport || s.englishTranslation || s.book || '').toLowerCase();
-      const wordMeanings = (s.wordToWord || []).map(w => `${w.sanskrit} ${w.hindi}`).join(' ').toLowerCase();
-      const lowQ = trimmedQuery.toLowerCase();
-
-      // High boost for whole substring match
-      if (sanskrit.includes(lowQ)) score += 60;
-      if (wordMeanings.includes(lowQ)) score += 50;
-      if (translation.includes(lowQ)) score += 40;
-      if (iast.includes(lowQ)) score += 35;
-      if (purport.includes(lowQ)) score += 20;
-
-      // Check tokens
-      let matchedTokenCount = 0;
-      for (const tok of allTokens) {
-        let tokScore = 0;
-        if (sanskrit.includes(tok)) tokScore += 25;
-        if (iast.includes(tok)) tokScore += 20;
-        if (translation.includes(tok)) tokScore += 15;
-        if (wordMeanings.includes(tok)) tokScore += 12;
-        if (purport.includes(tok)) tokScore += 5;
-
-        if (tokScore > 0) {
-          matchedTokenCount++;
-          score += tokScore;
+        } else if (ref.isChapter) {
+          if (ref.book === 'CC') {
+            const chKey = `${ref.lilaKey}-${ref.chapter}`;
+            const chVerses = (window.app && window.app.ccChapterMap && window.app.ccChapterMap.get(chKey)) || [];
+            if (chVerses.length > 0) {
+              const timeMs = (performance.now() - startTime).toFixed(2);
+              return {
+                results: chVerses.slice(0, limit),
+                totalCount: chVerses.length,
+                timeMs,
+                isRefMatch: true,
+                exactVerseKey: `CC ${ref.lilaKey.toUpperCase()} ${ref.chapter}.1`,
+                book: 'CC'
+              };
+            }
+          } else if (ref.book === 'BG') {
+            const chVerses = (window.app && window.app.bgChapterMap && window.app.bgChapterMap.get(ref.chapter)) || [];
+            if (chVerses.length > 0) {
+              const timeMs = (performance.now() - startTime).toFixed(2);
+              return {
+                results: chVerses.slice(0, limit),
+                totalCount: chVerses.length,
+                timeMs,
+                isRefMatch: true,
+                exactVerseKey: `${ref.chapter}.1`,
+                book: 'BG'
+              };
+            }
+          } else {
+            const chKey = `${ref.canto}-${ref.chapter}`;
+            const chVerses = (window.app && window.app.chapterMap && window.app.chapterMap.get(chKey)) || [];
+            if (chVerses.length > 0) {
+              const timeMs = (performance.now() - startTime).toFixed(2);
+              return {
+                results: chVerses.slice(0, limit),
+                totalCount: chVerses.length,
+                timeMs,
+                isRefMatch: true,
+                exactVerseKey: `${ref.canto}.${ref.chapter}.1`,
+                book: 'SB'
+              };
+            }
+          }
         }
       }
 
-      // Bonus if all query tokens match
-      if (matchedTokenCount === allTokens.length && allTokens.length > 0) {
-        score += 50;
+      // 2. Perform Keyword Search & Scoring across full corpus
+      const tokens = this.tokenize(trimmedQuery);
+      const transliterated = this.transliterateSimple(trimmedQuery);
+      const altTokens = transliterated !== trimmedQuery ? this.tokenize(transliterated) : [];
+      
+      // Add simple English plural / singular variants (e.g. weapons -> weapon)
+      const stemTokens = [];
+      tokens.forEach(tok => {
+        if (tok.length > 3 && tok.endsWith('s')) {
+          stemTokens.push(tok.slice(0, -1));
+          if (tok.endsWith('ies') && tok.length > 4) {
+            stemTokens.push(tok.slice(0, -3) + 'y');
+          }
+        }
+      });
+
+      const rawQueryTerms = trimmedQuery
+        .toLowerCase()
+        .replace(/[।,;:\-\—\–\(\)\[\]\{\}\"\'\?\!\/\\\|\*\+\=\>\<]/g, ' ')
+        .split(/\s+/)
+        .filter(t => t.length >= 2);
+
+      const allTokens = [...new Set([...tokens, ...altTokens, ...stemTokens])];
+
+      const results = [];
+      const normFilterTag = filterTag ? filterTag.toLowerCase() : null;
+      const searchPool = (this.slokas && this.slokas.length > 0) ? this.slokas : ((window.app && window.app.allSlokas) || []);
+
+      for (let i = 0; i < searchPool.length; i++) {
+        try {
+          const s = searchPool[i];
+          if (!s) continue;
+
+          const isCC = s.book === 'CC' || (s.id && s.id.startsWith('cc-'));
+          const isISO = !isCC && (s.book === 'ISO' || (s.id && s.id.startsWith('iso-')));
+          const isVS = !isCC && !isISO && (s.book === 'VS' || (s.id && s.id.startsWith('vs-')));
+          const isBG = !isCC && !isISO && !isVS && (s.book === 'BG' || (s.id && s.id.startsWith('bg-')) || (!s.canto && s.chapter && s.verse));
+
+          // Filter by scripture if requested
+          if (scriptureFilter && scriptureFilter !== 'all') {
+            const currentBook = isBG ? 'BG' : (isISO ? 'ISO' : (isCC ? 'CC' : (isVS ? 'VS' : 'SB')));
+            if (currentBook !== scriptureFilter) continue;
+          }
+
+          // Check Tag filter if specified
+          if (normFilterTag) {
+            const hasTag = (s.tags || []).some(t => t && String(t).toLowerCase() === normFilterTag);
+            if (!hasTag) continue;
+          }
+
+          if (allTokens.length === 0) {
+            results.push({ sloka: s, score: 1 });
+            continue;
+          }
+
+          let score = 0;
+          let key;
+          if (isCC) {
+            const lilaKey = this.getLilaKey(s.lila || s.canto || 1);
+            key = `cc ${lilaKey} ${s.chapter}.${s.verse}`;
+          } else if (isISO) {
+            key = `iso ${s.verseKey || s.verse}`;
+          } else if (isVS) {
+            key = `vs ${s.songNumber || s.id} ${s.title || ''}`;
+          } else if (isBG) {
+            key = s.verseKey || `${s.chapter}.${s.verse}`;
+          } else {
+            key = s.verseKey || `${s.canto}.${s.chapter}.${s.verse}`;
+          }
+
+          // Boost if query matches verseKey or title
+          if (key && key.toLowerCase().includes(trimmedQuery.toLowerCase())) {
+            score += 120;
+          }
+
+          const sanskrit = String(s.sanskritDevanagari || s.title || (Array.isArray(s.hindiDevanagariStanzas) ? s.hindiDevanagariStanzas.join(' ') : '') || '').toLowerCase();
+          const iast = String(s.sanskritIAST || s.firstLine || s.body || '').toLowerCase();
+          const iastNorm = this.stripDiacritics(iast);
+          const translation = String(s.hindiTranslation || (Array.isArray(s.hindiTranslations) ? s.hindiTranslations.join(' ') : '') || s.authorHindi || s.author || '').toLowerCase();
+          const english = String(s.englishTranslation || '').toLowerCase();
+          const purport = String(s.hindiPurport || s.book || '').toLowerCase();
+
+          let wordMeanings = '';
+          if (Array.isArray(s.wordToWord)) {
+            wordMeanings = s.wordToWord.map(w => (w ? `${w.sanskrit || ''} ${w.hindi || ''}` : '')).join(' ').toLowerCase();
+          } else if (typeof s.wordToWord === 'string') {
+            wordMeanings = s.wordToWord.toLowerCase();
+          }
+
+          const lowQ = trimmedQuery.toLowerCase();
+          const normQ = this.stripDiacritics(lowQ);
+          const normSanskrit = this.normalizeDevanagari(sanskrit);
+          const normDevQuery = transliterated ? this.normalizeDevanagari(transliterated) : '';
+
+          // Multi-word search constraint: Verse MUST contain all query terms
+          if (rawQueryTerms.length >= 2) {
+            let matchedQueryTerms = 0;
+            for (const qt of rawQueryTerms) {
+              const normQt = this.stripDiacritics(qt);
+              const devQt = this.transliterateSimple(qt);
+              const normDevQt = devQt ? this.normalizeDevanagari(devQt) : '';
+
+              const inSanskrit = sanskrit.includes(qt) || (devQt && sanskrit.includes(devQt)) || (normDevQt && normDevQt.length >= 2 && normSanskrit.includes(normDevQt));
+              const inIast = iast.includes(qt) || (normQt.length >= 2 && iastNorm.includes(normQt));
+              let inWords = false;
+              let inTrans = false;
+              let inPurport = false;
+
+              if (devQt && devQt.length <= 3) {
+                const boundaryRegex = new RegExp('(?:^|[\\s।,;:\\-\\—\\–\\(\\)\\[\\]\\"\\\'\\?\\!])' + devQt + '(?:$|[\\s।,;:\\-\\—\\–\\(\\)\\[\\]\\"\\\'\\?\\!])', 'i');
+                inWords = boundaryRegex.test(wordMeanings);
+                inTrans = boundaryRegex.test(translation);
+                inPurport = boundaryRegex.test(purport);
+              } else {
+                inWords = wordMeanings.includes(qt) || (devQt && wordMeanings.includes(devQt));
+                inTrans = translation.includes(qt) || (devQt && translation.includes(devQt));
+                inPurport = purport.includes(qt) || (devQt && purport.includes(devQt));
+              }
+
+              if (inSanskrit || inIast || inWords || inEnglish || inTrans || inPurport) {
+                matchedQueryTerms++;
+              }
+            }
+
+            const minRequired = rawQueryTerms.length === 2 ? 2 : Math.max(2, rawQueryTerms.length - 1);
+            if (matchedQueryTerms < minRequired) {
+              continue; // Exclude verses missing any of the query terms!
+            }
+          }
+
+          // High boost for whole substring match
+          if (sanskrit.includes(lowQ) || (transliterated && transliterated !== lowQ && sanskrit.includes(transliterated))) score += 70;
+          if (normDevQuery && normDevQuery.length >= 2 && normSanskrit.includes(normDevQuery)) score += 65;
+          if (iast.includes(lowQ) || (normQ.length >= 2 && iastNorm.includes(normQ))) score += 55;
+          if (wordMeanings.includes(lowQ) || (transliterated && transliterated !== lowQ && wordMeanings.includes(transliterated))) score += 50;
+          if (translation.includes(lowQ) || (transliterated && transliterated !== lowQ && translation.includes(transliterated))) score += 40;
+          if (english.includes(lowQ)) score += 40;
+          if (purport.includes(lowQ)) score += 20;
+
+          // Huge boost for adjacent / contiguous phrase match in multi-word queries
+          if (rawQueryTerms.length >= 2) {
+            const devWords = rawQueryTerms.map(w => this.transliterateSimple(w)).filter(Boolean);
+            if (devWords.length >= 2) {
+              const normDevWords = devWords.map(w => this.normalizeDevanagari(w)).filter(w => w.length >= 1);
+              if (normDevWords.length >= 2) {
+                const adjRegex = new RegExp(normDevWords.join('.{0,10}'), 'i');
+                if (adjRegex.test(normSanskrit)) {
+                  score += 250;
+                }
+              }
+            }
+          }
+
+          // Check tokens
+          let matchedTokenCount = 0;
+          for (const tok of allTokens) {
+            let tokScore = 0;
+            const normTok = this.stripDiacritics(tok);
+            const devTok = this.transliterateSimple(tok);
+            if (sanskrit.includes(tok) || (devTok && devTok !== tok && sanskrit.includes(devTok))) tokScore += 25;
+            if (iast.includes(tok) || (normTok.length >= 2 && iastNorm.includes(normTok))) tokScore += 22;
+            if (english.includes(tok)) tokScore += 15;
+
+            if (devTok && devTok.length <= 3) {
+              const boundaryRegex = new RegExp('(?:^|[\\s।,;:\\-\\—\\–\\(\\)\\[\\]\\"\\\'\\?\\!])' + devTok + '(?:$|[\\s।,;:\\-\\—\\–\\(\\)\\[\\]\\"\\\'\\?\\!])', 'i');
+              if (boundaryRegex.test(translation)) tokScore += 15;
+              if (boundaryRegex.test(wordMeanings)) tokScore += 12;
+              if (boundaryRegex.test(purport)) tokScore += 5;
+            } else {
+              if (translation.includes(tok) || (devTok && devTok !== tok && translation.includes(devTok))) tokScore += 15;
+              if (wordMeanings.includes(tok) || (devTok && devTok !== tok && wordMeanings.includes(devTok))) tokScore += 12;
+              if (purport.includes(tok)) tokScore += 5;
+            }
+
+            if (tokScore > 0) {
+              matchedTokenCount++;
+              score += tokScore;
+            }
+          }
+
+          // Bonus if tokens match
+          if (matchedTokenCount > 0 && matchedTokenCount >= Math.min(tokens.length, allTokens.length)) {
+            score += 50;
+          }
+
+          if (score > 0) {
+            results.push({ sloka: s, score });
+          }
+        } catch (itemErr) {
+          // Skip any individually corrupt item without stopping search
+          continue;
+        }
       }
 
-      if (score > 0) {
-        results.push({ sloka: s, score });
-      }
+      // Sort by score descending
+      results.sort((a, b) => b.score - a.score);
+
+      const timeMs = (performance.now() - startTime).toFixed(2);
+      const paginated = results.slice(0, limit).map(r => r.sloka);
+
+      return {
+        results: paginated,
+        totalCount: results.length,
+        timeMs,
+        isRefMatch: false
+      };
+    } catch (e) {
+      console.error('searchEngine.search error:', e);
+      return {
+        results: [],
+        totalCount: 0,
+        timeMs: (performance.now() - startTime).toFixed(2),
+        isRefMatch: false
+      };
     }
-
-    // Sort by score descending
-    results.sort((a, b) => b.score - a.score);
-
-    const timeMs = (performance.now() - startTime).toFixed(2);
-    const paginated = results.slice(0, limit).map(r => r.sloka);
-
-    return {
-      results: paginated,
-      totalCount: results.length,
-      timeMs,
-      isRefMatch: false
-    };
   }
 }
 
 // Global search engine instance
 window.searchEngine = new VedabaseSearchEngine();
+
+// Auto-index prebundled Bhagavad Gita immediately (< 1ms startup)
+if (typeof window !== 'undefined' && window.BG_SLOKAS_DATA && Array.isArray(window.BG_SLOKAS_DATA)) {
+  window.searchEngine.appendIndex(window.BG_SLOKAS_DATA);
+}

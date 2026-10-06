@@ -1,4 +1,5 @@
-[
+// Auto-generated prebundled Bhagavad Gita (700 verses with IAST and English translation for instant search)
+window.BG_SLOKAS_DATA = [
     {
         "id":  "bg-1-1",
         "book":  "BG",
@@ -60839,4 +60840,4 @@
                  ],
         "englishTranslation":  "Wherever there is Kṛṣṇa, the master of all mystics, and wherever there is Arjuna, the supreme archer, there will also certainly be opulence, victory, extraordinary power, and morality. That is my opinion."
     }
-]
+];
