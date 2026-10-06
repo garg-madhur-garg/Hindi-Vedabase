@@ -2330,21 +2330,49 @@ class VedabaseApp {
   }
 
   triggerHighlightFadeTimer() {
-    if (this.currentHighlightWord) {
-      clearTimeout(this.highlightFadeTimer);
-      this.highlightFadeTimer = setTimeout(() => {
-        document.querySelectorAll('.search-highlight').forEach(el => {
-          el.classList.remove('search-highlight');
+    clearTimeout(this.highlightFadeTimer);
+    if (!this.currentHighlightWord) return;
+
+    // Fade out search highlights after exactly 5 seconds (5000ms)
+    this.highlightFadeTimer = setTimeout(() => {
+      // 1. Gather all active highlights on reader & presentation slides (leave search modal cards intact)
+      const highlights = Array.from(document.querySelectorAll('.search-highlight')).filter(el => {
+        return !el.closest('#searchModal') && !el.closest('.search-modal');
+      });
+
+      if (highlights.length === 0) {
+        this.currentHighlightWord = null;
+        return;
+      }
+
+      // Add smooth CSS transition fade out
+      highlights.forEach(el => {
+        el.classList.add('highlight-fade-out');
+      });
+
+      // 2. After CSS fade transition completes (800ms), completely remove mark tags and unwrap
+      setTimeout(() => {
+        highlights.forEach(el => {
+          if (el.tagName && el.tagName.toLowerCase() === 'mark') {
+            el.replaceWith(...el.childNodes);
+          } else {
+            el.classList.remove('search-highlight', 'highlight-fade-out');
+          }
+        });
+        // Also cleanup any orphan mark tags across reading panes
+        document.querySelectorAll('#sanskritDevanagari mark, #sanskritIAST mark, #hindiTranslation mark, #hindiPurport mark, .vs-stanza-lyrics mark, .vs-song-flow mark, #presSanskrit mark, #presTranslation mark, #presPurport mark').forEach(m => {
+          m.replaceWith(...m.childNodes);
         });
         this.currentHighlightWord = null;
-      }, 6000);
-    }
+      }, 800);
+    }, 5000);
   }
 
   // Load verse by VerseKey (e.g. "cc adi 1.1", "cc madhya 20.108", "iso 1", "bg 2.13", "1.1.1")
   async loadVerseByKey(verseKey, highlightWord = null) {
     if (!verseKey) return;
     const cleanKey = verseKey.trim();
+    clearTimeout(this.highlightFadeTimer);
     this.currentHighlightWord = (highlightWord && highlightWord.trim().length >= 2) ? highlightWord.trim() : null;
 
     // 1. Check if CC query
