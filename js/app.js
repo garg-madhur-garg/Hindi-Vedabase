@@ -3699,13 +3699,18 @@ class VedabaseApp {
 
   // Theme Management
   setupTheme() {
-    const saved = localStorage.getItem('vedabase_theme') || 'dark';
-    this.setTheme(saved);
+    // Default to 'light' (white/cream) theme unless user explicitly selected another theme
+    const userChosen = localStorage.getItem('vedabase_user_theme');
+    const theme = userChosen || 'light';
+    this.setTheme(theme);
   }
 
   setTheme(theme, isUserAction = false) {
     this.currentTheme = theme;
     document.documentElement.setAttribute('data-theme', theme);
+    if (isUserAction) {
+      localStorage.setItem('vedabase_user_theme', theme);
+    }
     localStorage.setItem('vedabase_theme', theme);
 
     const icon = document.getElementById('themeIcon');
@@ -3722,7 +3727,7 @@ class VedabaseApp {
   }
 
   toggleNextTheme() {
-    const themes = ['dark', 'light', 'sepia'];
+    const themes = ['light', 'sepia', 'dark'];
     const nextIdx = (themes.indexOf(this.currentTheme) + 1) % themes.length;
     this.setTheme(themes[nextIdx], true);
   }
@@ -4587,34 +4592,6 @@ class VedabaseApp {
     // Navigation Buttons
     document.getElementById('btnNextVerse')?.addEventListener('click', () => this.nextVerse());
     document.getElementById('btnPrevVerse')?.addEventListener('click', () => this.prevVerse());
-
-    // Mobile Touch Swipe Gestures for Next / Previous Sloka
-    const mainSlokaCard = document.getElementById('mainSlokaCard');
-    if (mainSlokaCard) {
-      let touchStartX = 0;
-      let touchStartY = 0;
-      mainSlokaCard.addEventListener('touchstart', (e) => {
-        if (e.changedTouches && e.changedTouches[0]) {
-          touchStartX = e.changedTouches[0].screenX;
-          touchStartY = e.changedTouches[0].screenY;
-        }
-      }, { passive: true });
-
-      mainSlokaCard.addEventListener('touchend', (e) => {
-        if (e.changedTouches && e.changedTouches[0]) {
-          const diffX = e.changedTouches[0].screenX - touchStartX;
-          const diffY = e.changedTouches[0].screenY - touchStartY;
-          // Trigger when horizontal swipe is > 55px and greater than vertical scroll
-          if (Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY) * 1.4) {
-            if (diffX < 0) {
-              this.nextVerse(); // Swipe Left -> Next Verse
-            } else {
-              this.prevVerse(); // Swipe Right -> Previous Verse
-            }
-          }
-        }
-      }, { passive: true });
-    }
 
     // Modal Close Buttons
     document.getElementById('btnCloseSearch')?.addEventListener('click', () => this.closeAllModals());
