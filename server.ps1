@@ -45,6 +45,9 @@ Write-Host "===================================================" -ForegroundColo
 Write-Host "   🕉️ हिन्दी वेदबेस (Hindi Vedabase) सर्वर प्रारम्भ" -ForegroundColor Cyan
 Write-Host "   URL: $url" -ForegroundColor Green
 Write-Host "   फ़ाइल सेविंग API: सक्रिय (/api/save-verse)" -ForegroundColor Magenta
+Write-Host "---------------------------------------------------" -ForegroundColor DarkGray
+Write-Host "   📱 मोबाइल व्यू टेस्ट (बिना GitHub पुश किए):" -ForegroundColor Yellow
+Write-Host "      ब्राउज़र में F12 दबाएँ और 'Toggle Device Toolbar' (Ctrl+Shift+M) चुनें" -ForegroundColor Gray
 Write-Host "===================================================" -ForegroundColor Yellow
 Write-Host "ऐप आपके ब्राउज़र में खुल रहा है... (सर्वर बन्द करने के लिए यह विंडो बन्द करें)"
 Write-Host ""

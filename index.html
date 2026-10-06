@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>हिन्दी वेदबेस | श्रीमद्भगवद्गीता, श्री ईशोपनिषद्, श्रीमद्भागवतम् एवं श्री चैतन्य-चरितामृत (श्रील प्रभुपाद)
   </title>
   <meta name="description"
@@ -22,7 +22,7 @@
   </script>
 
   <!-- Main Stylesheet & PWA Manifest -->
-  <link rel="stylesheet" href="css/main.css?v=3.80">
+  <link rel="stylesheet" href="css/main.css?v=3.92">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b0f19">
   <link rel="icon"
@@ -56,6 +56,12 @@
   <!-- Header -->
   <header class="app-header">
     <div class="header-container">
+
+      <!-- Mobile Sidebar Drawer Toggle Button (Hamburger) -->
+      <button class="btn-icon header-icon-btn mobile-menu-btn" id="btnToggleMobileSidebar"
+        aria-label="Open Scriptures Menu" title="ग्रन्थ सूची (Menu)">
+        <span class="mobile-menu-icon">☰</span>
+      </button>
 
       <!-- Logo & Title -->
       <div class="logo-group" id="logoHome" style="cursor: pointer;">
@@ -93,11 +99,15 @@
   <!-- Main Container -->
   <main class="app-main">
 
+    <!-- Sidebar Backdrop for Mobile/Tablet Drawer -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
     <!-- Sidebar: Scriptures & Cantos Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="appSidebar">
       <div class="sidebar-header">
         <div class="sidebar-title">
           <span>📚 Scriptures</span>
+          <button class="sidebar-close-btn" id="btnCloseSidebar" aria-label="Close Menu" title="Close Menu">✕</button>
         </div>
       </div>
 
@@ -207,23 +217,27 @@
 
         <!-- Sloka Card Header -->
         <div class="sloka-header">
-          <div class="verse-badge-group">
-            <span class="verse-key-badge" id="currentVerseKeyBadge">SB 1.1.1</span>
-            <span class="chapter-title-text" id="currentChapterName">अध्याय 1 - शौनकादि ऋषियों के प्रश्न</span>
+          <div class="sloka-header-top">
+            <div class="verse-badge-group">
+              <span class="verse-key-badge" id="currentVerseKeyBadge">SB 1.1.1</span>
+              <span class="badge-user-edited" id="userEditedBadge" style="display: none;">✏️ संशोधित</span>
+            </div>
+
+            <div class="verse-tool-buttons">
+              <!-- Copy formatted verse for sharing -->
+              <button class="tool-btn" id="btnCopyVerse" title="Copy verse for WhatsApp / Notes">
+                <span>📋</span>
+                <span>Copy</span>
+              </button>
+              <!-- Edit Verse Button -->
+              <button class="tool-btn" id="btnEditCurrentVerse" title="Suggest Edit for this verse">
+                <span>✏️</span>
+                <span>Edit</span>
+              </button>
+            </div>
           </div>
 
-          <div class="verse-tool-buttons">
-            <!-- Copy formatted verse for sharing -->
-            <button class="tool-btn" id="btnCopyVerse" title="Copy verse for WhatsApp / Notes">
-              <span>📋</span>
-              <span>Copy</span>
-            </button>
-            <!-- Edit Verse Button -->
-            <button class="tool-btn" id="btnEditCurrentVerse" title="Suggest Edit for this verse">
-              <span>✏️</span>
-              <span>Edit</span>
-            </button>
-          </div>
+          <div class="chapter-title-text" id="currentChapterName">अध्याय 1 - शौनकादि ऋषियों के प्रश्न</div>
         </div>
 
         <!-- Vaishnava Song Audio Player Container -->
@@ -263,7 +277,7 @@
 
         <!-- Interactive Verse Number Selector Strip -->
         <div class="verse-selector-strip" id="verseSelectorStrip">
-          <span class="verse-strip-label">Verses:</span>
+          <span class="verse-strip-label">श्लोक (Verses):</span>
           <div class="verse-strip-scroll" id="verseStripScroll">
             <!-- Populated dynamically: [1] [2] [3] [4]... -->
           </div>
@@ -272,7 +286,7 @@
         <!-- Sanskrit Verse Section -->
         <div class="sanskrit-verse-box">
           <div class="sanskrit-devanagari-text" id="sanskritDevanagari">
-            Loading verse...
+            श्लोक लोड हो रहा है...
           </div>
           <div class="sanskrit-iast-text" id="sanskritIAST">
             <!-- IAST Transliteration -->
@@ -282,10 +296,11 @@
         <!-- Word-to-Word Section -->
         <div class="word-to-word-container">
           <div class="section-title">
-            <span>✨</span>
-            <span>Word-for-Word Meanings</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-left: auto;">(Click
-              any word to see cross-scripture usage)</span>
+            <div class="section-title-header">
+              <span>✨</span>
+              <span>शब्दार्थ (Word-for-Word Meanings)</span>
+            </div>
+            <span class="section-title-hint">(किसी भी शब्द पर क्लिक करके अन्य संदर्भ देखें)</span>
           </div>
           <div class="word-chips-grid" id="wordChipsGrid">
             <!-- Dynamically populated chips -->
@@ -295,8 +310,10 @@
         <!-- Translation Section -->
         <div class="translation-box">
           <div class="section-title" style="color: var(--accent-saffron);">
-            <span>📜</span>
-            <span>Translation</span>
+            <div class="section-title-header">
+              <span>📜</span>
+              <span>हिन्दी अनुवाद (Translation)</span>
+            </div>
           </div>
           <div class="hindi-translation-text" id="hindiTranslation">
             <!-- Translation text -->
@@ -306,8 +323,10 @@
         <!-- Purport Box -->
         <div class="purport-box" id="purportContainer">
           <div class="section-title" style="color: var(--accent-gold);">
-            <span>🪔</span>
-            <span>Purport</span>
+            <div class="section-title-header">
+              <span>🪔</span>
+              <span>श्रील प्रभुपाद तात्पर्य (Purport)</span>
+            </div>
           </div>
           <div class="hindi-purport-text" id="hindiPurport">
             <!-- Purport text -->
@@ -320,16 +339,14 @@
       <nav class="sloka-navigation-bar">
         <button class="nav-verse-btn" id="btnPrevVerse">
           <span>←</span>
-          <span>Previous</span>
-          <!-- <span class="kbd-shortcut" style="margin-left: 0.35rem;">← Key</span> -->
+          <span>Previous (पिछला)</span>
         </button>
 
-        <span style="font-size: 0.85rem; color: var(--text-muted);" id="verseCounterStatus">1 / 1</span>
+        <span class="verse-counter-status" id="verseCounterStatus">1 / 1</span>
 
         <button class="nav-verse-btn" id="btnNextVerse">
-          <span>Next</span>
+          <span>Next (अगला)</span>
           <span>→</span>
-          <!-- <span class="kbd-shortcut" style="margin-left: 0.35rem;">→ Key</span> -->
         </button>
       </nav>
 
@@ -744,8 +761,13 @@
   <div class="presentation-overlay" id="presentationOverlay">
     <div class="presentation-container">
 
-      <!-- Subtle Floating Hamburger Trigger in Top-Right Corner (Non-intrusive) -->
-      <button class="pres-hamburger-trigger" id="btnPresMenuToggle" title="Toggle Menu (M)">
+      <!-- Minimalist Semi-Transparent Floating Exit Button (Top-Left) -->
+      <button class="pres-floating-exit-btn" id="btnPresFloatingExit" title="Exit Presentation Mode (Esc / बाहर निकलें)" aria-label="Exit Presentation">
+        <span class="pres-exit-icon">✕</span>
+      </button>
+
+      <!-- Floating Hamburger Trigger in Top-Right Corner (Display & Settings Menu) -->
+      <button class="pres-hamburger-trigger" id="btnPresMenuToggle" title="Settings & Display Menu (M)">
         <span class="hamburger-icon" id="presMenuIcon">☰</span>
       </button>
 
@@ -901,7 +923,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
   <script src="js/firebase-sync.js?v=3.81"></script>
-  <script src="js/app.js?v=3.81"></script>
+  <script src="js/app.js?v=3.91"></script>
 </body>
 
 </html>

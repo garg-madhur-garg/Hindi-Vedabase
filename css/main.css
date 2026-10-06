@@ -550,12 +550,18 @@ input, textarea, select {
 /* Card Header Controls */
 .sloka-header {
   display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.95rem;
+}
+
+.sloka-header-top {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 1rem;
+  width: 100%;
+  gap: 0.75rem;
 }
 
 /* Interactive Verse Number Selector Bar */
@@ -653,6 +659,12 @@ input, textarea, select {
   padding: 0.35rem 0.85rem;
   border-radius: 8px;
   letter-spacing: 0.02em;
+  white-space: nowrap !important; /* CRITICAL: Never break verse key into two lines */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
 }
 
 .badge-user-edited {
@@ -681,9 +693,21 @@ input, textarea, select {
 }
 
 .chapter-title-text {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-family: var(--font-devanagari);
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  word-break: break-word;
+}
+
+[data-theme="light"] .chapter-title-text {
+  color: #b45309;
+}
+
+[data-theme="sepia"] .chapter-title-text {
+  color: #92400e;
 }
 
 .verse-tool-buttons {
@@ -758,17 +782,33 @@ input, textarea, select {
   line-height: 1.6;
 }
 
-/* Word to Word Breakdown */
+/* Section Titles (Word-to-Word, Translation, Purport) */
 .section-title {
   font-size: 0.95rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   color: var(--accent-gold);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0.45rem;
   margin-bottom: 0.85rem;
+}
+
+.section-title-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.section-title-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  margin-left: auto;
 }
 
 .word-to-word-container {
@@ -982,7 +1022,81 @@ input, textarea, select {
   overflow: hidden;
 }
 
-/* Subtle Floating Hamburger Trigger Button */
+/* Presentation Floating Exit Button (Minimalist & Transparent Top-Left Icon) */
+.pres-floating-exit-btn {
+  position: fixed;
+  top: 16px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  cursor: pointer;
+  z-index: 100035;
+  opacity: 0.85;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  user-select: none;
+  padding: 0;
+}
+
+.pres-floating-exit-btn:hover {
+  opacity: 1;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ef4444;
+  transform: scale(1.08);
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.35);
+}
+
+.pres-exit-icon {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 0.25s ease;
+}
+
+.pres-floating-exit-btn:hover .pres-exit-icon {
+  transform: rotate(90deg);
+}
+
+[data-theme="light"] .pres-floating-exit-btn {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #475569;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .pres-floating-exit-btn:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #dc2626;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.3);
+}
+
+[data-theme="sepia"] .pres-floating-exit-btn {
+  background: rgba(244, 235, 213, 0.6);
+  border-color: rgba(180, 83, 9, 0.2);
+  color: #78350f;
+  box-shadow: 0 2px 10px rgba(69, 26, 3, 0.08);
+}
+
+[data-theme="sepia"] .pres-floating-exit-btn:hover {
+  background: #fecdd3;
+  border-color: #e11d48;
+  color: #9f1239;
+  box-shadow: 0 0 14px rgba(225, 29, 72, 0.3);
+}
+
+/* Subtle Floating Hamburger Trigger Button (Top-Right) */
 .pres-hamburger-trigger {
   position: fixed;
   top: 16px;
@@ -993,35 +1107,36 @@ input, textarea, select {
   background: rgba(15, 23, 42, 0.45);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
   cursor: pointer;
   z-index: 100025;
-  opacity: 0.35;
+  opacity: 0.85;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   user-select: none;
+  padding: 0;
 }
 
 .pres-hamburger-trigger:hover,
 .pres-hamburger-trigger.active {
   opacity: 1;
-  background: rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.2);
   border-color: var(--accent-gold);
   color: var(--accent-gold-light);
   transform: scale(1.08);
-  box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.35);
 }
 
 [data-theme="light"] .pres-hamburger-trigger {
-  background: rgba(255, 255, 255, 0.65);
-  border-color: rgba(0, 0, 0, 0.12);
-  color: #334155;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #475569;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="light"] .pres-hamburger-trigger:hover,
@@ -1029,13 +1144,22 @@ input, textarea, select {
   background: #fef3c7;
   border-color: #f59e0b;
   color: #b45309;
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.3);
 }
 
 [data-theme="sepia"] .pres-hamburger-trigger {
-  background: rgba(244, 235, 213, 0.7);
-  border-color: rgba(180, 83, 9, 0.25);
+  background: rgba(244, 235, 213, 0.6);
+  border-color: rgba(180, 83, 9, 0.2);
   color: #78350f;
+  box-shadow: 0 2px 10px rgba(69, 26, 3, 0.08);
+}
+
+[data-theme="sepia"] .pres-hamburger-trigger:hover,
+[data-theme="sepia"] .pres-hamburger-trigger.active {
+  background: #fdf6e7;
+  border-color: #d97706;
+  color: #78350f;
+  box-shadow: 0 0 14px rgba(217, 119, 6, 0.25);
 }
 
 /* ==========================================================================
@@ -1055,14 +1179,14 @@ input, textarea, select {
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--text-primary);
-  display: none !important;
+  display: none;
   align-items: center;
   justify-content: center;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
   z-index: 100025;
-  opacity: 0.4;
+  opacity: 0.85;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   user-select: none;
@@ -1073,10 +1197,6 @@ input, textarea, select {
   font-weight: 800;
   letter-spacing: -0.5px;
   line-height: 1;
-}
-
-.presentation-overlay.active .pres-vs-lang-trigger {
-  display: flex !important;
 }
 
 .pres-vs-lang-trigger:hover,
@@ -3279,43 +3399,592 @@ input, textarea, select {
 }
 
 /* ==========================================================================
-   Responsive Breakpoints
+   Mobile Navigation Base Elements (Hidden on Desktop)
    ========================================================================== */
 
+.mobile-menu-btn {
+  display: none;
+}
+
+.sidebar-close-btn {
+  display: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints - Tablet & Mobile Optimization
+   ========================================================================== */
+
+/* Tablet & Mobile Screens (<= 1024px) */
 @media (max-width: 1024px) {
+  /* Show Hamburger Menu Toggle in Header */
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Backdrop Overlay for Mobile Sidebar Drawer */
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.68);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 100040;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Transform Sidebar into an Off-Canvas Slide-In Drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 330px;
+    max-width: 86vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 100050;
+    background: var(--bg-secondary);
+    border-radius: 0 20px 20px 0;
+    border: none;
+    border-right: 1.5px solid var(--border-color);
+    box-shadow: none;
+    transform: translateX(-105%);
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.32s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1.25rem 1.15rem 4rem 1.15rem;
+    display: flex !important;
+  }
+
+  [data-theme="light"] .sidebar {
+    background: #ffffff;
+    border-color: #e2e8f0;
+  }
+
+  [data-theme="sepia"] .sidebar {
+    background: #fbf6ea;
+    border-color: rgba(180, 83, 9, 0.25);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.65);
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.85rem;
+  }
+
+  .sidebar-title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+  }
+
+  /* Single Column Main Layout */
   .app-main {
     grid-template-columns: 1fr;
+    padding: 1.15rem 1rem 3rem 1rem;
+    gap: 1.25rem;
   }
-  .sidebar {
+
+  /* Compact Presentation Button in Header */
+  .btn-presentation .btn-label {
     display: none;
+  }
+
+  .btn-presentation {
+    padding: 0.45rem 0.65rem;
   }
 }
 
+/* Standard Smartphone Screens (<= 640px) */
 @media (max-width: 640px) {
+  /* Header Mobile Optimization */
   .app-header {
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 0.75rem;
   }
-  .app-main {
-    padding: 1rem;
+
+  .header-container {
+    gap: 0.45rem;
   }
-  .sloka-card {
-    padding: 1.25rem;
+
+  .logo-group {
+    gap: 0.45rem;
   }
-  .sanskrit-devanagari-text {
+
+  .app-logo-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .logo-text h1 {
     font-size: 1.25rem;
+    line-height: 1.2;
   }
+
+  .header-actions {
+    gap: 0.35rem;
+  }
+
+  .header-icon-btn,
+  .btn-icon,
+  .btn-presentation {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 0.95rem;
+  }
+
+  /* Main App Container */
+  .app-main {
+    padding: 0.75rem 0.5rem 2.5rem 0.5rem;
+    gap: 1rem;
+  }
+
+  /* Sloka Card */
+  .sloka-card {
+    padding: 1.15rem 0.85rem;
+    border-radius: 16px;
+    gap: 1.15rem;
+  }
+
+  /* Sloka Header (Mobile-Optimized Grid) */
+  .sloka-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.55rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .sloka-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .verse-badge-group {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-shrink: 0;
+  }
+
+  .verse-key-badge {
+    font-size: 0.88rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 7px;
+    white-space: nowrap !important;
+  }
+
+  .chapter-title-text {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--accent-gold);
+    width: 100%;
+    margin-top: 0.1rem;
+    word-break: break-word;
+  }
+
+  .verse-tool-buttons {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .tool-btn {
+    padding: 0.32rem 0.6rem;
+    font-size: 0.78rem;
+    border-radius: 7px;
+  }
+
+  /* Horizontal Verse Number Strip */
+  .verse-selector-strip {
+    padding: 0.45rem 0.65rem;
+    gap: 0.5rem;
+    border-radius: 10px;
+  }
+
+  .verse-strip-label {
+    font-size: 0.78rem;
+  }
+
+  .verse-strip-scroll {
+    gap: 0.35rem;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-bottom: 0;
+  }
+
+  .verse-strip-btn {
+    min-width: 34px;
+    height: 32px;
+    padding: 0 0.45rem;
+    font-size: 0.82rem;
+    border-radius: 7px;
+  }
+
+  /* Sanskrit Verse Section */
+  .sanskrit-verse-box {
+    padding: 1.15rem 0.75rem;
+    border-radius: 12px;
+  }
+
+  .sanskrit-devanagari-text {
+    font-size: clamp(1.18rem, 5vw, 1.38rem);
+    line-height: 1.85;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    letter-spacing: 0.01em;
+  }
+
+  .sanskrit-iast-text {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    margin-top: 0.75rem;
+    word-break: break-word;
+  }
+
+  /* Word to Word Meanings */
+  .word-to-word-container {
+    padding: 0.95rem 0.75rem;
+    border-radius: 12px;
+  }
+
+  .section-title {
+    font-size: 0.88rem;
+    margin-bottom: 0.65rem;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    justify-content: flex-start;
+  }
+
+  .section-title-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .section-title-hint {
+    display: block;
+    width: 100%;
+    margin-left: 0 !important;
+    margin-top: 0.15rem;
+    font-size: 0.74rem !important;
+  }
+
+  .word-chips-grid {
+    gap: 0.35rem;
+  }
+
+  .word-chip {
+    padding: 0.3rem 0.55rem;
+    font-size: 0.84rem;
+    border-radius: 7px;
+    word-break: break-word;
+  }
+
+  .word-chip .chip-sanskrit {
+    font-size: 0.86rem;
+  }
+
+  .word-chip .chip-hindi {
+    font-size: 0.82rem;
+  }
+
+  /* Translation Section */
+  .translation-box {
+    padding: 1rem 0.85rem;
+    border-radius: 0 12px 12px 0;
+    border-left-width: 3.5px;
+  }
+
   .hindi-translation-text {
-    font-size: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    text-align: left;
+    text-justify: auto;
+    word-break: break-word;
   }
+
+  /* Purport Section */
+  .purport-box {
+    padding: 1.1rem 0.85rem;
+    border-radius: 12px;
+  }
+
+  .hindi-purport-text {
+    font-size: 1.02rem;
+    line-height: 1.8;
+    text-align: left;
+    text-justify: auto;
+    word-break: break-word;
+  }
+
+  .para-block {
+    margin-bottom: 1rem;
+    line-height: 1.8;
+  }
+
+  .verse-quote-block {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0.85rem 0;
+  }
+
+  /* Bottom Navigation Controls */
+  .sloka-navigation-bar {
+    margin-top: 0.65rem;
+    gap: 0.5rem;
+  }
+
+  .nav-verse-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0.75rem 0.6rem;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    min-height: 44px;
+  }
+
+  #verseCounterStatus {
+    font-size: 0.78rem;
+    white-space: nowrap;
+    padding: 0 0.15rem;
+  }
+
+  /* Vaishnava Songs Audio Player */
+  .vs-audio-player-box {
+    padding: 0.85rem 0.75rem;
+    border-radius: 12px;
+  }
+
   .vs-audio-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0.5rem;
   }
+
   .vs-audio-track-selector-wrapper {
     max-width: 100%;
     width: 100%;
   }
+
+  .vs-audio-controls-row {
+    gap: 0.45rem;
+  }
+
   .vs-audio-vol-slider {
     display: none;
   }
+
+  .vs-audio-btn-play {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  /* Modals Mobile Optimization */
+  .modal-overlay {
+    padding: 0.4rem;
+    align-items: flex-end;
+  }
+
+  .modal-container {
+    max-height: 94vh;
+    border-radius: 18px 18px 0 0;
+    width: 100%;
+  }
+
+  .modal-header {
+    padding: 0.85rem 1rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .modal-body {
+    padding: 1rem 0.85rem;
+    max-height: calc(94vh - 85px);
+  }
+
+  .modal-body input,
+  .modal-body textarea,
+  .modal-body select {
+    font-size: 16px !important; /* Critical: Prevents iOS Safari auto-zoom on input focus */
+  }
+
+  .edit-meta-chips {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .edit-chip {
+    font-size: 0.78rem;
+    padding: 0.3rem 0.55rem;
+  }
+
+  #suggesterDetailsGroup > div:first-child,
+  #editVsMetaFields > div {
+    grid-template-columns: 1fr !important;
+  }
+
+  .preview-box {
+    padding: 1.15rem 0.85rem !important;
+  }
+
+  /* Presentation Mode Mobile (Symmetrical Top Action Buttons) */
+  .pres-floating-exit-btn {
+    top: 12px;
+    left: 14px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.05rem;
+    padding: 0;
+  }
+
+  .pres-hamburger-trigger {
+    top: 12px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.15rem;
+    padding: 0;
+  }
+
+  .pres-vs-lang-trigger {
+    top: 56px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .pres-header {
+    top: 8px;
+    padding: 0.25rem 0.4rem;
+    max-width: 96vw;
+    border-radius: 12px;
+    gap: 0.3rem;
+  }
+
+  .pres-toggle-group {
+    max-width: 160px;
+    overflow-x: auto;
+  }
+
+  .pres-toggle-chip {
+    font-size: 0.7rem;
+    padding: 0.18rem 0.35rem;
+  }
+
+  .presentation-stage {
+    padding: 4.25rem 0.75rem 4rem 0.75rem;
+    gap: 1.15rem;
+  }
+
+  .pres-slide-badge {
+    font-size: 1.15rem;
+    padding: 0.35rem 0.95rem;
+  }
+
+  .pres-sanskrit-box {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .pres-sanskrit-text {
+    font-size: clamp(1.25rem, 5.5vw, 1.65rem);
+    line-height: 1.8;
+  }
+
+  .pres-words-title,
+  .pres-translation-label,
+  .pres-purport-label {
+    font-size: 0.85rem;
+  }
+
+  .pres-translation-text,
+  .pres-purport-text {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
 }
+
+/* Extra Small Mobile Screens (<= 380px) */
+@media (max-width: 380px) {
+  .logo-text h1 {
+    font-size: 1.15rem;
+  }
+
+  .app-logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .header-icon-btn,
+  .btn-icon,
+  .btn-presentation {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sloka-card {
+    padding: 0.95rem 0.65rem;
+  }
+
+  .sanskrit-verse-box,
+  .word-to-word-container,
+  .purport-box {
+    padding: 0.85rem 0.65rem;
+  }
+}
+

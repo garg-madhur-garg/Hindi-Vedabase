@@ -1595,6 +1595,27 @@ class VedabaseApp {
     this.renderVsSidebar();
   }
 
+  // Mobile Sidebar Drawer Toggle & Close
+  toggleMobileSidebar() {
+    const sidebar = document.getElementById('appSidebar') || document.querySelector('.sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    if (sidebar) {
+      const isOpen = sidebar.classList.toggle('mobile-open');
+      if (backdrop) backdrop.classList.toggle('active', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+  }
+
+  closeMobileSidebar() {
+    const sidebar = document.getElementById('appSidebar') || document.querySelector('.sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    if (sidebar && sidebar.classList.contains('mobile-open')) {
+      sidebar.classList.remove('mobile-open');
+      if (backdrop) backdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
   // Accordion toggle: Toggles entire scripture open/close
   toggleScriptureAccordion(scriptureId) {
     const target = document.getElementById(scriptureId);
@@ -2465,6 +2486,11 @@ class VedabaseApp {
       }
     }
 
+    // Auto-close mobile sidebar drawer on verse load
+    if (window.innerWidth <= 1024) {
+      this.closeMobileSidebar();
+    }
+
     // Audio Player Bar for Vaishnava Songs
     const audioBox = document.getElementById('vsAudioPlayerBox');
     const trackSelect = document.getElementById('vsAudioTrackSelect');
@@ -3180,7 +3206,7 @@ class VedabaseApp {
     this.applyPresFontSize();
     this.renderPresentationSlide();
     this.hidePresMenu();
-    this.showToast('📽️ Presentation Mode Active (Press ☰ or M for controls)');
+    this.showToast('📽️ प्रेजेंटेशन मोड सक्रिय: बाहर आने के लिए ऊपर ✕ दबाएँ (या Esc)');
 
     try {
       if (typeof window.logVedabaseEvent === 'function') {
@@ -4487,13 +4513,27 @@ class VedabaseApp {
       });
     }
 
-    // Header Actions
+    // Header Actions & Mobile Drawer Toggle
     document.getElementById('logoHome')?.addEventListener('click', () => this.loadVerseByKey('bg 1.1'));
+    document.getElementById('btnToggleMobileSidebar')?.addEventListener('click', () => this.toggleMobileSidebar());
+    document.getElementById('btnCloseSidebar')?.addEventListener('click', () => this.closeMobileSidebar());
+    document.getElementById('sidebarBackdrop')?.addEventListener('click', () => this.closeMobileSidebar());
     document.getElementById('btnPresentationMode')?.addEventListener('click', () => this.openPresentationMode());
     document.getElementById('btnOpenManager')?.addEventListener('click', () => this.openModal('managerModal'));
     document.getElementById('btnThemeToggle')?.addEventListener('click', () => this.toggleNextTheme());
 
+    // Auto-close mobile sidebar when clicking a chapter button inside sidebar
+    const appSidebarEl = document.getElementById('appSidebar') || document.querySelector('.sidebar');
+    if (appSidebarEl) {
+      appSidebarEl.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1024 && e.target.closest('.chapter-btn')) {
+          this.closeMobileSidebar();
+        }
+      });
+    }
+
     // Presentation Mode Controls
+    document.getElementById('btnPresFloatingExit')?.addEventListener('click', () => this.closePresentationMode());
     document.getElementById('btnPresMenuToggle')?.addEventListener('click', () => this.togglePresMenu());
     document.getElementById('btnClosePresentation')?.addEventListener('click', () => this.closePresentationMode());
     document.getElementById('btnPresSearch')?.addEventListener('click', () => {
@@ -4548,6 +4588,34 @@ class VedabaseApp {
     document.getElementById('btnNextVerse')?.addEventListener('click', () => this.nextVerse());
     document.getElementById('btnPrevVerse')?.addEventListener('click', () => this.prevVerse());
 
+    // Mobile Touch Swipe Gestures for Next / Previous Sloka
+    const mainSlokaCard = document.getElementById('mainSlokaCard');
+    if (mainSlokaCard) {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      mainSlokaCard.addEventListener('touchstart', (e) => {
+        if (e.changedTouches && e.changedTouches[0]) {
+          touchStartX = e.changedTouches[0].screenX;
+          touchStartY = e.changedTouches[0].screenY;
+        }
+      }, { passive: true });
+
+      mainSlokaCard.addEventListener('touchend', (e) => {
+        if (e.changedTouches && e.changedTouches[0]) {
+          const diffX = e.changedTouches[0].screenX - touchStartX;
+          const diffY = e.changedTouches[0].screenY - touchStartY;
+          // Trigger when horizontal swipe is > 55px and greater than vertical scroll
+          if (Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY) * 1.4) {
+            if (diffX < 0) {
+              this.nextVerse(); // Swipe Left -> Next Verse
+            } else {
+              this.prevVerse(); // Swipe Right -> Previous Verse
+            }
+          }
+        }
+      }, { passive: true });
+    }
+
     // Modal Close Buttons
     document.getElementById('btnCloseSearch')?.addEventListener('click', () => this.closeAllModals());
     document.getElementById('btnCloseManager')?.addEventListener('click', () => this.closeAllModals());
@@ -4597,6 +4665,11 @@ class VedabaseApp {
       }
 
       if (e.key === 'Escape') {
+        const sidebar = document.getElementById('appSidebar') || document.querySelector('.sidebar');
+        if (sidebar && sidebar.classList.contains('mobile-open')) {
+          this.closeMobileSidebar();
+          return;
+        }
         if (document.querySelector('.modal-overlay.active')) {
           this.closeAllModals();
           return;
