@@ -494,7 +494,7 @@ class VedabaseSearchEngine {
   search(query, filterTag = null, limit = 50) {
     const startTime = performance.now();
     if (!query && !filterTag) {
-      return { results: this.slokas.slice(0, limit), totalCount: this.slokas.length, timeMs: 0, isRefMatch: false };
+      return { results: [], totalCount: 0, timeMs: 0, isRefMatch: false };
     }
 
     const trimmedQuery = (query || '').trim();

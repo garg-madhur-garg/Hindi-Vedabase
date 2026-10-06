@@ -3102,6 +3102,12 @@ class VedabaseApp {
 
     const trimmed = (query || '').trim();
 
+    if (!trimmed) {
+      if (speedBadge) speedBadge.textContent = '0 ms';
+      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem;">Type a verse number above (e.g. 1.1.1, BG 2.13)...</div>`;
+      return;
+    }
+
     await this.ensureBgLoaded();
     await this.ensureIsoLoaded();
     await this.ensureCcLoaded();
@@ -3129,7 +3135,7 @@ class VedabaseApp {
     }
 
     if (!res.results || res.results.length === 0) {
-      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No verses or songs found for "${this.escapeHtml(trimmed || '')}".</div>`;
+      list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No verses found for "${this.escapeHtml(trimmed)}".</div>`;
       return;
     }
 
@@ -4441,7 +4447,10 @@ class VedabaseApp {
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
       const firstInput = modal.querySelector('input, textarea');
-      if (firstInput) setTimeout(() => firstInput.focus(), 50);
+      if (firstInput) {
+        if (modalId === 'searchModal') firstInput.value = '';
+        setTimeout(() => firstInput.focus(), 50);
+      }
     }
   }
 
