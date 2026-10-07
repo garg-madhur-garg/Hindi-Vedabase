@@ -566,7 +566,7 @@ class VedabaseApp {
 
     this.loadingCc = (async () => {
       try {
-        const resp = await fetch('data/chaitanya-charitamrita/chaitanya-charitamrita.json');
+        const resp = await fetch('data/chaitanya-charitamrita/chaitanya-charitamrita.json?v=4.06');
         if (resp.ok) {
           let verses = await resp.json();
           verses = this.applyUserCustomEdits(verses);
@@ -662,7 +662,7 @@ class VedabaseApp {
 
     this.loadingIso = (async () => {
       try {
-        const resp = await fetch('data/isopanisad/isopanisad.json');
+        const resp = await fetch('data/isopanisad/isopanisad.json?v=4.06');
         if (resp.ok) {
           let mantras = await resp.json();
           mantras = this.applyUserCustomEdits(mantras);
@@ -1217,7 +1217,7 @@ class VedabaseApp {
 
     this.loadingVs = (async () => {
       try {
-        const resp = await fetch('data/vaishnava-songs/vaishnava-songs.json');
+        const resp = await fetch('data/vaishnava-songs/vaishnava-songs.json?v=4.06');
         if (resp.ok) {
           let songs = await resp.json();
           songs = this.applyUserCustomEdits(songs);
@@ -1331,7 +1331,7 @@ class VedabaseApp {
 
     this.loadingBg = (async () => {
       try {
-        const resp = await fetch('data/bhagavad-gita/bhagavad-gita.json?v=4.00');
+        const resp = await fetch('data/bhagavad-gita/bhagavad-gita.json?v=4.06');
         if (resp.ok) {
           let slokas = await resp.json();
           slokas = this.applyUserCustomEdits(slokas);
@@ -1389,7 +1389,7 @@ class VedabaseApp {
 
     const loadPromise = (async () => {
       try {
-        const resp = await fetch(`data/srimad-bhagavatam/canto-${cNum}.json`);
+        const resp = await fetch(`data/srimad-bhagavatam/canto-${cNum}.json?v=4.06`);
         if (resp.ok) {
           let slokas = await resp.json();
           slokas = this.applyUserCustomEdits(slokas);
