@@ -32,3 +32,8 @@ data/raw-sources/
 scratch/
 test_*.html
 
+# Reference PDFs
+PDF/
+*.pdf
+
+
