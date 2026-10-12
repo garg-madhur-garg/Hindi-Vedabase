@@ -1,4 +1,4 @@
-﻿// ==========================================================================
+// ==========================================================================
 // Comprehensive Authentic Hindi Vaishnava Songs Dataset
 // Direct UTF-8 Embedded Translations & Songs Engine
 // ==========================================================================
@@ -47,6 +47,50 @@
         "वैष्णव ही इस भौतिक मोह-निद्रा में सोए हुए संपूर्ण जगत को जगाने में समर्थ हैं; केवल उनकी अहैतुकी कृपा से ही महापापी भी परम भगवद्भक्त बन जाता है।"
       ]
     },
+    "118": {
+      title: "कलियुगे श्री कृष्ण चैतन्य अवतार (Kali-yuge Śrī Kṛṣṇa Caitanya)",
+      transliterations: [
+        "कलि-युगे श्री कृष्ण चैतन्य अबतार\nखेलिबार प्रबन्धे कैल खोल करताल",
+        "गडागडि यान प्रभु निज सण्कीर्तने\nघरे घरे हरि-नाम देन सर्ब-जने",
+        "उच्चैः-स्वरे कान्दे प्रभु जीबेर लागिया\nचेतन करान जीबे कृष्ण-नाम दिया",
+        "छल छल करे आण्खि नयनेर जले\nजगत पबित्र कैल गौर-कलेबरे",
+        "झल झल मुख येन पूर्ण शशधर\nएमत त देखि ना-इ दयार सागर",
+        "टलमल करे अङ्ग भाबेते बिभोल\nठमके ठमके चले बले हरिबोल",
+        "डोरहि कौपीन क्षीण कटिर उपरे\nढलिया ढलिया पडे गदाधेर क्रोडे",
+        "आन परसङ्ग गोरा ना शुने श्रबणे\nतान मन गान रसे मजा-इया मन",
+        "थिर नाहि हय प्रभुर नयनेर जल\nदीन-हीन जनेरे धरिया देय कोल",
+        "धेयांइया पूरब पिरीति परसङ्ग\nना जानि काहार भाबे ह-इया त्रि-भङ्ग",
+        "प्रेम-रसे भासा-इया अखिल संसार\nफुटिल श्री-बृन्दाबन सुरधुनी धार",
+        "ब्रह्मा महेश्वर यारे करे अन्वेषण\nभाबिया ना पान यांरे सहस्र-लोचन",
+        "मत्त मातङ्ग गति मधुर मृदु हास\nयशोमति माता यांर भुबने प्रकाश",
+        "रतिपति जिनि रूप अति मनोहर\nलीला लाबण्य यार अति अनुपम",
+        "बसुदेब-सुत से-इ श्री-नन्द-नन्दन\nशचीर नन्दन एबे बले सर्ब-जन",
+        "चतुर्-भुज रूप हैल अत्य्-आश्चर्य-मय\nसाबधान प्राण-नाथ गोरा रसमय",
+        "हरि हरि बल भा-इ कर महा-यज्ञ\nक्षिति-तले जन्मि केह ना हैय अबिज्ञ",
+        "ए चौत्रिश पदाबली ये करे कीर्तन\nदास नरोत्तम मागे ताहारे चरण"
+      ],
+      translations: [
+        "In the Kali-yuga Śrī Kṛṣṇa Caitanya descended to this world. He enjoyed kīrtana pastimes with khola and karatāla.",
+        "Chanting His own holy names, He rolled on the ground in ecstasy. Going from house to house, He gave to everyone the gift of Lord Hari\u0027s holy name.",
+        "For the benefit of the jīvas, the Lord loudly wept in the ecstasy of spiritual love. Giving them the gift of Lord Kṛṣṇa\u0027s holy names, He revived the jīvas.",
+        "Tears of ecstatic spiritual love flowed from His eyes. His fair spiritual form purified all the worlds.",
+        "His glorious face shone like the full moon. No one had ever seen an ocean of mercy like Him.",
+        "Overcome with ecstatic spiritual love, His body trembled. Dancing and dancing as He went, He chanted, “Haribol!\"",
+        "A kaupīna rested on His slender waist. Staggering and staggering as He walked, He fell at Gadādhara\u0027s side.",
+        "Lord Gaurāṅga\u0027s ears never listened to anything but descriptions of Lord Kṛṣṇa. His heart was plunged in the nectar of songs glorifying Lord Kṛṣṇa.",
+        "He could not be peaceful. Tears of ecstatic spiritual love flowed from Lord Gaurāṅga\u0027s eyes. The Lord hugged the poor fallen souls.",
+        "He meditated on the loving pastimes He previously enjoyed with His associates, pastimes He enjoyed as Lord Kṛṣṇa. Who was the person with a threefold-bending form standing before Him? He did not know.",
+        "He made the whole world float in the nectar of ecstatic spiritual love. On the Gaṅgā\u0027s banks He manifested the beautiful spiritual world of Vṛndāvana.",
+        "Brahmā, Śiva, and all the demigods search for Him. Thousand-eyed Indra meditates on Him but cannot find Him.",
+        "He walked like a graceful intoxicated elephant. His gentle smile was sweet. In His home Mother Yaśodā was present.",
+        "His charming form defeated Kāmadeva. His handsomeness and playfulness were without peer.",
+        "Everyone says that Lord Kṛṣṇa, who was the son of Vasudeva and the son of Nanda, has now become Śacī\u0027s son.",
+        "He manifested a wonderful six-armed form. Lord Gaura is sweet like nectar. He is the master of my life.",
+        "O my brothers, please chant, \"Hari! Hari!\" Please perform a great yajña of chanting Lord Hari\u0027s holy names. Now that everyone chants the holy names, no one remains foolish and bewildered on the surface of the earth.",
+        "Narottama dāsa prays at the feet of anyone who chants these 34 lines."
+      ]
+    },
+
     "121": {
       title: "कर्म-फले आसे सब नाना वेश धरि (Vṛndāvane Bhajana - 5)",
       transliterations: [
@@ -62,6 +106,32 @@
         "उसकी इस 'ठीक रहने' की बात पर हँसी आती है। मायाबद्ध संसारी जीव की सुख-शांति और 'भलाई' का यही वास्तविक स्वरूप है।"
       ]
     },
+    "132": {
+      title: "श्री गोवर्धनाष्टकम् (Śrī Govardhanāṣṭakam)",
+      transliterations: [
+        "कृष्ण-प्रसादेन समस्त-शैल-\nसाम्राज्यम् आप्नोति च वैरिणो ऽपि\nशक्रस्य यः प्राप बलिं स साक्षाद्\nगोवर्धनो मे दिशताम् अभीष्टम्",
+        "स्व-प्रेष्ठ-हस्ताम्बुज-सौकुमार्य-\nसुखानुभूतेर् अति-भूमि-वृत्तेः\nमहेन्द्र-वज्राहतिम् अप्य् अजानन्\nगोवर्धनो मे दिशताम् अभीष्टम्",
+        "यत्रैव कृष्णो वृषभानु-पुत्र्या\nदानं गृहीतुं कलहं वितेने\nश्रुतेः स्पृहा यत्र महत्य् अतः श्री-\nगोवर्धनो मे दिशताम् अभीष्टम्",
+        "स्नात्वा सरः स्वाशु समीर-हस्ती\nयत्रैव नीपादि-पराग-धूलिः\nआलोलयन् खेलति चारु स श्री-\nगोवर्धनो मे दिशताम् अभीष्टम्",
+        "कस्तूरिकाभिः शयितं किम् अत्रेत्य्\nऊहं प्रभोः स्वस्य मुहुर् वितन्वन्\nनैसर्गिक-स्वीय-शिला-सुगन्धैर्\nगोवर्धनो मे दिशताम् अभीष्टम्",
+        "वंशी-प्रतिध्वन्य्-अनुसार-वर्त्म\nदिदृक्षवो यत्र हरिं हरिण्यः\nयान्त्यो लभन्ते न हि विस्मिताः स\nगोवर्धनो मे दिशताम् अभीष्टम्",
+        "यत्रैव गङ्गाम् अनु नावि राधाम्\nआरोह्य मध्ये तु निमग्न-नौकः\nकृष्णो हि राधानुगलो बभौ स\nगोवर्धनो मे दिशताम् अभीष्टम्",
+        "विना-भवेत् किं हरि-दास-वर्य-\nपदाश्रयं भक्तिर् अतः श्रयामि\nयम् एव सप्रेम निजेशयोः श्री-\nगोवर्धनो मे दिशताम् अभीष्टम्",
+        "एतत् पठेद् यो हरि-दास-वर्य-\nमहानुभावाष्टकम् आर्द्र-चेताः\nश्री-राधिका-माधवयोः पदाब्ज-\nदास्यं स विन्देद् अचिरेण साक्षात्"
+      ],
+      translations: [
+        "जो कृष्ण की कृपा से समस्त पर्वतों का राजा बन गया, और जिसे अपने ही शत्रु इन्द्र से सम्मान की भेंट प्राप्त हुई, वह गोवर्धन पर्वत मेरी अभीष्ट कामना पूर्ण करे।",
+        "जब वह पृथ्वी के ऊपर उठाया गया, तो अपने प्रियतम कृष्ण के कमल-हस्त की कोमलता के अनुभव से इतना आनन्दमय हो उठा कि उसे इन्द्र के वज्र के आघात का पता भी नहीं चला। वह गोवर्धन पर्वत मेरी अभीष्ट कामना पूर्ण करे।",
+        "जहाँ कृष्ण ने कर वसूलने के लिए राजा वृषभानु की पुत्री से झगड़ा किया, और उस झगड़े को सुनने के लिए साक्षात वेद भी तरसते हैं, वह गोवर्धन पर्वत मेरी अभीष्ट कामना पूर्ण करे।",
+        "जहाँ सुहावनी पवन रूपी हाथी पास के सरोवर में नहाकर, कदम्ब आदि फूलों के पराग से ढका हुआ, सुन्दर ढंग से क्रीड़ा करता है, वह गोवर्धन पर्वत मेरी अभीष्ट कामना पूर्ण करे।",
+        "यहाँ कस्तूरी-मृगों की मीठी सुगन्ध और तरह-तरह की प्राकृतिक सुगन्धें भगवान को इतना शान्त और सहज कैसे कर देती हैं? वह गोवर्धन पर्वत मेरी अभीष्ट कामना पूर्ण करे।",
+        "जहाँ बाँसुरी के स्वर के मार्ग पर हरि को देखने की चाह में दौड़ती हुई चकित हरिणियाँ भी उन्हें नहीं पा सकतीं, वह गोवर्धन पर्वत मेरी अभीष्ट कामना पूर्ण करे।",
+        "जहाँ गंगा में नाव पर जाते हुए दिव्य युगल की नाव बीच धारा में डूबने लगी। तब राधा कृष्ण के गले से लिपट गईं, और कृष्ण बहुत सुन्दर दिखने लगे। वह गोवर्धन पर्वत मेरी अभीष्ट कामना पूर्ण करे।",
+        "हरि के श्रेष्ठतम सेवक और दिव्य राजा-रानी के प्रेम से भरे इस पर्वत के चरणों की शरण के बिना शुद्ध भक्ति प्राप्त करना कैसे सम्भव है? वह गोवर्धन पर्वत मेरी अभीष्ट कामना पूर्ण करे।",
+        "ये आठ श्लोक हरि के इस सबसे श्रेष्ठ सेवक की महिमा गाते हैं। जो पाठक शुद्ध प्रेम से पिघले हृदय से इनका पाठ करता है, उसे शीघ्र ही श्री राधा-माधव के चरण-कमलों की साक्षात सेवा प्राप्त हो।"
+      ]
+    },
+
     "135": {
       title: "श्रील प्रभुपाद स्तोत्रम् (Śrīla Prabhupāda Stotram)",
       transliterations: [
@@ -79,6 +149,22 @@
         "बंग-भूमि के आभूषण स्वरूप, महाप्रभु की गौर-लीला और गौरांग-भाव का सर्वत्र विस्तार करने वाले, श्री श्री राधा-मुकुंद के चरणकमलों में नित्य विलास करने वाले चित्त वाले, हे आनंद-राशि श्रील प्रभुपाद! आपको मेरा बारम्बार प्रणाम है।"
       ]
     },
+    "140": {
+      title: "माधव बहुत मिनति करि तोय (Mādhava Bahuta Minati)",
+      transliterations: [
+        "माधव, बहुत मिनति करि तोय\nदेइ तुलसी तिल, देह समर्पिनु,\nदया जानि ना छाडबि मोय",
+        "गणैते दोष, गुणलेश ना पाओबि,\nयब् तुहुञ् करबि विचार\nतुहुञ् जगन्नाथ्, जगते कहाओसि\nजग्-बाहिर नहि मुञि छार",
+        "किये मानुष पशु पखी ये जनमिये,\nअथवा कीट पतञ्गे\nकरम् विपाके, गतागति पुनः पुनः\nमति रहु तुया परसञ्गे",
+        "भणये विद्यापति, अतिशय कातर,\nतरैते इह भव-सिन्धु\nतुया पद-पल्लव, करि अवलम्बन्,\nतिल एक देह दीन-बन्धु"
+      ],
+      translations: [
+        "O Madhava, with this offering of a tulasi leaf and sesame seeds I beseech You and pledge my body in Your service. I know Your compassion is such that You will not reject me.",
+        "While considering this appeal, You will only be able to count my faults. You will not find even a trace of good qualities in me. You are known throughout the creation as Jagannatha (master of the universe). Therefore do I, a worthless soul living within this universe, not have the right to accept You as my master?",
+        "Birth after birth, as a result of my karma, I repeatedly come and go, sometimes as a human, sometimes as an animal and sometimes as a bird, worm or insect. But in whatever birth I take may my mind always remain fixed on Your narrations.",
+        "With great remorse, the poet Vidyapati humbly prays, “O Madhava, O friend of the fallen, please give this insignificant person shelter at the tender leaf of Your lotus feet. In this way, I may cross over this ocean of material existence.”"
+      ]
+    },
+
     "142": {
       title: "महा-वदान्य ईश्वर श्री-गौरसुन्दर (Vṛndāvane Bhajana - 22)",
       transliterations: [
@@ -94,6 +180,28 @@
         "वैष्णव का मुख्य धर्म भगवद्-सेवा है, न कि स्वयं रस-आस्वादन की लालसा करना। इस प्राकृत जड़ देह में रहकर उच्च दिव्य रस का कृत्रिम आस्वादन सर्वथा असंभव है।"
       ]
     },
+    "147": {
+      title: "मन रे कह न गौर-कथा (Mana Re Kaha Na Gaura-Kathā)",
+      transliterations: [
+        "मन रे! कह ना गौर कथा\nगौरेर नाम, अमियार धाम, पिरीति मूरति दाता",
+        "शयने गौर, स्वपने गौर, गौर नयनेर तारा\nजीवने गौर, मरणे गौर, गौर गलार हारा",
+        "हियार माझारे, गौराङ्ग राखिया, विरले बसिया रब\nमनेर साधेते, से रूप-चादेरे, नयने नयने थोब",
+        "गौर विहने, न वञ्छि पराणे, गौर क\u0027रेछि सार\nगौर बलिय, जौक जीवने, किछु ना चाहिब आर",
+        "गौर गमन, गौर गठन, गौर मुखेर हासि\nगौर-पिरीति, गौर मूरति, हीयाय रहल पशि",
+        "गौर धरम, गौर करम, गौर वेदेर सार\nगौर चरणे, पराण सम्पिनु, गौर करिबेन पार",
+        "गौर शबद, गौर सम्पद, जाहार हियाय जागे\nनरहरि दास, ताहार चरणे, सतत शरण मागे"
+      ],
+      translations: [
+        "O mind! Speak only about Gaura. Gaura’s name is the abode of nectar, and the worshipable bestower of unnatojjvala-prema.",
+        "In sleeping – Gaura, in dreaming – Gaura. Gaura is the star of my eyes. In life – Gaura, at the time of death – Gaura. Gaura’s name is the precious necklace I wear around my neck!",
+        "Keeping Gauranga inside my heart, I will sit alone and fix my mind on His enchanting moon-like form. I will gaze in His eyes and become absorbed in His beauty.",
+        "Without Gaura I cannot live. Gaura is my everything. I pray to give up my life taking the name of Gaura – I ask for nothing else.",
+        "Gaura’s movements, Gaura’s nature, Gaura’s smiling face, Gaura’s love, Gaura’s full form – all enter my heart.",
+        "Gaura is my dharma, Gaura is the object of my karma, Gaura is the essence of the Vedas. I surrender my life at Gaura’s lotus feet. It is Gaura who will take me across (the ocean of material existence).",
+        "Gaura is the essential sound vibration and wealth for that person in whose heart He manifests. Narahari dasa always prays to take shelter at the feet of such a person."
+      ]
+    },
+
     "148": {
       title: "मङ्गलाचरण (Maṅgalācaraṇa)",
       transliterations: [
@@ -132,6 +240,110 @@
         "मेरे गुरुदेव श्री वार्षभानवी-दयित दास (श्रील भक्तिसिद्धांत सरस्वती ठाकुर) ने यही शिक्षा दी है—'उच्च स्वर से हरिनाम संकीर्तन करो!'—यही उनका प्रधान आदेश और दीक्षा है।"
       ]
     },
+    "205": {
+      title: "श्री राम रक्षा स्तोत्रम् (Śrī Rāma Rakṣā Stotram)",
+      transliterations: [
+        "ओं अस्य श्री रामरक्षा स्तोत्रमन्त्रस्य\nबुधकौशिक ऋषिः\nश्री सीताराम छन्द्रोदेवता\nअनुष्टुप् छन्दः\nसीता शक्तिः\nश्रीमद् हनुमान् कीलकम्\nश्रीरामछन्द्र प्रीत्यर्थे रामरक्षा स्तोत्रजपे विनियोगः",
+        "ध्यानम्\nध्यायेदाजानुबाहुं धृतशर धनुषं बद्ध पद्मासनस्थं\nपीतं वासोवसानं नवकमल दḻअस्पर्थि नेत्रं प्रसन्नम्\nवामाङ्कारूढ सीतामुख कमलमिलल्लोछनं नीरदाभं\nनानालङ्कार दीप्तं दधतमुरु जटामण्डलं रामछन्द्रम्",
+        "स्तोत्रम्\nछरितं रघुनाथस्य शतकोटि प्रविस्तरम्\nएकैकमक्षरं पुंसां महापातक नाशनम्",
+        "ध्यात्वा नीलोत्पल श्यामं रामं राजीवलोछनम्\nजानकी लक्ष्मणोपेतं जटामुकुट मण्डितम्",
+        "सासितूण धनुर्बाण पाणिं नक्तं छरान्तकम्\nस्वलीलया जगत्त्रातु माविर्भूतमजं विभुम्",
+        "रामरक्षां पठेत्प्राज्ञः पापघ्नीं सर्वकामदाम्\nशिरो मे राघवः पातु फालं (भालं) दशरथात्मजः",
+        "कौसल्येयो दृशौपातु विश्वामित्रप्रियः शृती\nघ्राणं पातु मखत्राता मुखं सौमित्रिवत्सलः",
+        "जिह्वां विद्यानिधिः पातु कण्ठं भरतवन्दितः\nस्कन्धौ दिव्यायुधः पातु भुजौ भग्नेशकार्मुकः",
+        "करौ सीतापतिः पातु हृदयं जामदग्न्यजित्\nमध्यं पातु खरध्वंसी नाभिं जाम्बवदाश्रयः",
+        "सुग्रीवेशः कटिं पातु सक्थिनी हनुमत्-प्रभुः\nऊरू रघूत्तमः पातु रक्षःकुल विनाशकृत्",
+        "जानुनी सेतुकृत्-पातु जङ्घे दशमुखान्तकः\nपादौ विभीषणश्रीदः पातु रामो\u0027खिलं वपुः",
+        "एतां रामबलोपेतां रक्षां यः सुकृती पठेत्\nस छिरायुः सुखी पुत्री विजयी विनयी भवेत्",
+        "पाताḻअ-भूतल-व्योम-छारिण-श्छद्म-छारिणः\nन द्रष्टुमपि शक्तास्ते रक्षितं रामनामभिः",
+        "रामेति रामभद्रेति रामछन्द्रेति वा स्मरन्\nनरो न लिप्यते पापैर्भुक्तिं मुक्तिं छ विन्दति",
+        "जगज्जैत्रैक मन्त्रेण रामनाम्नाभि रक्षितम्\nयः कण्ठे धारयेत्तस्य करस्थाः सर्वसिद्धयः",
+        "वज्रपञ्जर नामेदं यो रामकवछं स्मरेत्\nअव्याहताज्ञः सर्वत्र लभते जयमङ्गḻअम्",
+        "आदिष्टवान्-यथा स्वप्ने रामरक्षामिमां हरः\nतथा लिखितवान्-प्रातः प्रबुद्धौ बुधकौशिकः",
+        "आरामः कल्पवृक्षाणां विरामः सकलापदाम्\nअभिराम-स्त्रिलोकानां रामः श्रीमान् स नः प्रभुः",
+        "तरुणौ रूपसम्पन्नौ सुकुमारौ महाबलौ\nपुण्डरीक विशालाक्षौ छीरकृष्णाजिनाम्बरौ",
+        "फलमूलाशिनौ दान्तौ तापसौ ब्रह्मछारिणौ\nपुत्रौ दशरथस्यैतौ भ्रातरौ रामलक्ष्मणौ",
+        "शरण्यौ सर्वसत्त्वानां श्रेष्ठौ सर्वधनुष्मताम्\nरक्षःकुल निहन्तारौ त्रायेतां नो रघूत्तमौ",
+        "आत्त सज्य धनुषा विषुस्पृशा वक्षयाशुग निषङ्ग सङ्गिनौ\nरक्षणाय मम रामलक्षणावग्रतः पथि सदैव गछ्छताम्",
+        "सन्नद्धः कवछी खड्गी छापबाणधरो युवा\nगछ्छन् मनोरथान्नश्छ (मनोरथो\u0027स्माकं) रामः पातु स लक्ष्मणः",
+        "रामो दाशरथि श्शूरो लक्ष्मणानुछरो बली\nकाकुत्सः पुरुषः पूर्णः कौसल्येयो रघूत्तमः",
+        "वेदान्तवेद्यो यज्ञेशः पुराण पुरुषोत्तमः\nजानकीवल्लभः श्रीमानप्रमेय पराक्रमः",
+        "इत्येतानि जपेन्नित्यं मद्भक्तः श्रद्धयान्वितः\nअश्वमेधाधिकं पुण्यं सम्प्राप्नोति न संशयः",
+        "रामं दूर्वादḻअ श्यामं पद्माक्षं पीतवाससम्\nस्तुवन्ति नामभि-र्दिव्यैर्न ते संसारिणो नराः",
+        "रामं लक्ष्मण पूर्वजं रघुवरं सीतापतिं सुन्दरम्\nकाकुत्स्थं करुणार्णवं गुणनिधिं विप्रप्रियं धार्मिकम्\nराजेन्द्रं सत्यसन्धं दशरथतनयं श्यामलं शान्तमूर्तिम्\nवन्दे लोकाभिरामं रघुकुल तिलकं राघवं रावणारिम्",
+        "रामाय रामभद्राय रामछन्द्राय वेधसे\nरघुनाथाय नाथाय सीतायाः पतये नमः",
+        "श्रीराम राम रघुनन्दन राम राम\nश्रीराम राम भरताग्रज राम राम\nश्रीराम राम रणकर्कश राम राम\nश्रीराम राम शरणं भव राम राम",
+        "श्रीराम छन्द्र छरणौ मनसा स्मरामि\nश्रीराम छन्द्र छरणौ वछसा गृह्णामि\nश्रीराम छन्द्र छरणौ शिरसा नमामि\nश्रीराम छन्द्र छरणौ शरणं प्रपद्ये",
+        "माता रामो मत्-पिता रामछन्द्रः\nस्वामी रामो मत्-सखा रामछन्द्रः\nसर्वस्वं मे रामछन्द्रो दयाḻउः\nनान्यं जाने नैव जाने न जाने",
+        "दक्षिणे लक्ष्मणो यस्य वामे छ (तु) जनकात्मजा\nपुरतो मारुतिर्यस्य तं वन्दे रघुनन्दनम्",
+        "लोकाभिरामं रणरङ्गधीरं\nराजीवनेत्रं रघुवंशनाथम्\nकारुण्यरूपं करुणाकरं तं\nश्रीरामछन्द्रं शरण्यं प्रपद्ये",
+        "मनोजवं मारुत तुल्य वेगं\nजितेन्द्रियं बुद्धिमतां वरिष्टम्\nवातात्मजं वानरयूथ मुख्यं\nश्रीरामदूतं शरणं प्रपद्ये",
+        "कूजन्तं रामरामेति मधुरं मधुराक्षरम्\nआरुह्यकविता शाखां वन्दे वाल्मीकि कोकिलम्",
+        "आपदामपहर्तारं दातारं सर्वसम्पदाम्\nलोकाभिरामं श्रीरामं भूयोभूयो नमाम्यहम्",
+        "भर्जनं भवबीजानामर्जनं सुखसम्पदाम्\nतर्जनं यमदूतानां राम रामेति गर्जनम्",
+        "रामो राजमणिः सदा विजयते रामं रमेशं भजे\nरामेणाभिहता निशाछरछमू रामाय तस्मै नमः\nरामान्नास्ति परायणं परतरं रामस्य दासोस्म्यहं\nरामे छित्तलयः सदा भवतु मे भो राम मामुद्धर",
+        "श्रीराम राम रामेति रमे रामे मनोरमे\nसहस्रनाम तत्तुल्यं राम नाम वरानने\nइति श्रीबुधकौशिकमुनि विरछितं श्रीराम रक्षास्तोत्रं सम्पूर्णम्\nश्रीसीतारामछन्द्रार्पणमस्तु"
+      ],
+      translations: [
+        "The author of this hymn (stotra), seeking Lord Rama’s protection, is sage Budhakaushika. The deity is Shri Sita-Ramachandra. The poetic meter is eight syllables in a quarter stanza. The power (energy of mother nature) is Sita. The center is Shri Hanuman. The purpose of reciting this mantra of Ramaraksha stotram is for the devotion to Lord Shri Ramachandra.",
+        "Thus begins the meditation of this mantra. One should meditate upon Lord Ramachandra who has arms reaching his knees, who is holding a bow and arrows, who is seated in a lotus pose, who is wearing yellow clothes, whose eyes compete with the petals of a newly bloomed lotus, who looks contented, whose sight is fixed on the lotus-like face of Sita, sitting on his left lap, whose color is like that of the rain cloud, who is shining in various ornaments and has hair which are reaching till his thighs.",
+        "The life story of the Lord of the Raghu’s lineage — Lord Shri Rama, has a vast expanse. Each and every letter is capable of destroying even the greatest sins of the human beings",
+        "Let us meditate on the blue-complexioned, blue lotus-eyed Rama, who is accompanied by Sita and Lakshmana, and is well-adorned with crown matted locks.",
+        "(Let us meditate on him) Who has a sword in the receptacle, bow and arrow in his hand, who destroyed the demons, who is not born but is incarnated by his own will to protect this world.",
+        "May the learned read the Ramaraksha `stotram’, which destroys all sins and grants all desires. (Begin listing details of the body to be protected) May Rama who is raghu’s descendant protect my head. May Rama who is Dasharatha’s son protect my forehead.",
+        "May the lord Rama who is Kausalya’s son, protect my eyes. Rama who is favorite of Vishvamitra protect my ears. Rama who is savior of Yajna protect my nose. Rama who is affectionate to Lakshmana protect my mouth.",
+        "May the Rama who is a sea of knowledge protect my tongue. May Rama who is saluted by Bharata protect my neck. May Rama who holds divine weapons protct my two shoulders. May Rama who broke Shiva’s bow protect my two upper arms.",
+        "May the Rama who is the husband of Sita protect my two hands. May Rama who conquered Parashurama protect my heart. May Rama who killed the Rakshasa named Khara protect my abdomen. May Rama who gave refuge to Jambavad protect my navel.",
+        "May master of Sugreeva protect my waist, may master of Hanuman protect my hips. May the best of Raghus and destroyer of the lineage of demons protect my thighs.",
+        "May establisher of the bridge (Ramasetu) protect my knees, may the slayer of ten-faced (Ravana) protect my shins. May consecrator of wealth to Bibhishana protect my feet, may Sri Rama protect my my entire body.",
+        "May the good man read this stotra (hymn) equable to all the power of Rama be blessed with long life, be blessed with children, be victorious and possess humility.",
+        "They who travel in the hell, earth and heaven and who travel secretly (changing forms), would not be able to see (the one who reads) the protective chant of Rama by the power of this chant.",
+        "(The one who) remembers Rama, Rambhadra and Ramachandra (The poet has used these names for the same Lord Rama) sins never get attached to him, he will propser and attain salvation.",
+        "In all three worlds, one who wears the hymn of the name of Rama as a protection round his neck, will have all powers unto him.",
+        "He who recites this hymn of the name of Rama called vajrapanjara (Diamond Shield) will be unaffected, unscathed and will enjoy victory in all his endeavours.",
+        "Budhakaushika (composer of this Stotram) was commanded in his dream by Lord Shiva to compose this hymn and he did so, as soon as he awoke in the morning.",
+        "Rama, who grants all desires (like a wish fulfilling tree), removes all obstacles and is the praise of all three worlds, is our Lord indeed.",
+        "May the two brothers ever protect us, who are young, handsome, lotus-eyed and bark and deer-skin dressed.",
+        "These two sons of Dasharatha, the brothers Rama and Lakshmana, the ones who are subsisting on roots and fruits and practicing penance and celibacy,",
+        "May these two scions of Raghu protect us, the foremost among the archers, the destroyers of the demons and the refuge of all beings, (may they) protect us.",
+        "Rama and Lakshmana (both), their bows pulled and ready, their hands on the arrows (packed) in ever full quivers (carried on their backs), may they always escort me in my path, for my protection.",
+        "Ever prepared and armed with sword, shield and bows and arrows and followed by Lakshmana , Rama is like our cherished thoughts come to life, may he (along with Lakshmana) protect us.",
+        "Rama, the descendant of Raghu and the son of Dasaratha and Kausalya, and ever, accompanied by Lakshmana, is all powerful and is the perfect man (Lord).",
+        "Rama, who is known through Vedanta, who is lord of all sacrifices, is the primeval Supreme Person, who is the beloved of Sita and whose bravery is unmeasurable.",
+        "(Thus lord Shiva said) My devotee who recites these names of Rama with faith, He, without any doubt, is blessed more than the performance of Aswamedha.",
+        "Those who sing the praise of Rama who is, dark-complexioned like the leaf of green grass, who is lotus-eyed and dressed in yellow robes, those who sing the praise of Him through this Hymn, are no longer ordinary men trapped in the world (they are liberated).",
+        "I bow to Rama who is handsome, the elder brother of Lakshmana, the husband of Sita and the best of the descendants of the Raghu race, Him who is the ocean of compassion, the stockpile of virtues, the beloved of the Brahmans and the protector of Dharma, Him who is the practitioner of the Truth, the lord emperor of kings, the son of Dasaratha, dark-complexioned and the personification of Peace and tranquillity, Him who is the enemy of Ravana, the crown jewel of the the Raghu dynasty and the cynosure (center of admiration) of all eyes.",
+        "I offer my respectful obeisances unto Lord Rama who is also known as Ramabhadra and Ramachandra, He is the source of the Vedas, the Lord of Raghuvansha and the whole world, and who is the consort of Sita.",
+        "O Rama, who is the delight of the Raghus, the elder brother of Bharata and the tormentor of his enemies in the war. May You become my refuge — O Rama, Rama!",
+        "I remember the feet of Lord Ramchandra with my mind, I praise the feet of Sri Ramachandra by my speech, I salute the feet of Sri Ramachandra by bowing down my head, I take complete refuge in the feet of Lord Ramchandra.",
+        "Rama is my mother, father, master and friend, indeed the compassionate Rama is all I have. I know of no other (like him), (I really) don’t!",
+        "I offer my respectful obeisances unto Lord Rama (delight of the Raghu dynasty) who has Lakshmana on his right and Sita on the left and who has Hanuman in his front.",
+        "I take refuge in that Rama who is so pleasing to the sight, the master of the stage of war, lotus-eyed, lord of the Raghu race, who is the personification of compassion.",
+        "I take refuge in the lord Hanuman who is as fast as the mind, equals his father, the wind-God, in speed, is the master of the senses, the foremost amongst the learned, the leader of the Monkey forces and the great messenger of Shri Rama.",
+        "I salute the great sage Valmiki who sings the glorious name of Rama as sweetly as a cuckoo sings, sitting atop a tree.",
+        "I bow again and again to Rama who removes all obstacles and grants all prosperity and pleases all.",
+        "The roar of the Rama nama is the destruction of the cause of rebirth, the earning of all wealth and a scare to Yama’s (Lord of Death’s) messengers.",
+        "Rama, the jewel among the kings, Him I worship, by Him so many demons have been destroyed, to him is said my prayer, beyond Him there is nothing to be worshipped, His servant I am, my mind is totally absorbed in Him, O Rama, please lift me up.",
+        "[Lord Śiva addressed his wife, Durgā:] ‘O Varānanā, I chant the holy name of Rāma, Rāma, Rāma and thus enjoy this beautiful sound. This holy name of Rāmacandra is equal to one thousand holy names of Lord Viṣṇu. Sri Budha Koushika’s composition of Sri Rama Raksha Stotram is complete here. This composition is devoted to the holy feet of Sri Rama and Sita."
+      ]
+    },
+
+    "206": {
+      title: "शचीर आङिनाय नाचे (Śacīra Āṅināya Nāce)",
+      transliterations: [
+        "शचीर आङ्गिनाय नाचे विश्वम्भर राय\nहासि हासि फिरि फिरि मायेरे लुकाय्",
+        "वयने वसन दिया बले लुकाइनु\nशची बले विश्वम्भर आमि ना देखिनु",
+        "मायेर अञ्चल धरि चञ्चल चरणे\nनाचिया नाचिया याय खञ्जन-गमने",
+        "वासुदेव-घोष कहे अपरुप शोभा\nशिशु-रूप देखि हय जग-मन-लोभा"
+      ],
+      translations: [
+        "In the courtyard of Saci Mata, the child Visvambhara Raya plays. Smiling and giggling, he goes from one place to another, hiding from His mother.",
+        "Covering Himself with His cloth, He says, \u0027I\u0027m hiding!\u0027  Saci Mata says to Visvambhara, \u0027I don\u0027t see you!\u0027",
+        "Holding the edge of His mother\u0027s sari, He dances about on tottering feet, in the skittish manner of a wagtail.",
+        "Vasudeva Ghosa says, \u0027Such extraordinary beauty! Seeing the child-form of Nimai, the whole world becomes infatuated.\u0027"
+      ]
+    },
+
     "208": {
       title: "सम्बन्ध जानिया येबा जीवन-युद्ध करे (Vṛndāvane Bhajana - 10)",
       transliterations: [
@@ -162,6 +374,30 @@
         "यह जीवात्मा इस प्रकार न जाने कितने शरीर धारण करता आ रहा है! अज्ञानवश वह इस अनित्य शरीर के अस्थायी संबंधों को ही अपना वास्तविक आत्मीय मान बैठता है।"
       ]
     },
+    "216": {
+      title: "श्री गोविन्दाष्टकम् (Śrī Govindāṣṭakam)",
+      transliterations: [
+        "श्री गोविन्दाष्टक\nचिद्-आनन्दाकारं श्रुति-सरस-सारं सम-रसं\nनिराधाराधारं भव-जलधि-पारं पर-गुणम्\nरमा-ग्रीवा-हारम् व्रज-वन-विहारं हर-नुतं\nसदा तं गोविन्दं परम-सुख-कन्दं भजत रे",
+        "महाम्भोधि-स्थानं स्थिर-चर-निदानं दिविज-पं\nसुधा-धारा-पानं विहग-प्रतियानं यम-रतम्\nमनो-ज्ञं सु-ज्ञानम् मुनि-जन-निधानं ध्रुव-पदं\nसदा तं गोविन्दं परम-सुख-कन्दं भजत रे",
+        "धिया धीरैर् ध्येयं श्रवण-पुट-पेयं यति-वरैर्\nमहा-वाक्यैर् ज्ञेयं त्रि-भुवन-विधेयं विधि-परम्\nमनो-मानामेयं सपदि हृदि नेयं नव-तनुं\nसदा तं गोविन्दं परम-सुख-कन्दं भजत रे",
+        "महा-माया-जालं विमल-वन-मालं मल-हरं\nसु-भालं गोपालं निहत-शिशुपालं शशि-मुखम्\nकलातीतं कालं गति-हय-मरालं मुर-रिपुं\nसदा तं गोविन्दं परम-सुख-कन्दं भजत रे",
+        "नभो-बिम्ब-स्फीटं निगम-गुण-गीतं सम-गतिं\nसुरौघे सम्प्रीतं दितिज-विपरीतं पुरि-शयम्\nगिरा पन्थातीतं स्वदित-नवनीतं नय-करं\nसदा तं गोविन्दं परम-सुख-कन्दं भजत रे",
+        "परेशं पद्मेशं शिव-कमलजेशं शिव-करं\nद्विजेशं देवेशं तनु-कुटिल-केशं कलि-हरं\nखगेशं विश्वेशं निखिल-भुवनेशं जग-धरं\nसदा तं गोविन्दं परम-सुख-कन्दं भजत रे",
+        "रमा-कान्तं कान्तं भव-भय-भयान्तं भव-सखं\nदुराशान्तं शान्तं निखिल-हृदि भ्रान्तं भुवन-पम्\nनिवादान्तं दान्तं दनुज-निचयान्तं सु-चरितं\nसदा तं गोविन्दं परम-सुख-कन्दं भजत रे",
+        "जगज्-ज्येष्ठं श्रेष्ठं सुरपति-कनिष्ठं क्रतु-पतिम्\nबलिष्ठं भूयिष्ठं त्रिभुवन-वरिष्ठं वर-वहम्\nस्व-निष्ठं धर्मिष्ठं गुरु-गण-गरिष्ठं गुरु-वरं\nसदा तं गोविन्दं परम-सुख-कन्दं भजत रे"
+      ],
+      translations: [
+        "His form is full of spiritual bliss. He is the sweet essence of the Vedas. He is sweet like nectar. He is supremely independent. He is the abode where everything rests. He carries the devotees to the farther shore of the ocean of birth and death. He is supremely virtuous. He is Goddess Lakṣmī\u0027s necklace. He enjoys pastimes in Vraja\u0027s forests. Śiva praises His glories. O people, please always worship Lord Govinda, the root of all bliss.",
+        "He resides on the great ocean. He is the father of all moving and unmoving beings. He protects the demigods in the higher worlds. He is a flood of nectar. He rides on Garuḍa. He is pleased by devotion. He knows every heart. He knows everything. He is the sages\u0027 shelter. To Dhruva He gave an eternal abode. O people, please always worship Lord Govinda, the root of all bliss.",
+        "Fixing their intelligence on Him, the sages meditate on Him. Filling the cups of their ears, the ascetics drink the nectar of His glories. He is known by the great statements of the Vedas. He created the three worlds. He is the supreme ordainer of what shall be. The material mind has no power to measure Him. In a moment He manifests His youthful form in His devotee\u0027s heart. O people, please always worship Lord Govinda, the root of all bliss.",
+        "By His command Goddess Mahā-māyā weaves her net. He wears a splendid forest-flower-garland. He removes all sins. His forehead is graceful. He is a cowherd boy. He killed Sisupala. His face is like the moon. He is beyond time\u0027s touch. He is time itself. His motions are like a graceful swan. He is Mura\u0027s enemy. O people, please always worship Lord Govinda, the root of all bliss.",
+        "He is glorious like a full moon shining in the sky. His glories are sung by the Vedas. He is equal to all. He is pleased with the demigods. He is not pleased by the demons. He resides in Dvārakā-purī. He is beyond the pathway of material words. He relishes fresh butter. He is everyone\u0027s guide. O people, please always worship Lord Govinda, the root of all bliss.",
+        "He is the supreme controller. He is Goddess Lakṣmī\u0027s master. He is the master of Śiva and Brahmā. He brings auspiciousness. He is the brāhmaṇas\u0027 master. He is the demigods\u0027 master. His hair is fine and curly. He stops strife. He is Garuḍa\u0027s master. He is the master of the universes. He is the master of all the worlds. He maintains the universes. O people, please always worship Lord Govinda, the root of all bliss.",
+        "He is Goddess Lakṣmī\u0027s beloved. He is handsome. He ends all fear of this world of birth and death. He is the only friend in this world. He puts an end to all sinful deaires. He is supremely peaceful. He resides in every heart. He protects the worlds. He ends all debate. He is self-controlled. He brings the demons to their end. His actions are glorious. O people, please always worship Lord Govinda, the root of all bliss.",
+        "He is supreme in all the worlds. He is the greatest. He is Indra\u0027s younger brother Upendra. He is the master of all yajñas. He is the most powerful. He is the best. He is the most exalted in the three worlds. He is the granter opf benedictions. He is independent. He is religious. He is the best of all gurus. He is the supreme master. O people, please always worship Lord Govinda, the root of all bliss."
+      ]
+    },
+
     "218": {
       title: "शिष्य हइया करे येइ गीतार श्रवण (Vṛndāvane Bhajana - 15)",
       transliterations: [
@@ -401,6 +637,32 @@
         "सब प्रकार से बोलने में समर्थ होने पर भी कोई इन नामों का उच्चारण नहीं करता! अहो, लोग अपने विनाश की ओर कितने तत्पर हैं! हे मेरी जिह्वा! तू तो केवल इसी अमृतरस का पान कर—'गोविन्द! दामोदर! माधव!'"
       ]
     },
+    "7": {
+      title: "आहे नील शैल (Ahe Nīla Śaila)",
+      transliterations: [
+        "आहे नील शैल प्रबल मत्त वारण\nमो आरत नलिनी वनकु कर दलन",
+        "गजराज चिन्ता कला थाइ घोर जलेण\nचक्र पेषि नक्र नाशि उद्धारिल आपण",
+        "घोर वने मृगुणी कु पड़िथिला कषण\nकेड़े बड़ विपत्तिरु रक्षाकल तक्षण",
+        "कुरु सभा तले सुणि द्रौपदी र जणाण\nकोटि वस्त्र देइ हेले लज्जा कल वारण",
+        "रावण र भाइ विभीषणगला शरण\nशरण सम्भालि ताकु लङ्के कल राजन",
+        "प्रह्लाद पिता से जे बड़ दुष्ट दारुण\nस्तम्भ रु बाहारि ताकु विदारिल तक्षण",
+        "अजामिल दाका देला प्राणयिबा कालेण\nएड़े बड़ पापी गला वैकुण्ठ भुवन",
+        "नीलाञ्चले बिजे प्रभु बौद्ध अवतारेण\nद्विबाहु प्रसारि प्रभु जाचुअछ शरण",
+        "कहे सालबेगहीन जाति रे मुं जबन\nश्रीरङ्गा चरण तले पशुअछि शरण"
+      ],
+      translations: [
+        "हे नील पर्वत! आप मतवाले हाथी के समान महाबली हैं। हे प्रभु, कृपया मेरे दुःख रूपी कमल-वन को रौंद डालिए।",
+        "गहरे जल के बीच गजराज ने आपका स्मरण किया। आपके चक्र के प्रहार ने मगरमच्छ का अंत कर दिया, और आप गजराज के उद्धारक बने।",
+        "घने वन में जब हिरणी भय से काँप रही थी, हे प्रभु, आपने उस भारी संकट को दूर कर उसकी रक्षा की।",
+        "कुरु सभा में द्रौपदी की सच्ची पुकार सुनकर, आपने उसे असंख्य वस्त्र देकर उसकी लाज बचाई।",
+        "रावण के भाई विभीषण ने आपकी शरण माँगी। हे प्रभु, आपने उसे शरण देकर लंका का राजा बना दिया।",
+        "प्रह्लाद के पिता जो अत्यन्त दुष्ट और क्रूर थे, आपने स्तम्भ से प्रकट होकर क्षण भर में उन्हें चीर डाला।",
+        "प्राण निकलते समय अजामिल ने आपका नाम पुकारा। इतना बड़ा पापी भी वैकुण्ठ धाम पहुँच गया।",
+        "हे प्रभु, नीलांचल में विराजमान होकर आप बुद्ध अवतार के रूप में प्रकट हुए। अपनी दोनों भुजाएँ फैलाकर आप संकट के तूफान से शरण प्रदान करते हैं।",
+        "सालबेग कहते हैं, जाति से हीन मैं एक यवन (मुसलमान) हूँ, फिर भी हे प्रभु, आपके अरुण चरणों में मैं अन्ततः शरण लेता हूँ।"
+      ]
+    },
+
     "8": {
       title: "अक्रोध परमानन्द नित्यानन्द राय",
       transliterations: [
@@ -729,6 +991,84 @@
         "गोविन्द की महिमा का गान करके अपने हृदय में भगवत्प्रेम की लौ प्रज्वलित कर; अपने जीवन को सफल बना और भगवान् के परम दिव्य धाम को प्राप्त कर!"
       ]
     },
+    "32": {
+      title: "श्री भज गोविन्दम् (Śrī Bhaja Govindam)",
+      transliterations: [
+        "भज गोविन्दं भज गोविन्दं\nगोविन्दं भज मूढ-मते |\nसंप्राप्ते सन्निहिते काले\nनहि नहि रक्षति डुकृञ्-करणे ||",
+        "मूढ जहीहि धनागम-तृष्णां\nकुरु सद्-बुद्धिं मनसि वितृष्णाम् |\nयल्लभसे निज कर्मोपात्तं\nवित्तं तेन विनोदय चित्तम् ||",
+        "नारी-स्तनभर-नाभी-देशं\nदृष्ट्वा मागामोहावेशम् |\nएतन् मांस-वसादि विकारं\nमनसि विचिन्तय वारं वारम् ||",
+        "नलिनी-दल-गत-जलम् अति-तरलं\nतद्वज्-जीवितम् अतिशय-चपलं |\nविद्धि व्याध्यभिमान-ग्रस्तं\nलोकं शोक-हतं च समस्तम् ||",
+        "यावद्-वित्तोपार्जन सक्तः\nतावन्-निज परिवारो रक्तः |\nपश्चाज्जीवति जर्जर देहे\nवार्तां को\u0027पि न पृच्छति गेहे ||",
+        "यावत्-पवनो निवसति देहे\nतावत्-पृच्छति कुशलं गेहे |\nगतवति वायौ देहापाये\nभार्या बिभ्यति तस्मिन् काये ||",
+        "बाल स्तावत् क्रीडासक्तः\nतरुण स्तावत् तरुणीसक्तः |\nवृद्ध स्तावत् चिन्तासक्तः\nपरे ब्रह्मणि को\u0027पि न सक्तः ||",
+        "काते कान्ता कस्ते पुत्रः\nसंसारो\u0027यमतीव विचित्रः |\nकस्य त्वं कः कुत आयातः\nतत्त्वं चिन्तय तद् इह भ्रातः ||",
+        "सत्सङ्गत्वे निस्सङ्गत्वं\nनिस्सङ्गत्वे निर्मोहत्वम् |\nनिर्मोहत्वे निश्चलतत्त्वं\nनिश्चलतत्त्वे जीवन्मुक्तिः ||",
+        "वयसि गते कः काम-विकारः\nशुष्के नीरे कः कासारः |\nक्षीणे वित्ते कः परिवारः\nज्ञाते तत्त्वे कः संसारः ||",
+        "मा कुरु धन जन यौवन गर्वं\nहरति निमेषात्-कालः सर्वम् |\nमायामयमिदम्-अखिलं हित्वा\nब्रह्म-पदं त्वं प्रविश विदित्वा ||",
+        "दिन यामिन्यौ सायं प्रातः\nशिशिर-वसन्तौ पुनरायातः |\nकालः क्रीडति गच्छत्यायुः\nतदपि न मुञ्चत्याशा-वायुः ||",
+        "द्वादश-मञ्जरिकाभिर शेषः\nकथितो वैयाकरणस्यैषः |\nउपदेशो\u0027भूद्-विद्यानिपुणैः\nश्रीमच्छङ्कर-भगवच्छरणैः ||",
+        "काते कान्ता धन गत-चिन्ता\nवातुल किं तव नास्ति नियन्ता |\nत्रिजगति सज्जन सङ्गतिरेका\nभवति भवार्णव तरणे नौका ||",
+        "जटिलो मुण्डी लुञ्छित केशः\nकाषायाम्बर बहुकृत वेषः |\nपश्यन्नपि च न पश्यति मूढः\nउदर निमित्तं बहुकृतवेषः ||",
+        "अङ्गं गलितं पलितं मुण्डं\nदशन-विहीनं जतं तुण्डम् |\nवृद्धो याति गृहीत्वा दण्डं\nतदपि न मुञ्चत्याशापिण्डम् ||",
+        "अग्रे वह्निः पृष्ठे भानुः\nरात्रौ चुबुक समर्पित जानुः |\nकरतल भिक्षस्-तरुतल वासः\nतदपि न मुञ्चत्याशापाशः ||",
+        "कुरुते गङ्गा-सागर गमनं\nव्रत परिपालनम्-अथवा दानम् |\nज्ञान विहिनः सर्वमतेन\nमुक्तिं न भजति जन्म शतेन ||",
+        "सुर मन्दिर तरु मूल निवासः\nशय्या भूतलम्-अजिनं वासः |\nसर्व परिग्रह भोग त्यागः\nकस्य सुखं न करोति विरागः ||",
+        "योगरतो वा भोगरतो वा\nसङ्गरतो वा सङ्गविहीनः |\nयस्य ब्रह्मणि रमते चित्तं\nनन्दति नन्दति नन्दत्येव ||",
+        "भगवद्-गीता किञ्चिदधीता\nगङ्गा जललव कणिका पीता |\nसकृदपि येन मुरारि समर्चा\nक्रियते तस्य यमेन न चर्चा ||",
+        "पुनरपि जननं पुनरपि मरणं\nपुनरपि जननी जठरे शयनम् |\nइह संसारे बहु दुस्तारे\nकृपया\u0027पारे पाहि मुरारे ||",
+        "रथ्या चर्पट विरचित कन्थः\nपुण्यापुण्य विवर्जित पन्थः |\nयोगी योग नियोजित चित्तो\nरमते बालोन्मत्तवदेव ||",
+        "कस्त्वं को\u0027हं कुत आयातः\nका मे जननी को मे तातः |\nइति परिभावय सर्वम् असारं\nविश्वं त्यक्त्वा स्वप्न विचारम् ||",
+        "त्वयि मयि चान्य त्रैको विष्णुः\nव्यर्थं कुप्यसि मय्यसहिष्णुः |\nभव समचित्तः सर्वत्र त्वं\nवाञ्छस्यचिराद्-यदि विष्णुत्वम् ||",
+        "शत्रौ मित्रे पुत्रे बन्धौ\nमा कुरु यत्नं विग्रह सन्धौ |\nसर्वस्मिन्नपि पश्यात्मानं\nसर्वत्रोत्-सृज भेदाज्ञानम् ||",
+        "कामं क्रोधं लोभं मोहं\nत्यक्त्वा\u0027त्मानं भावय को\u0027हम् |\nआत्म-ज्ञान विहीना मूढाः\nते पच्यन्ते नरक निगूढाः ||",
+        "गेयं गीता-नाम-सहस्रं\nध्येयं श्रीपति रूपम्-अजस्रम् |\nनेयं सज्जन सङ्गे चित्तं\nदेयं दीन-जनाय च वित्तम् ||",
+        "सुखतः क्रियते रामाभोगः\nपश्चाद्धन्त शरीरे रोगः |\nयद्यपि लोके मरणं शरणं\nतदपि न मुञ्चति पापा-चरणम् ||",
+        "अर्थम्-अनर्थं भावय नित्यं\nनास्ति ततः सुख लेशः सत्यम् |\nपुत्रादपि धन भाजां भीतिः\nसर्वत्रैषा विहिता रीतिः ||",
+        "प्राणायामं प्रत्याहारं\nनित्यानित्य विवेकविचारम् |\nजाप्यसमेत समाधि-विधानं\nकुर्ववधानं महद्-अवधानम् ||",
+        "गुरु-चरणाम्बुज निर्भर भक्तः\nसंसारादचिराद्भव मुक्तः |\nसेन्द्रिय मानस नियमादेवं\nद्रक्ष्यसि निज हृदयस्थं देवम् ||",
+        "मूढः कश्चन वैयाकरणो\nडुकृञ्करणाध्ययन धुरिणः |\nश्रीमच्छङ्कर भगवच्छिष्यै\nबोधित आसिच्छोधितकरणः ||",
+        "भज-गोविन्दं भज-गोविन्दं\nगोविन्दं भज-मूढमते |\nनाम-स्मरणादन्यमुपायं\nनहि पश्यामो भवतरणे ||",
+        "इति श्रीमच्छङ्कराचार्यविरचितं भजगोविन्दं सम्पूर्णम्॥"
+      ],
+      translations: [
+        "Worship Govinda, worship Govinda, worship Govinda, O fool! The rules of grammar will not save you at the time of your death.",
+        "O fool! Give up your thirst to amass wealth, devote your mind to dispassion and thoughts of the Real. Be content with what comes to you through actions performed by your own work.",
+        "Do not get drowned in delusion, infatuated with passion and lusty desires, by seeing a woman\u0027s raised breasts and navel. These are nothing but a modification of flesh and fat, and the like. Do not fail to remember this again and again in your mind.",
+        "As water drops on a lotus leaf are unsteady and trembling, in the same way life in this world is exceedingly unsteady and restless. Know that the whole world is full of miseries, afflicted by unhappiness and grief.",
+        "So long as a man is fit and able to support his family by earning wealth, all those family members around him show affection. But no one at home cares for him, even have a word with him, when his body becomes invalid and totters due to old age.",
+        "When one is alive, his family members enquire kindly about his welfare. But when the life-air stops and the soul departs from the body, even his wife runs away in fear of the corpse.",
+        "The childhood is lost in attachment to games. The youth is lost in attachment to woman. Old age passes with worry and anxiety, thinking over many things. But there is hardly anyone who wants to be lost (attached) in para-braman, the Supreme Spirit.",
+        "Who is your wife? Who is your son? Very strange indeed is this worldly cycle! To whom do you belong? Who are you? Whence have you come? Brother, contemplate this fundamental Truth here.",
+        "Being in the company of good people (saints) gives rise to non-attachment, from non-attachment comes freedom from delusion, which leads to awareness of reality, understanding of reality gives rise to emancipation leading to the liberation of the soul (jīvan-mukti), while still alive.",
+        "What good is lust when youth has fled? What use is a lake which has no water? Where are the relatives when wealth is gone? What is saṁsāra (transmigratory process), when Truth is known?",
+        "Do not take pride in wealth, friends and youth. Each one of these is destroyed within an instant by Time. Free yourself from the illusion of the world of māyā and attain the realm of brahman, timeless truth.",
+        "Day and night, evening and morning, winter and summer come and go again and again. Eternal time plays and life ebbs away, yet one does not let go of the storm of desire.",
+        "The bouquet of twelve verses was imparted to a grammarian by the all-knowing Śaṅkara, adored as bhagavat-pāda.",
+        "O, mad man! Why this engrossment in thoughts of wealth and beloved? Is there no one to guide you? In these thee worlds, only the association with saintly people (satsaṅga) can serve as the boat that can steer cross the ocean of repeated birth and death. (Stanza attributed to Padmapāda.)",
+        "There are many (ascetics) with matted hair, many with clean shaven heads, many whose hair have been plucked out, some are clothed in orange, yet others parading in various colors - Indeed, these different disguises or apparels are only for their belly’s sake. Seeing the truth revealed before them, still the foolish ones can not see through these many disguises. (Stanza attributed to Totakācārya.)",
+        "Strength has left the old man\u0027s body, his head has become bald, his gums toothless and leaning on crutches. Even then he can not let go of his attachment, clinging firmly to fruitless hopes and desires. (Stanza attributed to Hastamalaka.)",
+        "The ascetic warms his body with fire in front and the sun at the back. At night he dwells under a tree with face huddled between the knees to keep out of the cold. In his hands he holds the beggar\u0027s alms and yet he does not let go of the noose of attachment to desire and passion. (Stanza attributed to Subhodha.)",
+        "One may travel (on a pilgrimage) to the confluence where the Gaṅgā river meets the ocean (gaṅgā-sāgara), undertake vows and give away in charity, however without true knowledge (jñāna) one will not achieve liberation (mukti) even in a hundred lifetimes, according to all [schools of] thought. (Stanza attributed to Vārtikakāra.)",
+        "One who lives in temples or dwells at the foot of trees, whose bed is the surface of the earth, whose garment is a deer-skin, who has thus renounced all enjoyment of worldly possessions - to whom will such dispassion (vairāgya) not bring happiness? (Stanza attributed to Nityānanda.)",
+        "One may take delight in yoga (union with god) or bhoga (worldly enjoyment), may be delighted by company or solitude, but he whose mind delights in brahman (the spiritual truth), only he enjoys real bliss and is satisfied, no one else. (Stanza attributed to ānandagiriḥ)",
+        "Let a man read but a little from Bhagavad-gītā, drink just a drop of Gaṅgā-water, worship but once murāri, the enemy of \u0027Murā\u0027 (Lord Kṛṣṇa), he then will have no confrontation with Yama, the Lord of death. (Stanza attributed to Dṛḍhabhakta.)",
+        "Birth again, death again, again resting in the mother\u0027s womb! It is indeed hard to cross this boundless ocean of saṁsāra (cycle of repeated birth and death). O Murāri! by your causeless mercy please protect me (from this transmigratory process). (Stanza attributed to Nityanātha.)",
+        "The one whose patched garment is made from tattered rags cast on the road, whose path is free from sins having abandoned virtue and vices, whose mind is fixed on yoga (in union with god), that yogi indeed rejoices (in divine bliss) like a crazed wild child overwhelmed by happiness. (Stanza attributed to Nityanātha.)",
+        "Having abandoned this world, knowing it to be without essence, comparable to the reflection of a dream, consider well and reflect: Who am I? Who are you? Where have I come from? Who is my mother, and who is my father? (Stanza attributed to Surendra.)",
+        "In you, in me and everywhere else there is only one Viṣṇu. You get angry with me in vain, being impatient. Be equal-minded towards all if you wish to attain the state of Viṣṇu soon.",
+        "Do not waste your efforts to win the love of or to fight against friend and foe, children and relatives. See the true self in everyone and give up all feelings of duality completely. (Stanza attributed to Medhātithira.)",
+        "Give up lust, anger, greed and infatuation, try to know the true self and consider: who am I? Those fools covered by ignorance, who lack self-knowledge (ātma-jñāna) are tormented in hells. (Stanza attributed to Bhārativaṁśa.)",
+        "Regularly recite from the Gītā, meditate on Viṣṇu (śrīpati) in your heart, and chant his thousand glories names (viṣṇu-sahasranāma). Take delight to be with the noble and the holy. Distribute your wealth in charity to the poor and the needy. (Stanza attributed to Sumatir.)",
+        "Very readily one indulges in carnal pleasures but later on, alas, come diseases of the body. Even though in the world the ultimate end is death (maraṇaṁ), even then one does not relinquish his sinful behaviours.",
+        "Remember always that wealth is the source of misfortune. The truth is that one cannot extract even a bit of happiness from it. For the rich, there is fear even from one’s own son. This is the established way with wealth everywhere.",
+        "Practice control of breath (prāṇā-yāma) and withdrawal of the senses from their respective sense objects (pratyāhāra), deliberate on the distinction between the permanent and the transitory, perform meditation along with chanting the holy names of god, perform these with great attention and extreme care!",
+        "Oh devotee sincerely dedicated to the lotus feet of the Guru! May thou be soon free from Saṁsārā, the circle of birth and death. Through disciplined senses and controlled mind, thou shalt come to see (experience) the in-dwelling Lord of your heart!",
+        "Thus a foolish grammarian lost in grammatical rules, was cleansed of his narrow vision and shown the light by the students of the illustrious Śrīmad Śaṅkarācārya.",
+        "Worship Govinda, worship Govinda, worship Govinda, O fool! Other than chanting the Lord\u0027s names, there is no other way to cross the ocean of existence.",
+        "Thus ends Śrī Bhaja Govindam composed by Śrīmad Ādi Śaṅkarācārya."
+      ]
+    },
+
     "33": {
       title: "भजहुँ रे मन श्रीनन्दनन्दन",
       transliterations: [
@@ -934,6 +1274,18 @@
         "भक्तिविनोद रोते हुए कहते हैं कि श्री नित्यानन्द प्रभु के चरण-कमलों के अतिरिक्त इस संसार में जीवों की अन्य कोई गति नहीं है।"
       ]
     },
+    "43": {
+      title: "ब्रह्म बोले चतुर् मुख (Brahma Bole Catur Mukha)",
+      transliterations: [
+        "ब्रह्म बोले चतुर् मुख कृष्ण कृष्ण हरे हरे\nमहादेव पञ्च मुखे राम राम हरे हरे",
+        "एइ नाम् ब्रह्म जपे चतुर्-मुखे कृष्ण कृष्ण हरे हरे\nएइ नाम् नारद जपे वीणा यन्त्रे कृष्ण कृष्ण हरे हरे\nएइ नाम् शिव जपे पञ्च मुखे कृष्ण कृष्ण हरे हरे"
+      ],
+      translations: [
+        "ब्रह्मा जी अपने चार मुखों से जपते हैं, \u0027कृष्ण कृष्ण हरे हरे।\u0027 महादेव अपने पाँच मुखों से जपते हैं, \u0027राम राम हरे हरे।\u0027",
+        "यह महामंत्र ब्रह्मा जी अपने चार मुखों से जपते हैं, नारद मुनि अपनी वीणा के तारों पर जपते हैं, और महादेव अपने पाँच मुखों से जपते हैं।"
+      ]
+    },
+
     "44": {
       title: "चरण कमल बन्दौ हरिराई",
       transliterations: [
@@ -1312,6 +1664,28 @@
         "जो व्यक्ति वृन्दावन के अधीश्वर श्रीराधा-कृष्ण के चरणकमलों का भौंरा बनकर इस 'वृन्दाष्टकम्' का नित्य पाठ या श्रवण करता है, वह श्रीधाम वृन्दावन में नित्य वास प्राप्त करके युगल-प्रेम की दिव्य सेवा प्राप्त कर कृतार्थ हो जाता है।"
       ]
     },
+    "62": {
+      title: "गरुड़ दण्डकम् (Garuḍa Daṇḍakam)",
+      transliterations: [
+        "नमः पन्नग नद्धाय वैकुण्ठ वशवर्तिने\nश्रुति सिन्धु सुधोत्पाद मन्दराय गरुत्मते",
+        "गरुडमखिल वेद नीडाधिरूढं द्विषत् पीडनोत्कण्ठिताकुण्ठ वैकुण्ठ पीठीकृत\nस्कन्धमीडे स्वनीडा गति प्रीत रुद्रा सुकीर्ति स्तनाभोग गाढोपगूढ\nस्फुरत् कण्टक व्रात वेध व्यथावेपमान द्विजिह्वाधिपाकल्प विष्फार्यमाण\nस्फटावाटिका रत्न रोचिश्छटा राजिनीराजिटं कान्ति कल्लोलिनी राजितम्",
+        "जय गरुड सुपर्ण दर्वीकराहार देवाधिपाहार हारिन्\nदिवौकस्पति क्षिप्त दम्भोलि धाराकिणाकल्प कल्पान्त वातूल कल्पोदयानल्प\nवीरायितोद्यच् चमत्कार दैत्यारि जैत्र ध्वजारोह निर्धारितोत्कर्ष\nसङ्कर्षणात्मन् गरुत्मन् मरुत्पञ्च काधीश सत्यादिमूर्ते न कश्चित्\nसमस्ते नमस्ते पुनस्ते नमः",
+        "नम इदमजहत् सपर्याय पर्याय निर्यात पक्षानिलास्फालनोद् वेल पाथोधि\nवीचीच पेटाहतागाध पाताल भांकार संक्रुद्ध नागेन्द्र पीडासृणी भाव\nभास्वन् नख श्रेणये चण्ड तुण्डाय नृत्यद् भुजाङ्ग भ्रुवे वज्रिणे दंष्ट्रया\nतुभ्यम् अध्यात्म विद्या विधेया विधेया भवद् दास्यम् आपादयेथा दयेथाश्च मे",
+        "मनुरनुगत पक्षि वक्त्र स्फुरत् तारकस्तावकश् चित्र भानुप्रिया शेखरस् त्रायतां\nनस्त्रिवर्गापवर्ग प्रसूतिः परव्योम धामन्\nवलद्वेषि दर्प ज्वलद् वालखिल्य प्रतिज्ञावतीर्ण स्थिराम् तत्त्व बुद्धिं पराम्\nभक्ति धेनुं जगन् मूलकन्दे मुकुन्दे महानन्द दोग्ध्रीं दधीथा\nमुधाकामहीनाम् अहीनामहीनान्तक",
+        "षट्त्रिंशद् गण चरणो नर परिपाटी नवीन गुम्भगणः\nविष्णु रथ दण्डको\u0027यं विघटयतु विपक्ष वाहिनी व्यूहम्",
+        "विचित्र सिद्धिदः सो\u0027यं वेङ्कटेश विपश्चिता\nगरुडध्वज तोषाय गीतो गरुड दण्डकः"
+      ],
+      translations: [
+        "My salutations to Garuda with the beautiful wings. His limbs are adorned by the mighty serpents that he has conquered in battle. They are his jewellery. He does all the intimate kainkaryas to his Lord and is His Antharanga dhaasan. Garuda is devoted always to the Lord and His services. He is adept like the Mandara Mountain in churning the milky ocean of Vedas and to bring out the Brahma Vidyas. We can get the benefits of these Brahma Vidyas by offering our worship to him. My salutations are to him.",
+        "Garuda Bhagavan has designed the Vedas as his cage and uses that cage as his seat. (This suggests that the Vedas sing his praise). His Lord Sriman Narayana is bent upon destroying the enemies of His devotees. No one can stop Sriman Narayana in these endeavors. When He sets about to destroy the enemies of His devotees, he uses the shoulders of Garuda as his transport. When Garuda transports his Lord on His missions, his wives—Rudrai and Sukeerthi—miss his absence from home. When the Lord\u0027s mission is successfully concluded, Garuda returns to his wives and they embrace him intimately with affection. In that ecstatic state, the hairs on the body of Garuda become stiff like thorns. This in turn hurts the serpents, which are covering his body. The serpents are overcome with fear and they raise their hoods. On those occasions, the ratnas positioned on their hoods radiate their brilliant red rays. That splendorous group of red rays appear at that time as the mangala Aarathi to Garuda and he sparkles in that flood of red light.",
+        "O Garuda Bhagavan! You have been named Suparna, because of the beauty of your wings. Serpents of immense size serve as your food. You brought Nectar, the food of the Devas- from Indra Loka to release your mother from the bonds of servitude. Indra got angry at you during that time and threw his Vajra weapon at you. The sharp edge of that powerful weapon caused wounds on your wings and rest of the body. The welts from those wounds look today as pieces of jewellery on your body and attest to your heroic deed in defeating Indra. Your other heroic deeds stand out like the mighty winds that sweep the universe during the time of the great deluge. You are sitting on the flag of your Lord, which denotes His victory over His enemies; from your position on the flag of your Lord, we are able to infer your glories. You have incarnated as Sankarshana among the four Vyuha Murthys of Sriman Narayana, which are Vasudeva, Sankarshana, Pradhumna and Aniruddha. You have divided yourself into five forms-- Satyar, Suparnar, Garudar, Taarkshyar and VihagEswarar-- and matched those five forms with the five Vayus (Praanan, Apaanan, Samaanan, Udhaanan and Vyaanan) and shine thereafter as a supreme Devan. O Lord with the most exquisitely beautiful golden Wings! There is none, who is equal to you. I offer my salutations to you first and then again repeat my salutations.",
+        "O Garuda Bhagavan! Learned scholars offer their uninterrupted worships to you. Your wings in flight generate mighty winds that stir up all the oceans and make them flow over their boundaries. The waves that rise and fall from those powerful winds reach down to the netherworld (Paatalam) and the effect is like a violent blow given by the palm of one\u0027s hand. A frightening sound heard as \"Bhaam\" reverberates around the world at that time. The mighty elephants guarding the quarters are shaken up by this mighty sound of \"Bhaam\" and run to attack you, the generator of that sound. Your rows of sharp nails acting as the elephant goad attack those angry elephants of the quarters and repulse them. Your mighty beak raises terror in the minds of your enemies. When you knot your brows, it looks like the movement of the hood of a Cobra. Your canine teeth look like the Vajra weapon of Indra and strikes terror in the hearts of your enemies. My salutations to you of such limitless glory! May thou bless me so that Brahma Vidyas become easy to be possessed by me! Please bless me out of your infinite compassion so that I can have the good fortune to offer kainkaryams to you.",
+        "O Garuda Bhagavan residing permanently in Sri Vaikuntam! Your mantram confers to the reciters the four fold (Dharma-Artha-Kama -Moksha) goals of Life. That mantram of yours made up of 5 syllables, has the Pranavam as its first syllable. At the end, it carries the syllable associated with the wife of Agni. May the mantram of that structure protect us! Once, Devendran became arrogant over his powers and insulted the Sages with the name of VaalakilyAs. (The sages got angry and cursed Indra. They cursed that Indra\u0027s arrogance be destroyed by an incarnation of Sankarshana (Garuda) on a future date). You were born from the vow made by the VaalakilyAs that you destroy the mighty arrogance of Indra and you made their words come true. You serve as the lord of Death for mighty serpents that challenged you. Please bless me with the discriminating knowledge to distinguish between true (superior) and false (inferior) knowledge. Your Lord is the fundamental and principal cause of all the universes. Please bless me to have the cow representing the limitless devotion to your Lord, so that it can yield for me its delectable milk. May that devotion of mine be free from the distractions of the insignificant and evanescent pleasures of life! May thou confer on me the boon of possessing such a superior devotion to your Lord and True Knowledge about Him!",
+        "This entire Garuda Dhandakam is of the form of one slokam. This has four Paadas. Each of the Paadas has 36 GaNaas. Each Gana has three syllables. This Dhandakam follows strictly the rules of composing Dhandakams and has the NagaNaas and RagaNaas in each of the Paadas and yields novel word constructions. When one recites this Garuda Dhandakam, it will destroy the formations of the enemies, who have assembled to do battle with us and scatter them to the winds.",
+        "This Garuda Dhandakam was composed and sung by adiyEn, the Vidwan known as Venkatesa to please the Lord, who has Garuda on his flagstaff. The recitation of this Garuda Dhandakam will confer on the reciter multifold blessings and fulfill their heartfelt wishes of every kind."
+      ]
+    },
+
     "63": {
       title: "‘गौराङ्ग’ बलिते हबे पुलक शरीर",
       transliterations: [
@@ -2263,6 +2637,44 @@
         "भक्तिविनोद कहते हैं, हे कान्हा! हे राधानाथ! सुनिए, केवल आप ही मेरे प्राण हैं।"
       ]
     },
+    "157": {
+      title: "नाम-तत्त्व (Nāma-Tattva)",
+      transliterations: [
+        "(श्ब् 12.3.51)\nकलेर् दोष-निधे राजन्न्\nअस्ति ह्य् एको महान् गुणः\nकीर्तनाद् एव कृष्णस्य\nमुक्त-सङ्गः परं व्रजेत्",
+        "(श्ब् 11.5.36)\nकलिं सभाजयन्त्य् आर्या\nगुण ज्ञाः सार-भागिनः\nयत्र सङ्कीर्तनेनैव\nसर्व-स्वार्थो \u0027भिलभ्यते",
+        "(श्ब् 12.3.52)\nकृते यद् ध्यायतो विष्णुं\nत्रेतायां यजतो मखैः\nद्वापरे परिचर्यायां\nकलौ तद् धरि-कीर्तनात्",
+        "(श्ब् 11.5.37)\nन ह्य् अतः परमो लाभो\nदेहिनां भ्राम्यताम् इह\nयतो विन्देत परमां\nशान्तिं नश्यति संसृतिः",
+        "(श्ब् 2.1.11)\nएतन् निर्विद्यमानानाम्\nइच्छताम् अकुतो-भयम्\nयोगिनां नृप निर्णीतं\nहरेर् नामानुकीर्तनम्",
+        "(श्ब् 3.33.7)\nअहो बत श्व-पचो ’तो गरीयान्\nयज्-जिह्वाग्रे वर्तते नाम तुभ्यम्\nतेपुस् तपस् ते जुहुवुः सस्नुर् आर्या\nब्रह्मानूचुर् नाम गृणन्ति ये ते",
+        "(श्ब् 8.23.16)\nमन्त्रतस् तन्त्रतश् छिद्रं\nदेश-कालार्ह-वस्तुतः\nसर्वं करोति निश्छिद्रम्\nअनुसङ्कीर्तनं तव",
+        "(श्ब् 6.2.14)\nसाङ्केत्यं पारिहास्यं वा\nस्तोभं हेलनम् एव वा\nवैकुण्ठ-नाम-ग्रहणम्\nअशेषाघ-हरं विदुः",
+        "(श्ब् 1.1.14)\nआपन्नः संसृतिं घोरां\nयन्-नाम विवशो गृणन्\nततः सद्यो विमुच्येत\nयद् बिभेति स्वयं भयम्",
+        "(श्ब् 6.2.18)\nअज्ञानाद् अथवा ज्ञानाद्\nउत्तमश्लोक-नाम यत्\nसङ्कीर्तितम् अघं पुंसो\nदहेद् एधो यथानलः",
+        "(श्ब् 12.12.47)\nपतितः स्खलितश् चार्तः\nक्षुत्त्वा वा विवशो गृणन्\nहरये नम इत्य् उच्चैर्\nमुच्यते सर्व-पातकात्",
+        "(श्ब् 12.3.44)\nयन्-नामधेयं म्रियमाण आतुरः\nपतन् स्खलन् वा विवशो गृणन् पुमान्\nविमुक्त-कर्मार्गल उत्तमां गतिं\nप्राप्नोति यक्ष्यन्ति न तं कलौ जनाः",
+        "(श्ब् 2.3.24)\nतद् अश्म-सारं हृदयं बतेदं\nयद् गृह्यमाणैर् हरि-नाम-धेयैः\nन विक्रियेताथ यदा विकारो\nनेत्रे जलं गात्र-रुहेषु हर्षः",
+        "(श्ब् 11.2.40)\nएवं-व्रतः स्व-प्रिय-नाम-कीर्त्या\nजातानुरागो द्रुत-चित्त उच्चैः\nहसत्य् अथो रोदिति रौति गायत्य्\nउन्माद-वन् नृत्यति लोक-बाह्यः",
+        "(श्ब् 12.13.23)\nनाम-सङ्कीर्तनं यस्य\nसर्व-पाप प्रणाशनम्\nप्रणामो दुःख-शमनस्\nतं नमामि हरिं परम्"
+      ],
+      translations: [
+        "हे राजन्, यद्यपि कलियुग दोषों का सागर है, तथापि इस युग में एक महान् गुण है, केवल कृष्ण के नाम के कीर्तन से मनुष्य भौतिक बंधन से मुक्त होकर परम दिव्य लोक को प्राप्त हो सकता है।",
+        "जो उन्नत आत्माएँ ज्ञान में वास्तव में आगे बढ़ी हुई हैं, वे इस कलियुग का वास्तविक मूल्य समझकर उसकी प्रशंसा करती हैं, क्योंकि इस पतित युग में केवल संकीर्तन के द्वारा जीवन की समस्त सिद्धि सरलता से प्राप्त हो जाती है।",
+        "सत्ययुग में विष्णु के ध्यान से, त्रेतायुग में यज्ञों के अनुष्ठान से और द्वापरयुग में भगवान् के चरणों की सेवा से जो फल प्राप्त होता था, वही फल कलियुग में केवल हरे कृष्ण महामंत्र के कीर्तन से प्राप्त हो जाता है।",
+        "इस भौतिक जगत् में भटकते हुए देहधारी जीवों के लिये संकीर्तन से बढ़कर और कोई श्रेष्ठ प्राप्ति नहीं है, क्योंकि इससे मनुष्य परम शान्ति को प्राप्त करता है और उसका जन्म-मृत्यु का चक्र नष्ट हो जाता है।",
+        "हे राजन्, महापुरुषों के मार्ग पर चलते हुए भगवान् के पवित्र नाम का निरन्तर कीर्तन करना ही सबके लिए सफलता का निश्चित और निर्भय मार्ग है। यह उनके लिए भी है जो सब भौतिक इच्छाओं से मुक्त हैं, उनके लिए भी जो सब प्रकार के भोग चाहते हैं, और उन योगियों के लिए भी जो दिव्य ज्ञान से आत्म-तृप्त हैं।",
+        "आह, कैसी महिमा है उनकी, जिनकी जिह्वा पर आपका पवित्र नाम रहता है! ऐसा व्यक्ति चाण्डाल के घर में जन्मा हो तो भी वह पूजनीय है। हे प्रभु, जो आपका पवित्र नाम जपते हैं, उन्होंने अवश्य ही सब प्रकार की तपस्या की होगी, यज्ञ किये होंगे और आर्यों का सदाचार पा लिया होगा। उन्होंने तीर्थों में स्नान किया होगा, वेदों का अध्ययन किया होगा और सब कुछ पूरा कर लिया होगा।",
+        "हे प्रभु, मंत्रों के उच्चारण में, विधि-नियमों के पालन में तथा देश, काल, पात्र और सामग्री के विषय में भले ही त्रुटियाँ रह जायँ, परन्तु जब आपके पवित्र नाम का निरन्तर कीर्तन होता है, तब वह इन सब त्रुटियों को दूर करके सब कुछ पूर्ण और त्रुटिरहित बना देता है।",
+        "भगवान् का पवित्र नाम चाहे किसी और अर्थ में संकेत के रूप में लिया जाय, हास-परिहास में, गीत-वाद्य के मनोरंजन में अथवा उपेक्षा से भी उच्चारित हो, तो भी वह उच्चारण करनेवाले को उसके अनन्त पापों के फल से तुरन्त मुक्त कर देता है। शास्त्रों के सभी अनुभवी विद्वान् इसे स्वीकार करते हैं।",
+        "जन्म-मृत्यु के अत्यन्त जटिल चक्र में फँसा हुआ जीव भी यदि अनजाने में ही कृष्ण के उस परम नाम का उच्चारण कर दे, जिससे साक्षात् भय भी डरता है, तो वह उसी क्षण उस चक्र से मुक्त हो जाता है।",
+        "जिस प्रकार अग्नि सूखी घास को भस्म कर देती है, उसी प्रकार भगवान् का पवित्र नाम, चाहे वह जानते हुए उच्चारित हो या अनजाने में, मनुष्य के समस्त पापों के फल को निश्चय ही भस्म कर देता है।",
+        "गिरते समय, फिसलते समय, पीड़ा में अथवा छींकते समय यदि कोई अनजाने में ही ऊँचे स्वर से \u0027हरि को प्रणाम\u0027 पुकार उठे, तो वह अपने समस्त पापों के फल से स्वतः मुक्त हो जाता है।",
+        "पीड़ा से त्रस्त, मरणासन्न व्यक्ति यदि गिरते हुए, अस्पष्ट वाणी में और विवशता से भी भगवान् का पवित्र नाम उच्चारित कर दे, तो वह अपने कर्मों के बन्धन से मुक्त होकर परम श्रेष्ठ गति को प्राप्त कर लेता है। फिर भी कलियुग के लोग उस भगवान् की पूजा नहीं करते।",
+        "जिस हृदय में मन को एकाग्र करके भगवान् के पवित्र नाम का बार-बार उच्चारण करने पर भी न नेत्रों में अश्रु आते हैं और न रोमकूपों में आनन्द का रोमांच होता है, वह हृदय निश्चय ही लौह के समान कठोर है।",
+        "इस प्रकार व्रत लेकर मनुष्य जब भगवान् के अपने अत्यन्त प्रिय नाम का कीर्तन करता है, तब उसमें प्रेम उत्पन्न होने लगता है। हृदय पिघल जाने से वह भक्त कभी ऊँचे स्वर में हँसता है, कभी रोता है, कभी व्याकुल हो उठता है, कभी गाता है और लोक-लाज की चिन्ता किये बिना उन्मत्त की भाँति नाचने लगता है।",
+        "जिनके पवित्र नाम का सामूहिक कीर्तन समस्त पापों का नाश करनेवाला है और जिनको किया गया प्रणाम समस्त दुःखों को शान्त कर देता है, उन परम भगवान् हरि को मैं प्रणाम करता हूँ।"
+      ]
+    },
+
     "158": {
       title: "श्री श्री दामोदराष्टकम्",
       transliterations: [
@@ -2316,6 +2728,30 @@
         "यह दीन कृष्णदास प्रार्थना करता है कि मैं सदा श्री श्री राधा-गोविन्द के प्रेमामृत में निमग्न रहूँ।"
       ]
     },
+    "173": {
+      title: "श्री नामाष्टकम् (Śrī Nāmāṣṭakam)",
+      transliterations: [
+        "निखिल-श्रुति-मौलि-रत्न-माला\nद्युति-नीराजित-पाद-पङ्कजान्त\nअयि मुक्त-कुलैर् उपास्यमानं\nपरितस् त्वां हरि-नाम संश्रयामि",
+        "जय नामधेय मुनि-वृन्द-गेय हे\nजन-रञ्जनाय परम् अक्षराकृते\nत्वम् अनादराद् अपि मनाग् उदीरितं\nनिखिलोग्र-ताप-पटलीं विलुम्पसि",
+        "यद्-आभासो \u0027प्य् उद्यन् कवलित-भव-ध्वान्त-विभवो\nदृशं तत्त्वान्धानाम् अपि दिशति भक्ति-प्रणयिनीम्\nजनस् तस्योदात्तं जगति भगवन्-नाम-तरणे\nकृती ते निर्वक्तुं क इह महिमानं प्रभवति",
+        "यद्-ब्रह्म-साक्षात्-कृति-निष्ठयापि\nविनाशम् आयाति विना न भोगैः\nअपैति नाम स्फुरणेन तत् ते\nप्रारब्ध-कर्मेति विरौति वेदः",
+        "अघदमन-यशोदानन्दनौ नन्दसूनो\nकमलनयन-गोपीचन्द्र-वृन्दावनेन्द्राः\nप्रणतकरुण-कृष्णाव् इत्य् अनेक-स्वरूपे\nत्वयि मम रतिर् उच्चैर् वर्धतां नामधेय",
+        "वाच्यं वाचकम् इत्य् उदेति भवतो नाम स्वरूप-द्वयं\nपूर्वस्मात् परम् एव हन्त करुणं तत्रापि जानीमहे\nयस् तस्मिन् विहितापराध-निवहः प्राणी समन्ताद् भवेद्\nआस्येनेदम् उपास्य सो \u0027पि हि सदानन्दाम्बुधौ मज्जति",
+        "सूदिताश्रित-जनार्ति-राशये\nरम्य-चिद्-घन-सुख-स्वरूपिणे\nनाम गोकुल-महोत्सवाय ते\nकृष्ण पूर्ण-वपुषे नमो नमः",
+        "नारद-वीणोज्जीवन\nसुधोर्मि-निर्यास-माधुरी-पूर\nत्वं कृष्ण-नाम कामं\nस्फुर मे रसने रसेन सदा"
+      ],
+      translations: [
+        "हे हरि-नाम! उपनिषद समस्त वेदों के मुकुट-मणि हैं, और उनकी रत्न-माला से निकलने वाली दीप्तिमान आभा सदैव आपके चरण-कमलों की अंगुलियों के अग्रभाग की पूजा करती रहती है। नारद और शुकदेव जैसे मुक्त पुरुष सदा आपकी उपासना करते हैं। हे हरि-नाम! मैं पूर्ण रूप से आपकी शरण ग्रहण करता हूँ।",
+        "हे हरि-नाम, हे मुनियों द्वारा गाए जाने वाले नाम, हे लोगों को आनन्दित करने वाले दिव्य अक्षरो, यदि आपका उच्चारण एक बार भी हो जाए, चाहे अनादरपूर्वक ही क्यों न हो, तो आप तुरन्त सबके कठोर कष्टों को दूर कर देते हैं।",
+        "हे पवित्र नाम-रूपी सूर्य, आपकी भोर की धुँधली किरण (नामाभास) भी इस संसार के अंधकार के बल को निगल जाती है, और सत्य के प्रति अंधे लोगों को भी कृष्ण की शुद्ध भक्ति के मार्ग पर चलने की दृष्टि दे देती है। इस संसार में ऐसा कौन विद्वान है जो आपकी दिव्य महिमा का पूरा वर्णन कर सके?",
+        "हे पवित्र नाम, वेद घोषणा करते हैं कि निराकार ब्रह्म के ध्यान से भी पुराने कर्मों से मुक्ति नहीं मिलती, परन्तु भक्त की जिह्वा पर आपके प्रकट होते ही सारे कर्म तुरन्त मिट जाते हैं।",
+        "हे पवित्र नाम, मैं प्रार्थना करता हूँ कि आपके अनेक रूपों के प्रति, जैसे अघदमन (अघासुर का नाश करने वाले), यशोदानन्दन (यशोदा के पुत्र), नन्दसूनु (नन्द के पुत्र), कमलनयन (कमल जैसे नेत्रों वाले), गोपीचन्द्र (गोपियों के चन्द्रमा), वृन्दावनेन्द्र (वृन्दावन के राजा), प्रणतकरुण (शरणागतों पर करुणा करने वाले) और कृष्ण, मेरा प्रेम दिन-प्रतिदिन अत्यधिक बढ़ता जाए।",
+        "हे पवित्र नाम, आप दो रूपों में प्रकट होते हैं: पहला, वह परम पुरुष जिसका वर्णन पवित्र नाम करता है, और दूसरा, पवित्र नाम की ध्वनि स्वयं। हम जानते हैं कि दूसरा रूप पहले से भी अधिक दयालु है, क्योंकि यद्यपि कोई व्यक्ति आपके पहले रूप के प्रति अनेक अपराध कर सकता है, फिर भी वह अपनी वाणी से आपके दूसरे रूप की सेवा करके आनन्द के सागर में डूब जाता है।",
+        "हे भगवान कृष्ण के परिपूर्ण और सम्पूर्ण पवित्र नाम, आप आनन्दमय और सघन आध्यात्मिक सुख के साक्षात् स्वरूप हैं, आप अपनी शरण लेने वालों के अनेक कष्टों को नष्ट कर देते हैं, और आप गोकुल के लिए आनन्द का उत्सव हैं। मैं बार-बार आपको प्रणाम करता हूँ।",
+        "हे कृष्ण-नाम! हे नारद की वीणा को स्फूर्ति देने वाले! आप माधुर्य से परिपूर्ण हैं, जो अमृत की लहरों से भरे सागर के समान है। यदि आपकी इच्छा हो, तो कृपया भगवान के प्रति दिव्य प्रेम के साथ मेरी जिह्वा पर सदैव विराजमान रहें।"
+      ]
+    },
+
     "174": {
       title: "निताइ गुण-मणि आमार",
       transliterations: [
@@ -2327,6 +2763,24 @@
         "राढ़-देश (एकचक्रा धाम) में श्री नित्यानन्द राय प्रकट हुए और नवद्वीप में आकर श्री गौरांग महाप्रभु के साथ दिव्य संकीर्तन का विस्तार किया।"
       ]
     },
+    "176": {
+      title: "निताई मोर जीवन-धन (Nitāi Mora Jīvana-Dhana)",
+      transliterations: [
+        "निताइ मोर जीबन धन निताइ मोर जाति\nनिताइ बिहने मोर आर नाहि गति",
+        "संसार सुखेर मुखे तुले दिब छाइ\nनगरे मागिया खाब गाइब निताइ",
+        "ये देशे निताइ नाइ से देशे ना याब\nनिताइ बिमुख जनार मुख ना हेरिब",
+        "गङ्गा यार पद जल हर शिरे धरे\nहेन निताइ ना भजिया दुख पेये मरे",
+        "लोचन बोले मोर निताइ येबा नाहि माने\nअनल भेजाइ तार माझ मुखखाने"
+      ],
+      translations: [
+        "श्री नित्यानन्द प्रभु ही मेरे जीवन-धन हैं और निताई ही मेरी जाति (सर्वस्व) हैं। निताई के बिना मेरा अन्य कोई आश्रय या गति नहीं है।",
+        "भौतिक संसार के तथाकथित सुख के मुख पर मैं राख डाल दूँगा। नगर-नगर में भिक्षा माँगकर खाऊँगा और केवल श्री निताई के नाम का गान करूँगा।",
+        "जिस देश (स्थान) में निताई का वास अथवा उनका संकीर्तन नहीं है, उस देश में मैं कभी नहीं जाऊँगा। जो व्यक्ति निताई से विमुख है, उसका मुख भी मैं कभी नहीं देखूँगा।",
+        "लोचन दास कहते हैं—जो व्यक्ति मेरे निताई को नहीं मानता अथवा उनका अनादर करता है, उसके दोनों नेत्रों में आग लग जाए।",
+        "श्री निताई पाखंडियों का दलन करने वाले और पतितों का उद्धार करने वाले हैं। लोचन दास कहते हैं कि निताई ही मेरे जीवन-प्राण हैं।"
+      ]
+    },
+
     "178": {
       title: "निताइ-पद-कमल",
       transliterations: [
@@ -2340,6 +2794,32 @@
         "अहंकार में मत्त होकर जिसने नित्यानन्द प्रभु के चरणों को भुला दिया, वह असत्य संसार को ही सत्य मान बैठा है। जब नित्यानन्द प्रभु की करुणा होगी, तभी ब्रज में राधा-कृष्ण की प्राप्ति होगी—नरोत्तम दास इसी वाणी को धारण करते हैं।"
       ]
     },
+    "181": {
+      title: "ओहे प्रेमेर ठाकुर गोरा (Ohe Premera Ṭhākura Gorā)",
+      transliterations: [
+        "ओहे, प्रेमेर ठाकुर गोरा\nप्राणेर यातना किवा कब, नाथ! हयेछि आपन-हारा",
+        "कि आर बलिब, जे-काजेर तोरे\nएनेछिले, नाथ! जगते आमारे,\nएत-दिन परे कहिते से कथा, खेदे दुःखे है सारा",
+        "तोमार भजने ना जन्मिल रति,\nजड-मोहे मत्त सदा दुरमति –\nविषयीर काछे थेके थेके आमि हैनु विषयी-पारा",
+        "के आमि, केन जे एसेछि एखाने,\nसे-कथा कखन नाहि भावि मने,\nकखन भोगेर, कखन त्यागेर छलनाय मन नाचे",
+        "कि गति हैबे कखन भावि ना,\nहरि-भकतेर काछेओ जाइ ना,\nहरि-विमुखेर कु-लक्षण जत आमातेइ सब अछे",
+        "श्री-गुरु-कृपाय भेङ्गेछे स्वपन,\nबुझेछि एखन तुमि-इ आपन,\nतव निज-जन परम-बान्धव संसार कारागारे",
+        "आन ना भजिब भक्त-पद विनु,\nरातुल-चरणे शरण लोइनु,\nउद्धारहो नाथ! माया-जाल ह’ते ए दासेर केशे धो’रे",
+        "पातकीरे तुमि कृपा कर नाकि?\nजगाइ-माधाइ छिल जे पातकी,\nताहाते जेनेछि, प्रेमेर ठाकुर! पातकीरेओ तार तुमि",
+        "आमि भक्ति-हीन, दीन, अकिञ्चन –\nअपराधी-शिरे दाओ दु’ चरण,\nतोमार अभय श्री चरणे चिर – शरण लैनु आमि"
+      ],
+      translations: [
+        "हे प्रेम के ठाकुर गौरसुंदर! हे मेरे स्वामी! मैं आपसे अपनी पीड़ा और दुःख की क्या कथा कहूँ? मैं अपना स्वरूप भूल गया हूँ।",
+        "हे नाथ! और क्या कहूँ? जिस काम के लिए आप मुझे इस संसार में लाए थे, इतने दिनों बाद वह बात कहते हुए मैं पछतावे और दुःख से थक-हार गया हूँ।",
+        "हे प्रभु! मैं इतना दुर्भाग्यशाली हूँ कि मुझे आपकी भक्ति में कभी अनुराग नहीं हुआ, बल्कि मैं सदा दुर्बुद्धि और भौतिक भोग में उन्मत्त रहा। विषयी लोगों के बीच रहते-रहते मैं भी उनके ही समान बन गया।",
+        "मैं कौन हूँ? मैं इस संसार में क्यों आया हूँ? इन प्रश्नों पर मैंने कभी विचार ही नहीं किया। कभी भोग में, कभी त्याग में, मेरा मन इस छलावे में ही नाचता रहा।",
+        "मेरा क्या परिणाम होगा, यह मैंने कभी नहीं सोचा। मैं कभी हरिभक्तों के पास भी नहीं गया, और भगवान से विमुख रहने के जो भी दुर्लक्षण होते हैं, वे सब मुझमें विद्यमान रहे।",
+        "अब श्री गुरु की कृपा से मेरा स्वप्न टूट गया है और मेरी आँखें खुल गई हैं। अब मैं समझ गया हूँ कि मेरे अपने तो केवल आप ही हैं, और संसार के इस कारागार में आपके प्रिय भक्त ही मेरे सबसे बड़े मित्र हैं।",
+        "अब मैं केवल आपके भक्तों की ही सेवा करूँगा, और किसी की नहीं। हे नाथ! अब मैंने आपके लाल कमल जैसे चरणों की शरण ले ली है। इस दास को बालों से पकड़कर माया के जाल से बाहर निकाल लीजिए।",
+        "क्या आप पापियों पर कृपा नहीं करते? क्या जगाई और माधाई भी महापापी नहीं थे? फिर भी आपने उन्हें अपनी कृपा दी। इससे मैं समझ गया हूँ कि आप ही प्रेम के ठाकुर और पतितों के उद्धारक हैं।",
+        "हे प्रभु! मैं भक्ति से रहित, दीन और अकिंचन हूँ। अपने अभय देने वाले चरण इस अपराधी के सिर पर रख दीजिए। मैंने आपके उन्हीं दिव्य चरणों की चिरशरण ले ली है।"
+      ]
+    },
+
     "182": {
       title: "ओहे! वैष्णव ठाकुर",
       transliterations: [
@@ -2355,6 +2835,32 @@
         "श्रीकृष्ण आपके हैं और आप श्रीकृष्ण को किसी को भी देने में समर्थ हैं! मैं तो अत्यन्त दीन-हीन कंगाल हूँ, केवल 'कृष्ण! कृष्ण!' पुकारता हुआ आपके पीछे-पीछे दौड़ रहा हूँ।"
       ]
     },
+    "185": {
+      title: "पालयाच्युत अष्टकम् (Pālayācyuta Aṣṭakam)",
+      transliterations: [
+        "मध्वमानसपद्मभानुसमं स्मरप्रतिमं स्मर\nस्निग्धनिर्मलशीतकान्तिलसन्मुखं करुणोन्मुखम्\nहृद्यकम्बुज मानकन्धरमक्षयं दुरितक्षयम्\nस्निग्ध संस्तुत रूप्यपीठकृतालयं हरिमालयम्",
+        "अङ्गदादिसुशोभिपाणियुगेन संक्शुभितैनसं\nतुङ्गमाल्य मणीन्द्रहारसरोरसं खलनीरसम्\nमङ्गलप्रदमन्थदामविराचितं भजताजितं तंगृणे\nवर रूप्यपीठकृतालयं हरिमालयम्",
+        "पीनरम् यतनूदरं भज हे मनः शुभ हे मनः\nस्वानुभावनिदर्शनाय दिशन्तमर्थिसुशन्तमम्\nआनतोस्मि निजार्जुनप्रियसाधकं खलबाधकं\nहीनतोज्झित रूप्यपीठकृतालयं हरिमालयम्",
+        "हैमकिङ्किणिमालिकारशनाञ्चितं तमवञ्चितं\nकम्रकाञ्चन वस्त्रचित्रकटिं घनप्रभया घनम्\nनम्रनागरोपमोरुरुमनामययं शुभधीमयं\nनौम्यहम् वर रूप्यपीठकृतालयं हरिमालयम्",
+        "वृत्तजानुमनोज्ञजङ्घममोहदं परमोहदं\nरत्नकल्पनखत्विषा हृत्तहृत्तमस्ततिमुत्तमम्\nप्रत्यहं रचितार्चनं रमया स्वयागतया स्वयं\nचित्त चिन्तय रूप्यपीठकृतालयं हरिमालयम्",
+        "चारुपादसरोजयुग्मरुचामरोच्चयचामरो\nदारमूर्धजभानुमण्डलरञ्जकं कलिभञ्जकम्\nवीरतोचितभूषणं वरनूपुरंस्वतनूपुरं\nधारयात्मनिरूप्यपीठकृतालयं हरिमालयम्",
+        "शुष्कवादिमनोतिदूरतरागमोत्सवदागमं\nसत्कवीन्द्रवचोविलासमहोदयं महितोदयम्\nलक्षयामि यतीश्वरैः क्तपूजनं गुणभाजनं\nधिकृतोपम रूप्यपीठकृतालयं हरिमालयम्",
+        "नारदप्रियमाविशाम्बुरुहेक्षणं निजरक्षणं\nतारकोपमचारुदीपचयान्तरे गतचिन्तरे\nधीर मानस पूर्णचन्द्रसमानमच्युतमानम\nद्वारकोपम रूप्यपीठकृतालयं हरिमालयम्",
+        "रूप्यपीठकृतालयस्य हरेः प्रियं दुरिताप्रियं\nतत्पदार्चकवादिराजयतीरितं गुणपूरितम्\nगोप्यमष्टकमेतदुच्चमुदे ममास्त्विह निर्मम\nप्राप्यशुद्धफलाय तत्र सुकोमलं हृतधीमलम्"
+      ],
+      translations: [
+        "Meditate on Hari who is the sun to Madhwacharya\u0027s lotus mind, the pretty one with a blemishless moon-like face, personification of mercy, with a neck like a conch, who never decays, cures all sufferings, and has made Udupi his home.",
+        "Meditate till the end on that Hari, whose hands make his amulets shine along with the churn and rope that do good, whose chest is adorned with long garlands of gems and necklaces, who is the total destroyer of sins, who makes wicked people inactive, who can be won over by devotion, and who has made the great Udupi his home.",
+        "Meditate till the end on that Hari, whose pretty slender golden belly is bewitching, who grants salvation and wealth to his devotees to provide a personal experience of himself, who is a great lover of Arjuna, a destroyer of wicked people, and lives in the blemish-less Udupi.",
+        "Meditate till the end on that Hari, who is graced by a waist belt of golden bells, who cannot be cheated by bad ones, who wears a pearl-inlaid golden cloth around his pretty waist, whose body shines like black clouds, who has thighs like an elephant\u0027s trunk, who is free of blemishes, full of bliss and knowledge, and has made the great Udupi his home.",
+        "Meditate till the end on that Hari, who has bewitching knees and shanks, who does not give illusion to his devotees but gives it to the wicked, who destroys the darkness of the mind with the luster of his pearl-like nails, who is the storehouse of all good, and who is daily worshipped by his consort Goddess Lakshmi herself in Udupi.",
+        "Meditate till the end on that Hari, who by the brightness of his lotus feet brightens even the dense tufts of the prostrating devas, who destroys the evil of the kali age, wears ornaments suitable to a hero and exquisite anklets, resides within our bodies, and made Udupi his home.",
+        "Meditate till the end on that Hari, who is far beyond the reach of feeble debaters but gives great happiness to the king of poets who understand holy books, who bestows eternal happiness on devotees, is worshipped by god-like sages, is the storehouse of good, and lives in Udupi which is beyond comparison.",
+        "Oh brave man, get rid of all worries by meditating on the full moon-like Achyutha, who is dear to sage Narada, has lotus-like eyes, whose reality is himself alone, who protects his devotees, who is like the moon among star-like lamps, and who has made Dwaraka-like Udupi his home.",
+        "This octet pertaining to the cowherd who made the temple of Udupi his home is dear to Lord Hari, removes all sorrows, is full of good qualities, and was composed by Sage Vadhiraja to provide happiness in this world, remove ignorance, and provide blemish-less well-being in the other world."
+      ]
+    },
+
     "187": {
       title: "परम करुण, पहूँ दुइ जन",
       transliterations: [
@@ -2370,6 +2876,62 @@
         "लोचन दास कहते हैं कि ऐसे परम दयालु निताई-गौरांग के गुणों में मेरी प्रीति नहीं हुई; मैं अपने ही कर्म-बन्धन में बँधा रहा, अतः मेरी कोई गति नहीं है।"
       ]
     },
+    "196": {
+      title: "पुरुष सूक्तम् (Puruṣa Sūktam)",
+      transliterations: [
+        "ओं सहस्र शीर्षा पुरुषः  सहस्राक्षः सहस्रपात्\nस भूमिम् विष्वतो वृत्वा  अत्यतिष्टद् दशान्गुलम्",
+        "पुरुष एवेदगं सर्वम्  यद् भूतम् यच् च भव्यम्\nउतामृतत्वस्येषानः यद् अन्नेनातिरोहति",
+        "एतावान् अस्य महिम  अतो ज्यायागंश्च पूरुषः\nपादो \u0027स्य विष्वा भूतानि  त्रिपादस्यामृतम् दिवि",
+        "त्रिपाद् ऊर्ध्व उदैत् पुरुषः  पादो \u0027स्येहाभवत्पुनः\nततो विष्व.न् व्यक्रामत्  साशनानशने अभि",
+        "तस्मात् विराद् अजायत  विराजो अधिपूरुष ः\nस जातो अत्यरिच्यत  पश्चाद् भूमिमथो पुरः",
+        "यत्पुरुषेन हविषा  देवा यज्ञम् अतन्वत\nवसन्तो अस्यासी-दाज्यम्  ग्रीष्म इध्म शरद्धविः",
+        "सप्तास्या सन् परिदयः  त्रिः सप्तः समिदः क्र्ताः\nदेव यद् यज्ञम् तन्वानाः  अबध्नन् पुरुषम् पशुम्",
+        "तम् यज्ञम् बर्हिषि प्रोक्षन्  पुरुषम् जातम् अग्रतः\nतेन देवा अयजन्त  साध्या ऋषयश् च ये",
+        "तस्माद् यज्ञत् सर्वहुतः  सम्भृतम् प्र्षदाज्यम्\nपषूगंस्त्य गश् चक्रे वायव्यान्  आरण्यान् ग्राम्यास् च ये",
+        "तस्माद् यज्ञत् सर्वहुतः  ऋचः सामानि जज्निरे\nछन्दागंसि जज्निरे तस्मात्  यजुस् तस्माद् अजायन्त",
+        "तस्मादष्वा अजायन्त  ये के चोभयादतः\nगावोहम् जग्न्यिरे तस्मात्  तस्मज्जता अजावयः",
+        "यत् पुरुषम् व्यदधुः  कतिधा व्यकल्पयन्\nमुखम् किमस्य कौ बाहू  कवूरू पादा उच्येते",
+        "ब्राह्मणो अस्य मुखमासीत्  बाहू राजन्यः क्र्तः\nऊरु तदस्य यद् वैष्य  पद्भ्याम् षूद्रो अजायत",
+        "चन्द्रमा मनसो जातः  चक्षो सूर्यो अजायत\nमुखादीन्द्रस्चाग्निस्छ  प्राणाद्वायुरजायत",
+        "नाभ्या आसीदन्तरिक्षम्  षीर्ष्णौ ध्यौः समवर्तत\nपद्भ्याम् भूमिर् दिषः ष्रोत्रात्  तथा लोकाम् अकल्पयन्",
+        "वेदाहमेतम् पुरुषम् महान्तम्  आदित्यवर्णम् तमसस्तु पारे\nसर्वाणि रूपाणि विचित्य धीरः  नामानि क्र्त्वाभिवदन् यदास्ते",
+        "धाता पुरस्ताध्यमुदाजहार  षक्रः प्रविद्वान् प्रदिषष्चतस्रः\nतमेवम् विध्वानम्र्त इह भवति  नान्यः पन्था अयनाय विध्यते",
+        "यग्न्येन यग्न्य-मयजन्त देवः  तानि धर्माणि प्रथमानासन्न्\nते ह नाकम् महिमानः सचन्ते  यत्र पूर्वे साध्याः सन्ति देवाः",
+        "अद्भ्यस्सम्भोओतः प्र्थिव्यै रसाच्च  विश्वकर्मणस्समवर्तताधि\nतस्य त्वष्टा विदधद्रोओपमेति  तत्पुरुषस्य विश्वमाजानमग्रे",
+        "वेदाहमेतम् पुरुषम् महान्तम्  आदित्यवर्णम् तमसस् पारस्तात्\nतमेवम् विध्वानम्र्त इह भवति  नान्यः पन्था विध्यते अयनाय",
+        "प्रजापतिस्छरति गर्भे अन्तः  अजायमानो बहुधा विजायते\nतस्य धीराः परिजानन्ति योनिम्  मरीछीनाम् पदमिच्चन्ति वेधसः",
+        "यो देवेभ्य आतपति  यो देवानाम् पुरोहितः\nपुर्वो यो देवेभ्यो जातः  नमो रुचाय ब्राह्मये",
+        "रुचम् ब्राम्हम् जनयन्तः  देव अग्रे तदब्रुवन्\nयस्त्वैवम् ब्राह्मणो विध्यात्  तस्य देव असन् वशे",
+        "हृश्च ते लक्ष्मीश्च पत्न्यौ  अहोरात्रे पार्श्वे\nनक्षत्राणि रोओपम्  अश्विनौ व्यात्तम्\nइश्तम् मनिशन\nअमुन् मनिशन\nसर्वम् मनिशन\nओं शान्तिः शान्तिः शान्तिः"
+      ],
+      translations: [
+        "The Purusa (the Supreme Being) has a thousand heads, a thousand eyes and a thousand feet. He has enveloped this world from all sides and has (even) transcended it by ten angulas or inches.",
+        "All this is verily the Purusa. All that which existed in the past or will come into being in the future (is also the Purusa). Also, he is the Lord of immortality. That which grows profusely by food (is also the Purusa).",
+        "So much is His greatness. However, the Purusa is greater than this. All the beings form only a quarter (part of) Him. The three-quarter part of His, which is eternal, is established in the spiritual domain.",
+        "The Purusa with the three-quarters (of His energy) ascended above (the spiritual energy). His one quarter of material energy becomes this creation again (and again). Then He pervades this universe comprising a variety of sentient beings and insentient objects.",
+        "From Him (the Adi Purusa or original Supreme Being) was born the Virat (or Virat Purusa, the immense universal form). Making this Virat as the substratum (another) Purusa (or being, Brahma) (was born). As soon as he was born, he multiplied himself. Later, he created this earth and then, the bodies (of the living beings).",
+        "When the devas (the demigods or beings of light) performed a yajna (or sacrificial ritual), using the Purusa as the havis (sacrificial material) for the yajna (ritual), the Vasanta (spring) became the ajya (ghee), the Grishma (summer) served as idhma (pieces of wood) and the sharad (autumn) filled the place of havis (obligatory material like the purodasha or rice-cake).",
+        "For this (yajna or spiritual ceremony) there were seven paridhis (fuel pieces serving as borders). And, twenty-one items were made the samit or sacrificial fuel sticks. When the devas were performing this yajna or ceremony, they tied the Purusa (himself) as the pasu (sacrificial animal).",
+        "The devas, the sadhyas and the rsis performed the sacrifice by using that Purusa as the means of yajna, the Purusa who had been born in the beginning, after sprinkling him with water by the barhis (or sacrificial grass).",
+        "From that yajna (or sacrificial ritual) wherein the Cosmic Being was Himself the oblation, was produced the prasajya (or curds mixed with ghee). Birds flying in the air, wild animals of the forest as also the domesticated animals of the villages were also produced.",
+        "From that yajna (or sacrifice) wherein the Cosmic Being was Himself the oblation, were born the riks (the mantras of the Rg-veda) and the samans (the mantras of the Sama-veda). From that (yajna) the meters (like Gayatri) were born. From that (yajna again) the yujas (the Yajura-veda) was born.",
+        "From that were born the horses, as also animals (like donkeys and mules) which have two rows of teeth. From that were born the cattle. From that (again) were born goats and sheep.",
+        "(Now some questions are raised by the sages) When the gods decided to (mentally) sacrifice the ViratPurusa (and produce further creation), in how many ways did they do it? What became of his face or mouth? What became of his two arms? What became of His two thighs? What were (the products of) the two feet called?",
+        "From His face (or the mouth) came the brahmanas. From His two arms came the rajanya (the ksatriyas). From His two thighs came the vaisyas. From His two feet came the sudras.",
+        "From His mind was born the moon. From His two eyes was born the sun. From His mouth were born Indra and Agni. From His breath was born the air.",
+        "From (His) navel was produced the antariksha (the space between the earth and the heavens). Dyuloka (or heaven) came into existence from His head. The bhumi (the earth) evolved out of His feet, and deek (or spacial directions) from His ears. Similarly (the demigods) produced the worlds (too).",
+        "I know (through intuitive experience) this great Purusa (the Supreme Being), the wise one, who, having created the various forms and the nomenclatures (for those forms), deals with them by those names, and who is beyond darkness and is brilliant like the sun.",
+        "In the ancient days, Prajapati (Brahma) praised Him. Indra who knows all the four quarters also spoke about Him. Anyone who knows Him thus, will become immortal even in this life. For attaining liberation there is no other path (than knowledge of this Purusa, the Supreme Lord).",
+        "The (demi)gods worshiped (the Supreme Creator in the form of) yajna through yajna (sacrifical ceremonies). Those very processes became the primary dharmas (laws guiding humanity). Those great ones attain that heaven where the ancient devas (demigods) and sadhyas live.",
+        "The ViratPurusa manifested Himself from out of (the all-pervading) water as also the essence of the element of earth. This ViratPurusa was born out of the greatness of the ParamaPurusa, the Creator. The (ParamaPurusa, known as) Tvashta engaged Himself in the act of creating (the fourteen planetary systems), (which form of the expanded) figure (of the ViratPurusa). (Thus) the entire creation (related to the ViratPurusa) came into existence in the very beginning of creation.",
+        "I have known that great Purusa (Supreme Being) who is brilliant like the sun and who is beyond all darkness. One who knows Him thus becomes immortal (even) here. There is no other path for liberation than this.",
+        "Prajapati (the Supreme Creator) moves inside the cosmic womb. (Though) unborn He takes birth in a variety of ways. The wise ones know His (real nature) as the origin (of the universe). The (secondary) creators desire to attain the positions of Marichi and others.",
+        "Obeisances to Him, the self-luminous Brahman, who shines for the (demi)gods, who is the leader of the rituals of the gods and who was born even before the gods.",
+        "In the beginning of creation, the gods, manifesting the light of Brahman, addressed Brahman thus: \u0027That brahmana who realizes (You) thus, all the gods will come under his control.\u0027",
+        "O Purusa! The goddesses Hri (modesty) and Sri (Lakshmi, wealth) are Your consorts. Day and night are Your lateral limbs. The stars are Your form. The Ashvins are your widely opened (mouth). (O Purusa) fulfill our desire for self-knowledge as also our desire for the enjoyments of this world (like longevity, cows, and horses). Give us all that we need. Om, let there be peace, peace, peace."
+      ]
+    },
+
     "198": {
       title: "राधा-कृष्ण प्राण मोर युगल-किशोर",
       transliterations: [
@@ -2491,6 +3053,145 @@
         "श्री रूप मंजरी के अनुगत्य में परम आनन्द के साथ मैं श्री श्री राधा-कृष्ण के युगल-चरणों के सुधामृत रस की सेवा करूँगा। नरोत्तम दास कहते हैं कि मुझ पर ऐसी कृपा हो कि मैं सदा आपके वशीभूत रहूँ।"
       ]
     },
+    "233": {
+      title: "à¤®à¥à¤•à¥à¤¨à¥à¤¦à¤®à¤¾à¤²à¤¾ à¤¸à¥à¤¤à¥‹à¤¤à¥à¤° (Mukunda-mÄlÄ-stotra)",
+      transliterations: [
+        "श्रीवल्लभेति वरदेति दयापरेति\nभक्तप्रियेति भवलुण्ठनकोविदेति।\nनाथेति नागशयनेति जगन्निवासे-\nत्यालापिनं प्रति-दिनं कुरु मां मुकुन्द॥ १॥",
+        "जयतु जयतु देवो देवकीनन्दनोऽयं\nजयतु जयतु कृष्णो वृष्णिवंशप्रदीपः।\nजयतु जयतु मेघश्यामलो कोमलाङ्गो\nजयतु जयतु पृथ्वीभारनाशो मुकुन्दः॥ २॥",
+        "मुकुन्द मूर्ध्ना प्रणिपत्य याचे\nभवन्तमेकान्तमियन्तमर्थम्।\nअविस्मृतिस्त्वच्चरणारविन्दे\nभवे भवे मेऽस्तु भवत्प्रसादात्॥ ३॥",
+        "नाहं वन्दे तव चरणयोर्द्वन्द्वमद्वन्द्वहेतोः\nकुम्भीपाकं गुरुमपि हरे नारकं नापनेतुम्।\nरम्यारामामृदुतनुुलतानन्दने नापि रन्तुं\nभावे भावे हृदयभवने भावयेयं भवन्तम्॥ ४॥",
+        "नास्था धर्मे न वसुनिचये नैव कामोपभोगे\nयद्भाव्यं तद्भवतु भगवन्पूर्वकर्मानुरूपम्।\nएतत्प्रार्थ्यं मम बहु मतं जन्मजन्मान्तरेऽपि\nत्वत्पादाम्भोरुहयुगगता निश्चला भक्तिरस्तु॥ ५॥",
+        "दिवि वा भुवि वा ममास्तु वासो\nनरके वा नरकान्तक प्रकामम्।\nअवधीरितशारदारविन्दौ\nचरणौ ते मरणेऽपि चिन्तयामि॥ ६॥",
+        "चिन्तयामि हरिमेव सन्ततं\nमन्दहासमुदिताननाम्बुजम्।\nनन्दगोपतनयं परात्परं\nनारदादिमुनिवृन्दवन्दितम्॥ ७॥",
+        "करचरणसरोजे कान्तिमान्नेत्रमीने\nश्रममुषि भुजवीचिव्याकुलेऽगाधमार्गे।\nहरिसरसि विगाह्यापीय तेजोजलौघं\nभवमरुपरिखिन्नः क्लेशमद्य त्यजामि॥ ८॥",
+        "सरसिजनयने सशङ्खचक्रे\nमुरभिदि मा विरमस्व चित्त रन्तुम्।\nसुखतरमपरं न जातु जाने\nहरिचरणस्मरणामृतेन तुल्यम्॥ ९॥",
+        "माभीर्मन्दमनो विचिन्त्य बहुधा यामीश्चिरं यातना\nनैवामी प्रभवन्ति पापरिपुवः स्वामी ननु श्रीधरः।\nआलस्यं व्यपनीय भक्तिसुलभं ध्यायस्व नारायणं\nलोकस्य व्यसनापनोदनकरो दासस्य किं न क्षमः॥ १०॥",
+        "भवजलधिगतानां द्वन्द्ववाताहतानां\nसुतदुहितृकलत्रत्राणभारार्दितानाम्।\nविषमविषयतोये मज्जतामाप्लवानां\nभवति शरणमेको विष्णुपोतो नराणाम्॥ ११॥",
+        "भवजलधिमगाधं दुस्तरं निस्तरेयं\nकथमहमिति चेतो मा स्म गाः कातरत्वम्।\nसरसिजदृशि देवे तारकी भक्तिरेका\nनरकभिदि निषण्णा तारयिष्यत्यवश्यम्॥ १२॥",
+        "तृष्णातोये मदनपवनोद्धूतमोहोर्मिमाले\nदारावर्ते तनयसहजग्राहसङ्घाकुले च।\nसंसाराख्ये महति जलधौ मज्जतां नस्त्रिधामन्\nपादाम्भोजे वरद भवतो भक्तिनावं प्रयच्छ॥ १३॥",
+        "पृथ्वी रेणुरणुः पयांसि कणिकाः फल्गुः स्फुलिङ्गो लघु-\nस्तेजो निःश्वसनं मरुत्तनुतरं रन्ध्रं सुसूक्ष्मं नभः।\nक्षुद्रा रुद्रपितामहप्रभृतयः कीटाः समस्ताः सुरा\nदृष्टे यत्र स तारको विजयते श्रीपादधूलिकणः॥ १४॥",
+        "हे लोकाः शृणुत प्रसूतिमरणव्याधेश्चिकित्सामिमां\nयोगज्ञाः समुदाहरन्ति मुनयो यां याज्ञवल्क्यादयः।\nअन्तर्ज्योतिरमेयमेकममृतं कृष्णाख्यमापीयतां\nतत्पीतं परमौषधं वितनुते निर्वाणमात्यन्तिकम्॥ १५॥",
+        "हे मर्त्याः परमं हितं शृणुत वो वक्ष्यामि संक्षेपतः\nसंसारार्णवमापदूर्मिबहुलं सम्यक् प्रविश्य स्थिताः।\nनानाज्ञानमपास्य चेतसि नमो नारायणायेत्यमुं\nमन्त्रं सप्रणवं प्रणामसहितं प्रावर्तयध्वं मुहुः॥ १६॥",
+        "नाथे नः पुरुषोत्तमे त्रिजगतामेकाधिपे चेतसा\nसेव्ये स्वस्य पदस्य दातरि परे नारायणे तिष्ठति।\nयं कञ्चित्पुरुषाधमं कतिपयग्रामेशमल्पार्थदं\nसेवावै मृगयामहे नरमहो मूढा वराका वयम्॥ १७॥",
+        "बद्धेनाञ्जलिना नतेन शिरसा गात्रैः सरोमोद्गमैः\nकण्ठेन स्वरगद्गदेन नयनेनोद्गीर्णबाष्पाम्बुना।\nनित्यं त्वच्चरणारविन्दयुगलध्यानामृतास्वादिना-\nमस्माकं सरसीरुहाक्ष सततं सम्पद्यतां जीवितम्॥ १८॥",
+        "यत्कृष्णप्रणिपातधूलिधवलं तद्धर्म तद्वै शिर-\nस्ते नेत्रे तमसोझिते सुरुचिरे याभ्यां हरिर्दृश्यते।\nसा बुद्धिविमलेन्दुशङ्खधवला या माधवध्यायिनी\nसाजिह्वामृतवर्षिणी प्रतिपदं या स्तौति नारायणम्॥ १९॥",
+        "जिह्वे कीर्तय केशवं मुररिपुं चेतो भज श्रीधरं\nपाणिद्वन्द्व समर्चयाच्युतकथाः श्रोत्रद्वय त्वं शृणु।\nकृष्णं लोकय लोचनद्वय हरेर्गच्छाङ्घ्रियुग्मालयं\nजिघ्र घ्राण मुकुन्दपादतुलसीं मूर्धन्नमाधोक्षजम्॥ २०॥",
+        "आम्नायाभ्यसनान्यरन्यरुदितं वेदव्रतान्यन्वहं\nमेदश्छेदफलानि पूर्तविधयः सर्वं हुतं भस्मनि।\nतीर्थानामवगाहनानि च गजस्नानं विना यत्पद-\nद्वन्द्वाम्भोरुहसंस्मृतिं विजयते देवः स नारायणः॥ २१॥",
+        "मदन परिहर स्थितिं मदीये\nमनसि मुकुन्दपदारविन्दधाम्नि।\nहरनयनकृशानुना कृशोऽसि\nस्मरसि न चक्रपराक्रमं मुरारेः॥ २२॥",
+        "नाथे धातरि भोगिभोगशयने नारायणे माधवे\nदेवे देवकिनन्दने सुरवरे चक्रायुधे शार्ङ्गिणि।\nलीलाशेषजगत्प्रपञ्चजठरे विश्वेश्वरे श्रीधरे\nगोविन्दे कुरु चित्तवृत्तिमचलामल्यैस्तु किं वर्तनैः॥ २३॥",
+        "मा द्राक्षं क्षीणपुण्यान् क्षणमपि भवतो भक्तिहीनान्पदाब्जे\nमा श्रौषं श्राव्यबन्धं तव चरितमपास्यान्यदाख्यानजातम्।\nमा स्मार्षं माधव त्वामपि भुवनपते चेतसापह्रुवानान्\nमा भूवं त्वत्सपर्याव्यतिकररहितो जन्मजन्मान्तरेऽपि॥ २४॥",
+        "मज्जन्मनः फलमिदं मधुकैटभारे\nमत्प्रार्थनीयमदनुग्रह एष एव।\nत्वद्भृत्यभृत्यपरिचारकभृत्यभृत्य-\nभृत्यस्य भृत्य इति मां स्मर लोकनाथ॥ २५॥",
+        "तत्त्वं ब्रुवाणानि परं परस्तान्\nमधु क्षरन्तीव मुदावहानि।\nप्रावर्तय प्राञ्जलिरस्मि जिह्वे\nनामानि नारायणगोचराणि॥ २६॥",
+        "नमामि नारायणपादपङ्कजं\nकरोमि नारायणपूजनं सदा।\nवदामि नारायणनामनिर्मलं\nस्मरामि नारायणतत्त्वमव्ययम्॥ २७॥",
+        "श्रीनाथ नारायण वासुदेव\nश्रीकृष्ण भक्तप्रिय चक्रपाणे।\nश्रीपद्मनाभाच्युत कैटभारे\nश्रीराम पद्माक्ष हरे मुरारे॥ २८॥",
+        "अनन्त वैकुण्ठ मुकुन्द कृष्ण\nगोविन्द दामोदर माधवेति।\nवक्तुं समर्थोऽपि न वक्ति कश्चिद्\nअहो जनानां व्यसनाभिमुख्यम्॥ २९॥",
+        "भक्तापायभुजाङ्गगारुडमणिस्त्रैलोक्यरक्षामणि-\nर्गोपीलोचनचातकाम्बुदमणिः सौन्दर्यमुद्रामणिः।\nयः कान्तामणिरुक्मिणीघनकुचद्वन्द्वैकभूषामणिः\nश्रेयो देवशिखामणिर्दिशतु नो गोपालचूड़ामणिः॥ ३०॥",
+        "शत्रुच्छेदैकमन्त्रं सकलमुपनिषद्वक्यसम्पूज्यमन्त्रं\nसंसारोच्छेदमन्त्रं समुचिततमसः सङ्घनिर्याणमन्त्रम्।\nसर्वैश्वर्यैकमन्त्रं व्यसनभुजगसन्दष्टसन्त्राणमन्त्रं\nजिह्वे श्रीकृष्णमन्त्रं जप जप सततं जन्मसाफल्यमन्त्रम्॥ ३१॥",
+        "व्यामोहप्रशमौषधं मुनिमनोवृत्तिप्रवृत्त्यौषधं\nदैत्येन्द्रार्तिकरौषधं त्रिभुवने सञ्जीवनैकौषधम्।\nभक्तात्यन्तहितौषधं भवभयप्रध्वंसनैकौषधं\nश्रेयःप्राप्तिकरौषधं पिब मनः श्रीकृष्णदिव्यौषधम्॥ ३२॥",
+        "कृष्ण त्वदीयपदपङ्कजपञ्जरान्त-\nमद्यैव मे विशतु मानसराजहंसः।\nप्राणप्रयाणसमये कफवातपित्तैः\nकण्ठावरोधनविधौ स्मरणं कुतस्ते॥ ३३॥",
+        "चेतश्चिन्तय कीर्तयस्व रसने नम्रीभव त्वं शिरो\nहस्तावाञ्जलिसम्पुटं रचयतं वन्दस्व दीर्घं वपुः।\nआत्मन्संश्रय पुण्डरीकनयनं नागाचलेन्द्रस्थितं\nधन्यं पुण्यतमं तदेव परमं दैवं हि तत्सिद्धये॥ ३४॥",
+        "शृण्वञ्जनार्दनकथागुणकीर्तनानि\nदेहे न यस्य पुलकोद्गमोमराजिः।\nनोत्पद्यते नयनयोर्विमलाम्बुमाला\nधिक् तस्य जीवितमहो पुरुषाधमस्य॥ ३५॥",
+        "अन्धस्य मे हृतविवेकमहाधनस्य\nचौरैः प्रभो बलिभिरिन्द्रियनामधेयैः।\nमोहान्धकूपकुहरे विनिपातितस्य\nदेवेश देहि कृपणस्य करावलम्बम्॥ ३६॥",
+        "इदं शरीरं परिणामपेशलं\nपतत्यवश्यं शतसन्धिजर्जरम्।\nकिमौषधं पृच्छसि मूढ दुर्मते\nनिरामयं कृष्णरसायनं पिब॥ ३७॥",
+        "आश्चर्यमेतद्धि मनुष्यलोके\nसुधां परित्यज्य विषं पिबन्ति।\nनामानि नारायणगोचराणि\nत्यक्त्वान्यवादः कुहकाः पठन्ति॥ ३८॥",
+        "त्यजन्तु बान्धवाः सर्वे निन्दन्तु गुरवो जनाः।\nतथापि परमानन्दो गोविन्दो मम जीवनम्॥ ३९॥",
+        "सत्यं ब्रवीमि मनुजाः स्वयमूर्ध्वबाहु-\nर्यो यो मुकुन्द नरसिंह जनार्दनेति।\nजीवो जपत्यनुदिनं मरणे रणे वा\nपाषाणकाष्ठसदृशाय ददात्यभीष्टम्॥ ४०॥",
+        "नारायणाय नम इत्यमुमेव मन्त्रं\nसंसारघोरविषनिर्हरणाय नित्यम्।\nशृण्वन्तु भव्यमतयो यतयोऽनुरागाद्\nउच्चैस्तरामुपदिशाम्यहमूर्ध्वबाहुः॥ ४१॥",
+        "चित्तं नैव निवर्तते क्षणमपि श्रीकृष्णपादाम्बुजान्\nनिन्दन्तु प्रियबान्धवा गुरुजना गृह्णन्तु मुञ्चन्तु वा।\nदुर्वादं परिघोषयन्तु मनुजा वंशे कलङ्कोऽस्तु वा\nतादृक्प्रेमधरानुरागमधुना मत्ताय मानं तु मे॥ ४२॥",
+        "कृष्णो रक्षतु नो जगत्त्रयगुरुः कृष्णं नमध्वं सदा\nकृष्णेनाखिलशत्रवो विनिहताः कृष्णाय तस्मै नमः।\nकृष्णादेव समुत्थितं जगदिदं कृष्णस्य दासोऽस्म्यहं\nकृष्णे तिष्ठति विश्वमेतदखिलं हे कृष्ण रक्षस्व माम्॥ ४३॥",
+        "हे गोपालक हे कृपाजलनिधे हे सिन्धुकन्यापते\nहे कंसान्तक हे गजेन्द्रकरुणापारीण हे माधव।\nहे रामानुज हे जगत्त्रयगुरो हे पुण्डरीकाक्ष मां\nहे गोपीजननाथ पालय परं जानामि न त्वां विना॥ ४४॥",
+        "दारा वाराकरवरसुता ते तनूजो विरिञ्चिः\nस्तोता वेदस्तव सुरगणा भृत्यवर्गः प्रसादः।\nमुक्तिर्माया जगदविकलं तावकी देवकी ते\nमाता मित्रं बलरिपुसुतस्तत्त्वदन्यं न जाने॥ ४५॥",
+        "प्रणाममीशस्य शिरःफलं विदु-\nस्तदर्चनं प्राणफलं दिवौकसः।\nमनःफलं तद्गुणतत्त्वचिन्तनं\nवचःफलं तद्गुणकीर्तनं बुधाः॥ ४६॥",
+        "श्रीमन्नाम प्रोच्य नारायणाख्यं\nके न प्रापुर्वाञ्छितं पापिनोऽपि।\nहा नः पूर्वं वाक्प्रवृत्ता न तस्मिं-\nस्तेन प्राप्तं गर्भवासादिदुःखम्॥ ४७॥",
+        "ध्यायन्ति ये विष्णुमनन्तमव्ययं\nहृत्पद्ममध्ये सततं व्यवस्थितम्।\nसमाहितानां सततभयप्रदं\nते यान्ति सिद्धिं परमां तु वैष्णवीम्॥ ४८॥",
+        "तत्त्वं प्रसीद भगवन्कुरु मय्यनाथे\nविष्णो कृपां परमकारुणिकः खलु त्वम्।\nसंसारसागरनिमग्नमनन्त दीन-\nमुद्धर्तुमर्हसि हरे पुरुषोत्तमोऽसि॥ ४९॥",
+        "क्षीरसागरतरङ्गशीकरा-\nसारतारकितचारुमूर्तये।\nभोगिभोगशयनीयशायिने\nमाधवाय मधुविद्विषे नमः॥ ५०॥",
+        "अलमलमलमेका प्राणिनां पातकानां\nनिरसनविषये या कृष्ण कृष्णेति वाणी।\nयदि भवति मुकुन्दे भक्तिरानन्दसान्द्रा\nकरतलकलिता सा मोक्षसाम्राज्यलक्ष्मीः॥ ५१॥",
+        "यस्य प्रियौ श्रुतिधरौ कविलोकवीरौ\nमित्रौ द्विजन्मवरपद्मशरावभूताम्।\nतेनाम्बुजाक्षचरणाम्बुजषट्पदेन\nराज्ञा कृता कृतिरियं कुलशेखरेण॥ ५२॥",
+        "मुकुन्दमालां पठतां नराणा-\nमशेषसौख्यं लभते न कः स्वित्।\nसमस्तपापक्षयमेत्य देही\nप्रयाति विष्णोः परमं पदं तत्॥ ५३॥"
+      ],
+      translations: [
+        "हे मेरे स्वामी मुकुन्द! कृपा करके आप मुझे अपने नामों का निरन्तर कीर्तन करने वाला बनने दीजिये, जिससे मैं आपको इस तरह सम्बोधित कर सकूं—श्रीवल्लभ (जो लक्ष्मी को अत्यन्त प्रिय हैं), वरद (जो वर देने वाले हैं), दयापर (जो अहैतुक रूप से दयालु हैं), भक्तप्रिय (जो अपने भक्तों को अति प्रिय हैं), भव-लुण्ठन-कोविद (जो जन्म-मृत्यु के चक्कर को समाप्त करने में दक्ष हैं), नाथ (परमेश्वर), जगन्-निवास (ब्रह्माण्ड के आश्रय) तथा नाग-शयन (नागशय्या पर लेटने वाले)।",
+        "श्रीमती देवकीदेवी के पुत्र के रूप में विख्यात पुरुषोत्तम भगवान् की जय हो! वृष्णि वंश के उज्ज्वल प्रकाश भगवान् कृष्ण की जय हो! उन भगवान् की जय हो, जिनके कोमल शरीर का रंग नवीन बादल के श्यामल वर्ण जैसा है! उन भगवान् मुकुन्द की जय हो, जो पृथ्वी के भार को हटाने वाले हैं!",
+        "हे भगवान् मुकुन्द! मैं आपके समक्ष नतमस्तक हूँ और आपसे आदरपूर्वक याचना करता हूँ कि आप मेरी इस एक इच्छा को पूरा करें कि मैं अपने प्रत्येक भावी जन्म में आपके चरणकमलों का सदा ही स्मरण करता रहूँ और उन्हें कभी न भूलूँ।",
+        "हे भगवान् हरि! मैं न तो भौतिक संसार के द्वैतों से, न ही कुम्भीपाक नरक के दारुण कष्टों से अपने आपको बचाये जाने के लिए आपके चरणकमलों की वन्दना कर रहा हूँ। न ही मेरा उद्देश्य नन्दनकानन में निवास करने वाली कोमल त्वचा वाली सुन्दरियों का भोग करना है। मैं तो आपके चरणकमलों पर इसलिए प्रार्थना करता हूँ कि मैं जन्म-जन्मान्तर अपने हृदय के अन्तर्भाग में एकमात्र आपका स्मरण कर सकूँ।",
+        "हे प्रभु! मेरी अनुरक्ति न तो धर्म में है, न ही धन संचय करने में और न ही इन्द्रियतृप्ति में। ये सब मेरे विगत कर्मों के अनुसार अनिवार्यतः आते हैं, तो आएँ। किन्तु मैं इस अत्यन्त मनवांछित वरदान के लिए प्रार्थना करता हूँ कि जन्म-जन्मान्तर आप मुझे अपने दोनों चरणकमलों की अचल भक्ति सम्पन्न करने दें।",
+        "नरकासुर का वध करने वाले हे प्रभु! आप जहाँ भी चाहें—देवलोक, मनुष्यलोक या नरक में—मुझे निवास दें। मेरी एकमात्र यही विनती है कि मृत्यु के समय मैं आपके उन युगल चरणकमलों का स्मरण कर सकूँ, जिनका सौन्दर्य शरत्कालीन कमल को चुनौती देने वाला है।",
+        "मैं सदैव भगवान् हरि का चिन्तन करता हूँ, जिनके कमल समान प्रसन्न मुखमण्डल में मृदु मुस्कान बनी रहती है। यद्यपि वे नन्द गोप के पुत्र हैं, वे परम पूर्ण सत्य भी हैं, जो नारद जैसे महान् मुनियों द्वारा पूजित हैं।",
+        "भौतिक अस्तित्व रूपी मरुस्थल ने मुझे थका दिया है। किन्तु आज मैं भगवान् हरि रूपी झील में गोता लगाकर और उनके तेज रूपी अगाध जल का मुक्त भाव से पान करके सारे कष्टों को एक ओर फेंक दूँगा। भगवान् के हाथ पाँव उस झील में खिले कमल हैं और उनकी चमकीली आँखें मछलियाँ हैं। उस झील का जल समस्त थकान को मिटाने वाला है और वह भगवान् के हाथों द्वारा उत्पन्न लहरों से उद्वेलित रहता है। उसकी धारा अथाह गहरी बहती है।",
+        "हे मन, तुम उन कमल सदृश नेत्रवाले तथा शंख एवं चक्र धारण करने वाले मुर राक्षस के संहारक के विषय में चिन्तन करने से मिलने वाले आनन्द को प्राप्त करने से कभी रुकना नहीं। वस्तुतः मुझे अन्य ऐसी कोई वस्तु ज्ञात नहीं है, जो भगवान् हरि के दैवी चरणों का ध्यान करने जैसा अगाध आनन्द देने वाली हो।",
+        "अरे मूर्ख मन! तुम यमराज द्वारा दी जाने वाली यातनाओं के बारे में बार बार सोचना बन्द करो। तुम्हारे शत्रु, जो तुम्हारे द्वारा किये गये पापों के कर्मफल हैं, भला तुम्हें कैसे छू सकते हैं? क्या तुम्हारे स्वामी परमेश्वर नहीं हैं, जो लक्ष्मी देवी के पति हैं? तुम सारा संकोच दूर करके अपने विचारों को उन भगवान् नारायण पर एकाग्र करो, जिन्हें भक्तिमय सेवा द्वारा आसानी से प्राप्त किये जा सकते हैं। सम्पूर्ण संसार के कष्टों को दूर करने वाले भला अपने दास के लिए क्या नहीं कर सकते?",
+        "जन्म-मृत्यु के इस विस्तृत सागर में भौतिक द्वन्द्वों के झोंके लोगों को उड़ाये ले जा रहे हैं। जब वे इन्द्रियलिप्तता के विषम जल में थपेड़े खाते रहते हैं और उनकी सहायता के लिए कोई नाव नहीं रहती, तो वे अपने पुत्रों, पुत्रियों तथा पत्नियों को बचाने की आवश्यकता के कारण अत्यन्त दुःखी रहते हैं। उन्हें केवल विष्णु रूपी नाव ही बचा सकती है।",
+        "हे मन! तुम यह सोचकर मत व्यग्र हो कि मैं इस भौतिक अस्तित्व वाले संसार रूपी अगाध तथा दुर्लङ्घ्य सागर को कैसे पार कर सकूँगा? तुम्हें यदि कोई बचा सकता है, तो वह भक्ति है। यदि तुम इस भक्ति को नरकासुर के विनाशकर्ता कमलनयन भगवान् को अर्पित कर सको, तो यह भक्ति तुम्हें निश्चित रूप से समुद्र के उस पार ले जाएगी।",
+        "हे तीनों लोकों के स्वामी! हम इस संसार रूपी अगाध सागर में डूब रहे हैं, जो भौतिक लालसाओं रूपी जल से भरा हुआ है, जिसमें मोह रूपी अनेक लहरें उठ रही हैं, जो वासना रूपी हवाओं के द्वारा विलोड़ित है। इस सागर में पत्नी रूपी भँवर हैं और हमारे पुत्र तथा भ्राता रूपी शार्कों तथा अन्य समुद्री दैत्यों के विशाल झुंड हैं। हे समस्त वरों के दाता! कृपा करके अपने चरणकमल रूपी भक्ति की नाव पर मुझे स्थान दें।",
+        "एकबार अपने रक्षक के दर्शन पा लेने के बाद सारी पृथ्‍वी धूलकण सदृश बन जाती है, समुद्र का सारा जल मात्र बूंदें बन जाता है, अग्नि क्षुद्र चिनगारी बन जाती है, वायु हल्की आह बनकर रह जाती है और विस्तृत आकाश एक लघु छिद्र बन जाता है। रुद्र तथा पितामह ब्रह्मा जैसे महान् देवता तुच्छ बन जाते हैं और सारे देवता छोटे छोटे कीटों के समान लगने लगते हैं। निस्सन्‍देह, अपने प्रभु के चरणों की धूल का एक कण सभी को जीत लेता है।",
+        "अरे लोगों! जन्म तथा मृत्यु के रोग के लिए यह उपचार सुनो! यह कृष्ण का नाम है। इसकी संस्तुति याज्ञवल्क्य तथा अन्य ज्ञानी पटु योगियों ने की है। यह असीम नित्य आन्तरिक प्रकाश सर्वश्रेष्ठ औषधि है, क्योंकि पीने पर यह पूर्ण तथा चरम मोक्ष देने वाली है। जरा इसे पियो तो!",
+        "हे मरणशील मनुष्यों, तुम लोगों ने अपने आपको संसार-सागर में पूर्णतया डूबोकर रखा है, जो विपत्ति रूपी लहरों से पूरित है। कृपया सुनो, जैसे मैं तुम लोगों को संक्षेप में बतला रहा हूँ कि अपने परम लाभ को किस तरह प्राप्त किया जाये। तुम लोग ज्ञान प्राप्त करने के विविध प्रयासों को ताक में रखकर ॐ नमो नारायणाय मन्त्र का निरन्तर जप करना तथा भगवान् को सिर झुकाकर प्रणाम करना प्रारम्भ कर दो।",
+        "हमारे स्वामी भगवान् नारायण, जो अकेले तीनों लोकों में शासन करते हैं, जिनकी सेवा ध्यान में की जा सकती है और जो अपने निजी धाम में प्रसन्नतापूर्वक सबों को स्थान देते हैं, वे हमारे समक्ष प्रकट हैं। फिर भी हम कुछ गाँवों के किसी छोटे स्वामी की, ऐसे निम्न पुरुष की, जो हमें छोटा पुरस्कार दे सकता है, सेवा करने की याचना करते हैं। हाय! हम कितने मूढ़ हैं!",
+        "हे कमलनयन भगवान्! कृपया हमारे जीवन का भरणपोषण करें, क्योंकि हम आपके चरणकमलों के ध्यान रूपी अमृत का निरन्तर आस्वाद ले रहे हैं; हमारी हथेलियाँ स्तुति के लिए जुड़ी हुई हैं, हम नतमस्तक हैं, हर्ष में हमारे शरीर के सारे रोम खड़े हैं, भावुकता से हमारी वाणी रुद्ध है और हमारे नेत्रों से आँसू बह रहे हैं।",
+        "जो सिर भगवान् कृष्ण के सामने झुकने से लगी धूल से धवल है, वही सर्वोच्च है। वे आँखें सर्वाधिक सुन्दर हैं, जिन्होंने भगवान् हरि का दर्शन करने के बाद अन्धकार को त्याग दिया है। वह बुद्धि जो भगवान् माधव पर एकाग्र रहती है, वह उसी तरह विमल है, जिस तरह चन्द्रमा या शंख का उज्ज्वल तेज होता है। और वह जीभ अमृत वर्षा करती है, जो निरन्तर भगवान् नारायण की महिमा का गान करती है।",
+        "हे जीभ, तुम भगवान् केशव के यश का गुणगान करो। हे मन, तुम मुर के शत्रु की पूजा करो। हे हाथो, तुम श्रीपति की सेवा करो। हे कानो, तुम भगवान् अच्युत की कथाएँ सुनो। हे आँखो, तुम श्रीकृष्ण को निहारो। हे पाँवो, तुम भगवान् हरि के मन्दिर जाओ। हे नाक, तुम भगवान् मुकुन्द के चरणों पर चढ़ी तुलसी-मंजरियों को सूंघो। हे सिर, तुम भगवान् अधोक्षज को नमन करो।",
+        "भगवान् नारायण की जय हो! उनके चरणकमलों के स्मरण के बिना शास्त्रों का पाठ यों ही अरण्यरोदन जैसा है, वेदों द्वारा आदिष्ट कठिन व्रतों का नियमित रूप से पालन करना शरीर का मोटापा कम करने की विधि के अलावा और कुछ नहीं है। निर्दिष्ट पुण्य कर्मों को सम्पन्न करना मानो राख में आहुतियाँ डालना है और विभिन्न पवित्र स्थानों में स्नान करना गजस्नान के समान है।",
+        "हे कामदेव, तुम मेरे मन में बने अपने आवास को छोड़ दो, क्योंकि अब वह भगवान् मुकुन्द के चरणकमलों का निवास स्थान है। तुम पहले ही शिव की प्रचण्ड चितवन से भस्म किये जा चुके हो, तो फिर तुम भगवान् मुरारी के चक्र की शक्ति को क्यों भूल गये?",
+        "हे मनुष्यो, अपने एकमात्र स्वामी तथा पालनकर्ता भगवान् का चिन्तन करो, जो नारायण तथा माधव कहलाते हैं और जो अनन्त नाग के शरीर पर शयन करते हैं। वे देवकी के लाड़ले पुत्र, देवताओं के नायक तथा गौवों के स्वामी हैं। वे शंख तथा शार्ङ्ग धनुष धारण करते हैं। वे लक्ष्मी के पति हैं तथा उन समस्त ब्रह्माण्डों के नियन्ता हैं, जिन्हें लीला के रूप में वे अपने उदर से प्रकट करते हैं। तुम उनके अतिरिक्त अन्य किसी के बारे में सोचकर क्या पाओगे?",
+        "हे माधव, आप उन लोगों पर मेरी दृष्टि भी न जाने दें, जिनके पुण्यकर्म इतने क्षीण हो चुके हैं कि उन्हें आपके चरणकमलों में कोई अनुरक्ति नहीं है। कृपया आप मुझे अपनी लीलाओं के बारे में सुनने से ध्यान न हटाने दें, जिससे कि मैं अन्य कथाओं में रुचि लेने लगूँ। हे ब्रह्माण्ड के स्वामी! मैं उन लोगों पर ध्यान न दूँ, जो आपके विषय में चिन्तन करने से दूर रहना चाहते हैं और आप मुझे कभी भी जन्म-जन्मान्तर अपनी तुच्छ से भी तुच्छ सेवा करने में असमर्थ न बनने दें।",
+        "हे मधु तथा कैटभ के शत्रु, हे ब्रह्माण्ड के स्वामी, मेरे जीवन की पूर्णता तथा मुझ पर आप जो सर्वाधिक अभिलषित दया दिखा सकते हैं, वह यही होगी कि आप मुझे अपने दास के दास के दास के दास के दास के दास का दास मानें।",
+        "मेरी प्रिय जीभ, मैं हाथ जोड़कर तुम्हारे समक्ष खड़ा हूँ और तुम से भगवान् नारायण के नाम गाकर सुनाने के लिए प्रार्थना करता हूँ। परम पूर्ण सत्य का बखान करने वाले ये नाम अति आनन्द प्रदान करते हैं, मानो उनसे शहद टपक रहा हो।",
+        "मैं प्रतिक्षण शीश झुकाकर नारायण के चरणकमलों को नमस्कार करता हूँ, नारायण की पूजा करता हूँ। मैं नारायण के शुद्ध नाम का उच्चारण करता हूँ और नारायण के अचूक सत्य का ध्यान करता हूँ।",
+        "हे श्रीनाथ, नारायण, वासुदेव, दिव्य कृष्ण! हे अपने भक्तों के दयालु मित्र! हे चक्रपाणि, पद्मनाभ, अच्युत, कैटभारि, राम, पद्माक्ष, हरि, मुरारी!",
+        "हे अनन्त, वैकुण्ठ, मुकुन्द, कृष्ण, गोविन्द, दामोदर, माधव! यद्यपि सारे लोग आपको (यों) पुकार सकते हैं किन्तु वे चुप रहते हैं। देखो न, वे अपने ही संकट के लिए कैसे उत्सुक हैं!",
+        "अपने पंखों पर भगवद्भक्तों को ले जाने वाले गरुड़ की पीठ पर सवार वे (कृष्ण) मणि हैं। वे वह चमत्कारी मणि हैं, जो तीनों लोकों की रक्षा करने वाला है। वे मणि सदृश बादल हैं, जो गोपियों के चातक (पपीहा) सदृश नेत्रों को आकृष्ट करने वाले हैं और वे उन सबों के बीच मणितुल्य हैं, जो बहुत ही भद्रतापूर्वक भावभंगिमा दिखाते हैं। वे उन महारानी रुक्मिणी के विपुल स्तनों पर एकमात्र मणिजटित आभूषण हैं, जो स्वयं ही प्रेयसियों की मणिरूपा हैं। समस्त देवताओं के चूड़ामणि स्वरूप, गोपों में सर्वश्रेष्ठ, वे हमें परम आशीष प्रदान करें।",
+        "हे जीभ, तुम कृपया श्रीकृष्ण के नामों से रचे गये मन्त्र का निरन्तर जप करो। यह समस्त शत्रुओं का विनाश करने के लिए एकमात्र मन्त्र है। यह मन्त्र उपनिषदों के प्रत्येक शब्द द्वारा पूजित है, यह मन्त्र संसार को समूल नष्ट करता है, यह मन्त्र अज्ञान के सारे अन्धकार को भगाता है। यह अनन्त ऐश्वर्य प्राप्त करने, सांसारिक क्लेश रूपी विषैले साँप द्वारा डसे गये लोगों को अच्छा करने और इस संसार में जन्म को सफल बनाने वाला मन्त्र है।",
+        "मेरे मन! तुम कृपया श्रीकृष्ण की महिमा रूपी दिव्य औषधि का पान करो। यह मोह रूपी रोग को ठीक करने, मुनियों को अपने मन को ध्यान में लीन करने के लिए प्रोत्साहित करने तथा बलशाली दैत्यों को यातना देने के लिए परिपूर्ण औषधि है। यह तीनों लोकों को पुनः जीवनदान देने और भगवान् के भक्तों को असीम वर प्रदान करने के लिए एकमात्र औषधि है। वस्तुतः यह एकमात्र औषधि है, जो किसी के भी भौतिक अस्तित्व के भय को नष्ट कर सकती है तथा उसे परम कल्याण की प्राप्ति करा सकती है।",
+        "हे भगवान् कृष्ण, इस समय मेरे मन रूपी राजहंस को अपने चरणकमल के डण्ठल के जाल में प्रवेश करने दें। मृत्यु के समय जब मेरा गला कफ, वात तथा पित्त से अवरुद्ध हो जाएगा, तब मेरे लिए आपका स्मरण करना कैसे सम्भव हो सकेगा?",
+        "हे मन, उन कमलनयन भगवान् का चिन्तन करो, जो पर्वताकार अनन्त नाग पर लेटे हैं। हे जीभ, तुम उनकी महिमा का गायन करो। हे सिर, तुम उनके समक्ष झुको। ओ हाथो, अपनी हथेलियाँ जोड़कर उनकी प्रार्थना करो। हे शरीर, तुम उन्हें दण्डवत् प्रणाम करो। हे हृदय, उनकी पूर्ण शरण लो। वे परमेश्वर ही सर्वोच्च विग्रह हैं। एकमात्र वे ही पूर्ण मंगलकारी और परम विशुद्धकारी हैं। वे ही शाश्वत सिद्धि के प्रदायक हैं।",
+        "जो व्यक्ति भगवान् जनार्दन की लीलाओं तथा उनके यशस्वी गुणों का वर्णन सुनता है, किन्तु जिसके शरीर में हर्ष से रोमांच नहीं होता तथा जिसकी आँखों में शुद्ध प्रेम के अश्रुओं का प्रवाह नहीं होता—ऐसा व्यक्ति निस्सन्‍देह अत्यन्त निम्न स्तर का धूर्त है। उसका जीवन कितना गर्हित है!",
+        "हे प्रभु! मेरी इन्द्रियों रूपी शक्तिशाली चोरों ने मेरी सर्वाधिक मूल्यवान सम्पत्ति, मेरा विवेक चुराकर मुझे अंधा कर दिया है और मुझे मोह के गहरे अन्धकूप में फेंक दिया है। हे देवाधिदेव! अपना हाथ बढ़ायें और इस दुष्टात्मा को बचा लें।",
+        "इस शरीर का सौन्दर्य क्षणिक है और बुढ़ापे में जब इसके सैकड़ों जोड़ ऐंठ जाएँगे, तो इसकी मृत्यु होनी निश्चित है। तो फिर मोहग्रस्त मूर्ख! तू क्यों दवा माँग रहा है? बस, कृष्णामृत को ग्रहण कर, जो अचूक उपचार है।",
+        "मानव समाज का सबसे बड़ा आश्चर्य यह है कि लोग न सुधरने पर इतने अड़े हुए हैं कि वे नारायण के नामों के जीवनदायी अमृत को छोड़कर अन्य सब कुछ बोल कर विषपान कर लेते हैं।",
+        "चाहे मेरे सारे कुटुम्बीजन मेरा परित्याग कर दें और मेरे वरिष्ठजन मेरी निन्दा करें, फिर भी परम आनन्दमय गोविन्द मेरे प्राणाधार बने हुए हैं।",
+        "हे मनुष्यो! मैं अपनी भुजाएँ ऊँची उठाकर सत्य वचन कह रहा हूँ। जो भी मर्त्य प्राणी मुकुन्द, नृसिंह तथा जनार्दन नामों का नित्यप्रति जप करता है, वह चाहे युद्ध में हो या मृत्यु के समक्ष हो, अपनी सर्वाधिक अभीष्ट आकांक्षाओं को पत्थर या काठ के टुकड़े जैसा मानने लगेगा।",
+        "मैं अपनी भुजाएँ उठाकर उच्च स्वर में यह दयापूर्ण सलाह यथासम्भव जोर से पुकारकर दे रहा हूँ—यदि संन्यासी लोग भीषण विषाक्त भौतिक जीवन से उबरना चाहते हैं, तो उन्हें इतना सद्ज्ञान होना चाहिए कि वे ॐ नमो नारायणाय मन्त्र का निरन्तर श्रवण करें।",
+        "मेरा मन क्षणभर के लिए भी श्रीकृष्ण के चरणकमलों से विमुख नहीं हो सकता, चाहे मेरे प्रियजन तथा अन्य सम्बन्धी मेरी निन्दा करें, चाहे मेरे वरिष्ठजन मुझे स्वीकारें या त्याग दें, सामान्यजन मेरे विषय में दुष्प्रचार करें, भले ही मेरे कुल की प्रतिष्ठा कलंकित हो। मुझ जैसे पागल व्यक्ति के लिए यही सम्मान पर्याप्त है कि ईश्वर के प्रेम की इस बाढ़ का अनुभव करूँ, जो मेरे प्रभु के प्रति आकर्षण का अनुराग लाने वाली है।",
+        "तीनों लोकों के गुरु, कृष्ण हमारी रक्षा करें। कृष्ण के समक्ष सदा शीश झुकाएँ। कृष्ण ने हमारे समस्त शत्रुओं का वध किया है। कृष्ण को हमारा नमस्कार है। कृष्ण से ही यह जगत अस्तित्व में आया है। मैं कृष्ण का दास हूँ। यह सम्पूर्ण ब्रह्माण्ड कृष्ण के भीतर स्थित है। हे कृष्ण! कृपा करके मेरी रक्षा करें।",
+        "हे युवा गोप! हे करुणासिन्धु! हे सागरकन्या लक्ष्मी के पति! हे कंस के संहारक! हे गजेन्द्र के करुणामय उद्धारक! हे माधव! हे बलराम के अनुज! हे तीनों लोकों के गुरु! हे गोपियों के कमलनयन प्रभु! मैं अन्य किसी को आपसे बढ़कर महान् नहीं जानता। कृपया मेरी रक्षा करें।",
+        "आपकी सुन्दर सी पत्नी सागर की पुत्री हैं और आपके पुत्र ब्रह्माजी हैं। वेद आपके वंदीजन (चारण) हैं, देवतागण आपके दास हैं और मोक्ष आपका वरदान है, जबकि यह सम्पूर्ण ब्रह्माण्ड आपकी चमत्कारी शक्ति का प्रदर्शन है। श्रीमती देवकी आपकी माता हैं और इन्द्रपुत्र अर्जुन आपका सखा है। इसलिए मुझे आपके अलावा अन्य किसी में कोई रुचि नहीं है।",
+        "स्वर्गलोक के चतुर निवासी जानते हैं कि सिर की पूर्णता भगवान् को दण्डवत् प्रणाम करने, प्राण की पूर्णता भगवान् की पूजा करने, मन की पूर्णता उनके दिव्य गुणों के बारे में विस्तार से मनन करने तथा वाणी की पूर्णता उनके गुणों के यश का कीर्तन करने में है।",
+        "क्या कभी ऐसा हुआ है कि पापी से पापी व्यक्ति की, जिसने कभी उच्च स्वर से नारायण के शुभ नाम का उच्चारण किया हो, इच्छाएँ पूरी न हुई हों? किन्तु हाय! हमने कभी भी उस तरह से अपनी वाक्शक्ति का प्रयोग नहीं किया; इसलिए हमें गर्भ में रहने जैसे कष्ट भोगने पड़े।",
+        "असीम तथा अव्यय विष्णु, जो हृदय रूपी कमल में सदैव विद्यमान रहते हैं, उन लोगों को निर्भीकता प्रदान करते हैं, जो अपनी बुद्धि को उन पर स्थिर करते हैं। जो भक्त उनका ध्यान करते हैं, वे वैष्णवों की सर्वोच्च सिद्धि को प्राप्त करेंगे।",
+        "हे परमेश्वर! हे विष्णु! आप परम दयालु हैं। अतः अब आप मुझ पर प्रसन्न हों और इस असहाय प्राणी को अपनी कृपा प्रदान करें। हे अनन्त भगवान्, भवसागर में डूब रहे इस दुखियारे को आप उबार लें। हे भगवान् हरि, आप ही पूर्ण पुरुषोत्तम भगवान् हैं।",
+        "मधु दैत्य के शत्रु, भगवान् माधव को नमस्कार है। शेषनाग की शैया पर लेटा हुआ उनका सुन्दर रूप क्षीरसागर की तरंगों से उठने वाले छींटों से सुशोभित है।",
+        "\u0027कृष्ण कृष्ण\u0027 ये शब्द स्वयं में समस्त जीवों के पापों से छुटकारा पाने के लिए पर्याप्त हैं। जो व्यक्ति अत्यधिक आनन्द से युक्त भगवान् मुकुन्द की भक्ति में संलग्न है, वह अपनी हथेली में मोक्ष, सांसारिक प्रभाव तथा सम्पत्ति के उपहार धारण करता है।",
+        "यह ग्रन्थ राजा कुलशेखर द्वारा रचा गया, जो कमलनेत्र भगवान् के चरणकमलों में मधुमक्खी के समान हैं। राजा के दो प्रिय मित्र ब्राह्मण जाति के अति सुंदर कमल के दो नालों के समान हैं, जो कवि समुदाय के नायकों के रूप में विख्यात कुशल वैदिक पंडित हैं।",
+        "इस मुकुन्दमाला का पाठ करने वालों में से ऐसा कौन है, जिसे पूर्ण सुख प्राप्त नहीं होगा? जो भी देहधारी जीव इन स्तुतियों का उच्चारण करता है, उसके सारे पापफल समूल नष्ट हो जाते हैं और वह सीधे भगवान् विष्णु के परम धाम को जाता है।"
+      ]
+    },
+    "240": {
+      title: "श्री नन्दनन्दनाष्टकम् (Śrī Nanda-Nandanāṣṭakam)",
+      transliterations: [
+        "श्री नन्द-नन्दनाष्टक\nसु-चारु-वक्त्र-मण्डलं\nसु-कर्ण-रत्न-कुण्डलम्\nसु-चर्चिताङ्ग-चन्दनं\nनमामि नन्द-नन्दनम्",
+        "सु-दीर्घ-नेत्र-पङ्कजं\nशिखी-शिखण्ड-मूर्धजम्\nअनङ्ग-कोटि-मोहनं\nनमामि नन्द-नन्दनम्",
+        "सु-नासिकाग्र-मौक्तिकं\nस्वच्छन्द-दन्त-पङ्क्तिकम्\nनवाम्बुदाङ्ग-चिक्कणं\nनमामि नन्द-नन्दनम्",
+        "करेण वेणु-रञ्जितम्\nगती-करीन्द्र-गञ्जितम्\nदुकूल-पीत-शोभनं\nनमामि नन्द-नन्दनम्",
+        "त्रि-भङ्ग-देह-सुन्दरं\nनख-द्युति-सुधाकरम्\nअमूल्य-रत्न-भूषणं\nनमामि नन्द-नन्दनम्",
+        "सु-गन्ध-अङ्ग-सौरभं\nउरो-विराजि-कौस्तुभम्\nस्फुरच्-छ्रीवत्स-लञ्छनं\nनमामि नन्द-नन्दनम्",
+        "वृन्दावन-सु-नागरं\nविलासानुग-वाससम्\nसुरेन्द्र-गर्व-मोचनं\nनमामि नन्द-नन्दनम्",
+        "व्रजाङ्गना-सु-नायकं\nसदा सुख-प्रदायकम्\nजगन्-मनः-प्रलोभनं\nनमामि नन्द-नन्दनम्",
+        "श्री-नन्द-नन्दनाष्टकं\nपठेद् यः श्रद्धयान्वितः\nतरेद् भवाब्धि-दुस्तरं\nलभेत् तद्-अङ्घ्रि-युग्मकम्"
+      ],
+      translations: [
+        "The circle of His fcae is graceful and handsome. Jewel earrings adorn His graceful ears. Sandal paste anoints His graceful limbs. To Nanda\u0027s son I offer my respectful obeisances.",
+        "His large eyes are lotus flowers. A peacock feather decorates the hair of His head. He is more charming than millions of Kāmadevas. To Nanda\u0027s son I offer my respectful obeisances.",
+        "A pearl decorates the tip of His nose. His teeth are splendid. His form glistens like a new raincloud. To Nanda\u0027s son I offer my respectful obeisances.",
+        "A glorious flute rests in His hand. His motions are more graceful than the king of elephants\u0027. He wears glistening yellow silk garments. To Nanda\u0027s son I offer my respectful obeisances.",
+        "His graceful form bends in three places. He is like a moon shining in the sky. He is adorned with priceless jewel ornaments. To Nanda\u0027s son I offer my respectful obeisances.",
+        "His limbs are fragrant. A Kaustubha jewel glistens on His chest. He bears the glorious Śrīvatsa mark. To Nanda\u0027s son I offer my respectful obeisances.",
+        "He is the playful hero of Vṛndāvana. His garments are glorious. He removed great Indra\u0027s pride. To Nanda\u0027s son I offer my respectful obeisances.",
+        "He enjoys pastimes with Vraja\u0027s girls. He is always delightful. He charms the hearts of all the worlds. To Nanda\u0027s son I offer my respectful obeisances.",
+        "I pray that the faithful person who reads or recites this Śrī Nanda-nandanāṣṭaka will cross the impassable ocean of birth and death and attain the feet of Nanda\u0027s son."
+      ]
+    },
+
     "241": {
       title: "शुद्ध-भकत-चरण-रेणु",
       transliterations: [
@@ -2519,6 +3220,22 @@
         "मुख से 'हरि हरि' बोलो! अब और कितनी नींद सोओगे? श्री चैतन्य महाप्रभु की मंगलमयी कथाओं को सुनकर अपने जीवन को शीतल करो।"
       ]
     },
+    "261": {
+      title: "वन्दे विश्वम्भर पद कमलम (Vande Viśvambhara)",
+      transliterations: [
+        "वन्दे विश्वम्भर-पद-कमलम्\nखण्डित-कलियुग-जन-मल-समलम्",
+        "सौरभ-कर्षित निज-जन-मधुपम्\nकरुणा खण्डित-विरह-वितापम्",
+        "नाशित-हृद्-गत-माया-तिमिरम्\nवर-निज-कान्त्या जगताम् अचिरम्",
+        "सतत-विराजित-निरुपम-शोभम्\nराधा-मोहन कल्पित विलोभम्"
+      ],
+      translations: [
+        "I offer prayers to the lotus feet of Visvambhara, who cuts away the defective consciousness of those who are influenced by Kali-yuga.",
+        "With the fragrance of His supremely sweet philosophy, name, qualities, etc., Mahaprabhu attracts His honeybee-like followers. By His causeless mercy, He removes the anguish of separation of His dear associates (like Advaita Acarya).",
+        "For a long time the hearts of the jivas in this world have been afflicted with ignorance due to maya, which He instantly destroys with His brilliant effulgence.",
+        "Radha-mohana, having become greatly attracted to Mahaprabhu whose unmatched splendor is always radiating out, is broadcasting His glories to all."
+      ]
+    },
+
     "262": {
       title: "विभावरी शेष (अरुणोदय कीर्तन २)",
       transliterations: [
@@ -2628,6 +3345,148 @@
       ]
     }
 ,
+    "166": {
+      title: "श्री नृसिंह कवचम् (Śrī Nṛsiṁha Kavacam)",
+      transliterations: [
+        "नृसिंह-कवचं वक्ष्ये\nप्रह्लादेनोदितं पुरा\nसर्व-रक्षा-करं पुण्यं\nसर्वोपद्रव-नाशनम्",
+        "सर्व-सम्पत्-करं चैव\nस्वर्ग-मोक्ष-प्रदायकम्\nध्यात्वा नृसिंहं देवेशं\nहेम-सिंहासन-स्थितम्",
+        "विवृतास्यं त्रि-नयनं\nशरद्-इन्दु-सम-प्रभम्\nलक्ष्म्य्-आलिङ्गित-वामाङ्गं\nविभूतिभिर् उपाश्रितम्",
+        "चतुर्-भुजं कोमलाङ्गं\nस्वर्ण-कुण्डल-शोभितम्\nसरोज-शोभितोरस्कं\nरत्न-केयूर-मुद्रितम्",
+        "तप्त-काञ्चन-सङ्काशं\nपीत-निर्मल-वाससम्\nइन्द्रादि-सुर-मौलिष्ठः\nस्फुरन् माणिक्य-दीप्तिभिः",
+        "विराजित-पद-द्वन्द्वं\nशङ्ख-चक्रादि-हेतिभिः\nगरुत्मता च विनयात्\nस्तूयमानं मुदान्वितम्",
+        "स्व-हृत्-कमल-संवासं\nकृत्वा तु कवचं पठेत्\nनृसिंहो मे शिरः पातु\nलोक-रक्षार्थ-सम्भवः",
+        "सर्वगो ’पि स्तम्भ-वासः\nफालं मे रक्षतु ध्वनिम्\nनृसिंहो मे दृशौ पातु\nसोम-सूर्याग्नि-लोचनः",
+        "स्मृतिं मे पातु नृहरिः\nमुनि-वर्य-स्तुति-प्रियः\nनासां मे सिंह-नासस् तु\nमुखं लक्ष्मी-मुख-प्रियः",
+        "सर्व-विद्याधिपः पातु\nनृसिंहो रसनां मम\nवक्त्रं पात्व् इन्दु-वदनं\nसदा प्रह्लाद-वन्दितः",
+        "नृसिंहः पातु मे कण्ठं\nस्कन्धौ भू-भरणान्त-कृत्\nदिव्यास्त्र-शोभित-भुजः\nनृसिंहः पातु मे भुजौ",
+        "करौ मे देव-वरदो\nनृसिंहः पातु सर्वतः\nहृदयं योगि-साध्यश् च\nनिवासं पातु मे हरिः",
+        "मध्यं पातु हिरण्याक्ष\nवक्षः-कुक्षि-विदारणः\nनाभिं मे पातु नृहरिः\nस्व-नाभि-ब्रह्म-संस्तुतः",
+        "ब्रह्माण्ड-कोटयः कट्यां\nयस्यासौ पातु मे कटिम्\nगुह्यं मे पातु गुह्यानां\nमन्त्राणां गुह्य-रूप-धृक्",
+        "ऊरू मनोभवः पातु\nजानुनी नर-रूप-धृक्\nजङ्घे पातु धरा-भार\nहर्ता यो ’सौ नृ-केशरी",
+        "सुर-राज्य-प्रदः पातु\nपादौ मे नृहरीश्वरः\nसहस्र-शीर्षा-पुरुषः\nपातु मे सर्वशस् तनुम्",
+        "महोग्रः पूर्वतः पातु\nमहा-वीराग्रजो ’ग्नितः\nमहा-विष्णुर् दक्षिणे तु\nमहा-ज्वालस् तु नैरृतौ",
+        "पश्चिमे पातु सर्वेशो\nदिशि मे सर्वतो-मुखः\nनृसिंहः पातु वायव्यां\nसौम्यां भूषण-विग्रहः",
+        "ईशान्यां पातु भद्रो मे\nसर्व-मङ्गल-दायकः\nसंसार-भयतः पातु\nमृत्योर् मृत्युर् नृ-केशरी",
+        "इदं नृसिंह-कवचं\nप्रह्लाद-मुख-मण्डितम्\nभक्तिमान् यः पठेन् नित्यं\nसर्व-पापैः प्रमुच्यते",
+        "पुत्रवान् धनवान् लोके\nदीर्घायुर् उपजायते\nयं यं कामयते कामं\nतं तं प्राप्नोत्य् असंशयम्",
+        "सर्वत्र जयम् आप्नोति\nसर्वत्र विजयी भवेत्\nभूम्य्-अन्तरीक्ष-दिव्यानां\nग्रहाणां विनिवारणम्",
+        "वृश्चिकोरग-सम्भूत\nविषापहरणं परम्\nब्रह्म-राक्षस-यक्षाणां\nदूरोत्सारण-कारणम्",
+        "भूर्जे वा ताल-पत्रे वा\nकवचं लिखितं शुभम्\nकर-मूले धृतं येन\nसिध्येयुः कर्म-सिद्धयः",
+        "देवासुर-मनुष्येषु\nस्वं स्वम् एव जयं लभेत्\nएक-सन्ध्यं त्रि-सन्ध्यं वा\nयः पठेन् नियतो नरः",
+        "सर्व-मङ्गल-माङ्गल्यं\nभुक्तिं मुक्तिं च विन्दति\nद्वा-त्रिंशति-सहस्राणि\nपठेच् छुद्धात्मनां नृणाम्",
+        "कवचस्यास्य मन्त्रस्य\nमन्त्र-सिद्धिः प्रजायते\nअनेन मन्त्र-राजेन\nकृत्वा भस्माभिमन्त्रणम्",
+        "तिलकं विन्यसेद् यस् तु\nतस्य ग्रह-भयं हरेत्\nत्रि-वारं जपमानस् तु\nदत्तं वार्य् अभिमन्त्र्य च",
+        "प्राशयेद् यो नरो मन्त्रं\nनृसिंह-ध्यानम् आचरेत्\nतस्य रोगाः प्रणश्यन्ति\nये च स्युः कुक्षि-सम्भवाः",
+        "किम् अत्र बहुनोक्तेन\nनृसिंह-सदृशो भवेत्\nमनसा चिन्तितं यत् तु\nस तच् चाप्नोत्य् असंशयम्",
+        "गर्जन्तं गर्जयन्तं निज-भुज-पटलं स्फोटयन्तं हठन्तं\nरूप्यन्तं तापयन्तं दिवि भुवि दितिजं क्षेपयन्तं क्षिपन्तम्\nक्रन्दन्तं रोषयन्तं दिशि दिशि सततं संहरन्तं भरन्तं\nवीक्षन्तं घूर्णयन्तं शर-निकर-शतैर् दिव्य-सिंहं नमामि\nइति श्री-ब्रह्माण्ड-पुराणे प्रह्लादोक्तं श्री-नृसिंह-कवचं सम्पूर्णम्"
+      ],
+      translations: [
+        "I shall now recite the Nrsimha-kavaca, formerly spoken by Prahlada Maharaja. It is most pious, vanquishes all kinds of impediments, and provides one all protection.",
+        "It bestows upon one all opulences and can give one elevation to the heavenly planets or liberation. One should meditate on Lord Nrsimha, Lord of the universe, seated upon a golden throne.",
+        "His mouth is wide open, He has three eyes, and He is as radiant as the autumn moon. He is embraced by Laksmidevi on his left side, and His form is the shelter of all opulences, both material and spiritual.",
+        "The Lord has four arms, and His limbs are very soft. He is decorated with golden earrings. His chest is resplendent like the lotus flower, and His arms are decorated with jewel-studded ornaments.",
+        "He is dressed in a spotless yellow garment, which exactly resembles molten gold. He is the original cause of existence, beyond the mundane sphere, for the great demigods headed by Indra. He appears bedecked with rubies which are blazingly effulgent.",
+        "His two feet are very attractive, and He is armed with various weapons such as the conch, disc, etc. Garuda joyfully offers prayers with great reverence.",
+        "Having seated Lord Nrsimhadeva upon the lotus of one\u0027s heart, one should recite the following mantra: May Lord Nrsimha, who protects all the planetary systems, protect my head.",
+        "Although the Lord is all-pervading, He hid Himself within a pillar. May He protect my speech and the results of my activities. May Lord Nrsimha, whose eyes are the sun, and fire, protect my eyes.",
+        "May Lord Nrhari, who is pleased by the prayers offered by the best of sages, protect my memory. May He who has the nose of a lion protect my nose, and may He whose face is very dear to the goddess of fortune protect my mouth.",
+        "May Lord Nrsimha, who is the knower of all sciences, protect my sense of taste. May He whose face is beautiful as the full moon and who is offered prayers by Prahlada Maharaja protect my face.",
+        "May Lord Nrsimha protect my throat. He is the sustainer of the earth and the performer of unlimitedly wonderful activities. May He protect my shoulders. His arms are resplendent with transcendental weapons. May He protect my shoulders.",
+        "May the Lord, who bestows benedictions upon the demigods, protect my hands, and may He protect me from all sides. May He who is achieved by the perfect yogis protect my heart, and may Lord Hari protect my dwelling place.",
+        "May He who ripped apart the chest and abdomen of the great demon Hiranyaksa protect my waist, and may Lord Nrhari protect my navel. He is offered prayers by Lord Brahma, who has sprung from his own navel.",
+        "May He on whose hips rest all the universes protect my hips. May the Lord protect my private parts. He is the knower of all mantras and all mysteries, but He Himself is not visible.",
+        "May He who is the original Cupid protect my thighs. May He who exhibits a human-like form protect my knees. May the remover of the burden of the earth, who appears in a form which is half-man and half-lion, protect my calves.",
+        "May the bestower of heavenly opulence protect my feet. He is the Supreme Controller in the form of a man and lion combined. May the thousand-headed Supreme enjoyer protect my body from all sides and in all respects.",
+        "May that most ferocious personality protect me from the east. May He who is superior to the greatest heroes protect me from the southeast, which is presided over by Agni. May the Supreme Visnu protect me from the south, and may that person of blazing luster protect me from the southwest.",
+        "May the Lord of everything protect me from the west. His faces are everywhere, so please may He protect me from this direction. May Lord Nrsimha protect me from the northwest, which is predominated by Vayu, and may He whose form is in itself the supreme ornament protect me from the north, where Soma resides.",
+        "May the all-auspicious Lord, who Himself bestows all-auspiciousness, protect from the northeast, the direction of the sun-god, and may He who is death personified protect me from fear of death and rotation in this material world.",
+        "This Nrsimha-kavaca has been ornamented by issuing from the mouth of Prahlada Maharaja. A devotee who reads this becomes freed from all sins.",
+        "Whatever one desires in this world he can attain without doubt. One can have wealth, many sons, and a long life.",
+        "He becomes victorious who desires victory, and indeed becomes a conqueror. He wards off the influence of all planets, earthly, heavenly, and everything in between.",
+        "This is the supreme remedy for the poisonous effects of serpents and scorpions, and Brahma-raksasa ghosts and Yaksas are driven away.",
+        "One may write this most auspicious prayer on his arm, or inscribe it on a palm-leaf and attach it to his wrist, and all his activities will become perfect.",
+        "One who regularly chants this prayer, whether once or thrice (daily), he becomes victorious whether among demigods, demons, or human beings.",
+        "One who with purified heart recites this prayer 32,000 times attains the most auspicious of all auspicious things, and material enjoyment and liberation are already understood to be available to such a person.",
+        "This Kavaca-mantra is the king of all mantras. One attains by it what would be attained by anointing oneself with ashes and chanting all other mantras.",
+        "Having marked one’s body with tilaka, taking acamana with water, and reciting this mantra three times, one will find that the fear of all inauspicious planets is removed.",
+        "That person who recites this mantra, meditating upon Lord Nrsimhadeva, has all of his diseases vanquished, including those of the abdomen.",
+        "Why should more be said? One acquires qualitative oneness with Narasimha Himself. There is no doubt that the desires in the mind of one who meditates will be granted.",
+        "Lord Nrsimha roars loudly and causes others to roar. With His multitudes of arms He tears the demons asunder and kills them in this way. He is always seeking out and tormenting the demoniac descendants of Diti, both on this earth planet and in the higher planets, and He throws them down and scatters them. He cries with great anger as He destroys the demons in all directions, yet with His unlimited hands He sustains, protects, and nourishes the cosmic manifestation. I offer my respectful obeisances to the Lord, who has assumed the form of a transcendental lion."
+      ]
+    },
+
+    "167": {
+      title: "श्री नृसिंह नख स्तुति (Śrī Nṛsiṁha Nakha Stuti)",
+      transliterations: [
+        "पान्त्वस्मान् पुरुहूतवैरि-बलवन्-मातङ्ग माद्यद्घटा\nकुम्भोच्चाद्रि-विपाटनाधिक-पटु प्रत्येक वज्रायिताः\nश्रीमत्-कण्ठीरवास्य-प्रतत-सुनखरा दारितारातिदूर\nप्रध्वस्त-ध्वान्त शान्त प्रवितत मनसा भाविता भूरिभागैः",
+        "लक्ष्मीकान्त समन्ततो:\u0027पि कलयन् नैवेशितुस्ते समं\nपश्याम्युत्तमवस्तु दूरतरतोपास्तं रसो यो:\u0027ष्टमः\nयद्रोषोत्करदक्ष नेत्र कुटिल प्रान्तोत्थिताग्नि स्फुरत्\nखद्योतोपम विश्फुलिङ्ग-भसिता ब्रह्मेशशक्रोत्कराः\nइति श्रीमद् आनन्दतीर्थ भगवत् पादाचार्य विरचिता श्री नरसिंह नखस्तुतिः सम्पूर्णम्"
+      ],
+      translations: [
+        "May the expansive and sharp nails of the beautiful lion-faced Lord protect us; nails which are each like a Vajra weapon, exceptionally skilled in tearing open the mountain-like frontal globes of the intoxicated elephants of Indra’s enemies (the demons), and which are meditated upon by the fortunate whose minds are peaceful and expansive after the darkness of ignorance has been utterly destroyed from afar.",
+        "O Lord of Lakshmi, even after searching everywhere, I do not see any superior object equal to You, the Lord; You are far beyond all else, like an eighth flavor beyond the known seven. The groups of Brahmas, Shivas, and Indras are reduced to ashes by the sparks, resembling fireflies, rising from the fire born of the curved corners of Your eyes during Your intense anger."
+      ]
+    },
+
+    "168": {
+      title: "श्री नारायण कवचम् (Śrī Nārāyaṇa Kavacam)",
+      transliterations: [
+        "ओम् हरिर् विदध्यान् मम सर्व-रक्षां\nन्यस्ताङ्घ्रि-पद्मः पतगेन्द्र-पृष्ठे\nदरारि-चर्मासि-गदेषु-चाप\nपाशान् दधानो ’ष्ट-गुनो ’ष्ट-बाहुः",
+        "जलेषु मां रक्षतु मत्स्य-मूर्तिर्\nयादो-गणेभ्यो वरुणस्य पाशात्\nस्थलेषु मायावटु-वामनो व्यात्\nत्रिविक्रमः खे वतु विश्वरूपः",
+        "दुर्गेष्व् अटव्य्-आजि-मुखादिषु प्रभुः\nपायान् नृसिंहो ’सुर-यूथपारिः\nविमुञ्चतो यस्य महाट्ट-हासं\nदिशो विनेदुर् न्यपतंश् च गर्भाः",
+        "रक्षत्व् असौ माध्वनि यज्ञ-कल्पः\nस्व-दंष्ट्रयोन्नीत-धरो वराहः\nरामो ’द्रि-कूटेष्व् अथ विप्रवासे\nसलक्ष्मणो ’व्याद् भरताग्रजो ’स्मान्",
+        "माम् उग्र-धर्माद् अखिलात् प्रमादान्\nनारायणः पातु नरश् च हासात्\nदत्तस् त्व् अयोगाद् अथ योग-नाथः\nपायाद् गुणेशः कपिलः कर्म-बन्धात्",
+        "सनत्-कुमारो ’वतु कामदेवाद्\nधयशीर्षा मां पथि देव-हेलनात्\nदेवर्षि-वर्यः पुरुषार्चनान्तरात्\nकूर्मो हरिर् मां निरयाद् अशेषात्",
+        "धन्वन्तरिर् भगवान् पात्व् अपथ्याद्\nद्वन्द्वाद् भयाद् ऋषभो निर्जितात्मा\nयज्ञश् च लोकाद् अवताज् जनान्ताद्\nबलो गणात् क्रोध-वशाद् अहीन्द्रः",
+        "द्वैपायनो भगवान् अप्रबोधाद्\nबुद्धस् तु पाषण्ड-गण-प्रमादात्\nकल्किः कलेः काल-मलात् प्रपातु\nधर्मावनायोरु-कृतावतारः",
+        "मां केशवो गदया प्रातर् अव्याद्\nगोविन्द आसङ्गवम् आत्त-वेणुः\nनारायणः प्राह्ण उदात्त-शक्तिर्\nमध्यन्-दिने विष्णुर् अरीन्द्र-पाणिः",
+        "देवो ’पराह्णे मधु-होग्रधन्वा\nसायं त्रि-धामावतु माधवो माम्\nदोषे हृषीकेश उतार्ध-रात्रे\nनिशीथ एको ’वतु पद्मनाभः",
+        "श्रीवत्स-धामापर-रात्र ईशः\nप्रत्यूष ईशो ’सि-धरो जनार्दनः\nदामोदरो ’व्याद् अनुसन्ध्यं प्रभाते\nविश्वेश्वरो भगवान् काल-मूर्तिः",
+        "चक्रं युगान्तानल-तिग्म-नेमि\nभ्रमत् समन्ताद् भगवत्-प्रयुक्तम्\nदन्दग्धि दन्दग्ध्य् अरि-सैन्यम् आशु\nकक्षं यथा वात-सखो हुताशः",
+        "गदे ’शनि-स्पर्शन-विस्फुलिङ्गे\nनिष्पिण्ढि निष्पिण्ढ्य् अजित-प्रियासि\nकुष्माण्ड-वैनायक-यक्ष-रक्षो\nभूत-ग्रहांश् चूर्णय चूर्णयारीन्",
+        "त्वं यातुधान-प्रमथ-प्रेत-मातृ\nपिशाच-विप्रग्रह-घोर-दृष्टीन्\nदरेन्द्र विद्रावय कृष्ण-पूरितो\nभीम-स्वनो ’रेर् हृदयानि कम्पयन्",
+        "त्वं तिग्म-धारासि-वरारि-सैन्यम्\nईश-प्रयुक्तो मम छिन्धि छिन्धि\nचक्षूंषि चर्मञ् छत-चन्द्र छादय\nद्विषाम् अघोनां हर पाप-चक्षुषाम्",
+        "यन् नो भयं ग्रहेभ्यो ’भूत्\nकेतुभ्यो नृभ्य एव च\nसरीसृपेभ्यो दंष्ट्रिभ्यो\nभूतेभ्यो ’ंहोभ्य एव च",
+        "सर्वाण्य् एतानि भगवन्\nनाम-रूपानुकीर्तनात्\nप्रयान्तु सङ्क्षयं सद्यो\nये नः श्रेयः-प्रतीपकाः",
+        "गरुडो भगवान् स्तोत्र\nस्तोभश् छन्दोमयः प्रभुः\nरक्षत्व् अशेष-कृच्छ्रेभ्यो\nविष्वक्सेनः स्व-नामभिः",
+        "सर्वापद्भ्यो हरेर् नाम\nरूप-यानायुधानि नः\nबुद्धीन्द्रिय-मनः-प्राणान्\nपान्तु पार्षद-भूषणाः",
+        "यथा हि भगवान् एव\nवस्तुतः सद् असच् च यत्\nसत्येनानेन नः सर्वे\nयान्तु नाशम् उपद्रवाः",
+        "यथैकात्म्यानुभावानां\nविकल्प-रहितः स्वयम्\nभूषणायुध-लिङ्गाख्या\nधत्ते शक्तीः स्व-मायया",
+        "तेनैव सत्य-मानेन\nसर्व-ज्ञो भगवान् हरिः\nपातु सर्वैः स्वरूपैर् नः\nसदा सर्वत्र सर्व-गः",
+        "विदिक्षु दिक्षूर्ध्वम् अधः समन्ताद्\nअन्तर् बहिर् भगवान् नारसिंहः\nप्रहापयḻ लोक-भयं स्वनेन\nस्व-तेजसा ग्रस्त-समस्त-तेजाः",
+        "मघवन्न् इदम् आख्यातं\nवर्म नारायणात्मकम्\nविजेष्यसे ’ञ्जसा येन\nदंशितो ’सुर-यूथपान्",
+        "एतद् धारयमाणस् तु\nयं यं पश्यति चक्षुषा\nपदा वा संस्पृशेत् सद्यः\nसाध्वसात् स विमुच्यते",
+        "न कुतश्चिद् भयं तस्य\nविद्यां धारयतो भवेत्\nराज-दस्यु-ग्रहादिभ्यो\nव्याध्य्-आदिभ्यश् च कर्हिचित्"
+      ],
+      translations: [
+        "The Supreme Lord, who sits on the back of the bird Garuḍa, touching him with His lotus feet, holds eight weapons — the conchshell, disc, shield, sword, club, arrows, bow and ropes. May that Supreme Personality of Godhead protect me at all times with His eight arms. He is all-powerful because He fully possesses the eight mystic powers [aṇimā, laghimā, etc.].",
+        "May the Lord, who assumes the body of a great fish, protect me in the water from the fierce animals that are associates of the demigod Varuṇa. By expanding His illusory energy, the Lord assumed the form of the dwarf Vāmana. May Vāmana protect me on the land. Since the gigantic form of the Lord, Viśvarūpa, conquers the three worlds, may He protect me in the sky.",
+        "May Lord Nṛsiṁhadeva, who appeared as the enemy of Hiraṇyakaśipu, protect me in all directions. His loud laughing vibrated in all directions and caused the pregnant wives of the asuras to have miscarriages. May that Lord be kind enough to protect me in difficult places like the forest and battlefront.",
+        "The Supreme indestructible Lord is ascertained through the performance of ritualistic sacrifices and is therefore known as Yajñeśvara. In His incarnation as Lord Boar, He raised the planet earth from the water at the bottom of the universe and kept it on His pointed tusks. May that Lord protect me from rogues on the street. May Paraśurāma protect me on the tops of mountains, and may the elder brother of Bharata, Lord Rāmacandra, along with His brother Lakṣmaṇa, protect me in foreign countries.",
+        "May Lord Nārāyaṇa protect me from unnecessarily following false religious systems and falling from my duties due to madness. May the Lord in His appearance as Nara protect me from unnecessary pride. May Lord Dattātreya, the master of all mystic power, protect me from falling while performing bhakti-yoga, and may Lord Kapila, the master of all good qualities, protect me from the material bondage of fruitive activities.",
+        "May Sanat-kumāra protect me from lusty desires. As I begin some auspicious activity, may Lord Hayagrīva protect me from being an offender by neglecting to offer respectful obeisances to the Supreme Lord. May Devarṣi Nārada protect me from committing offenses in worshiping the Deity, and may Lord Kūrma, the tortoise, protect me from falling to the unlimited hellish planets.",
+        "May the Supreme Personality of Godhead in His incarnation as Dhanvantari relieve me from undesirable eatables and protect me from physical illness. May Lord Ṛṣabhadeva, who conquered His inner and outer senses, protect me from fear produced by the duality of heat and cold. May Yajña protect me from defamation and harm from the populace, and may Lord Balarāma as Śeṣa protect me from envious serpents.",
+        "May the Personality of Godhead in His incarnation as Vyāsadeva protect me from all kinds of ignorance resulting from the absence of Vedic knowledge. May Lord Buddhadeva protect me from activities opposed to Vedic principles and from laziness that causes one to madly forget the Vedic principles of knowledge and ritualistic action. May Kalkideva, the Supreme Personality of Godhead, who appeared as an incarnation to protect religious principles, protect me from the dirt of the Age of Kali.",
+        "May Lord Keśava protect me with His club in the first portion of the day, and may Govinda, who is always engaged in playing His flute, protect me in the second portion of the day. May Lord Nārāyaṇa, who is equipped with all potencies, protect me in the third part of the day, and may Lord Viṣṇu, who carries a disc to kill His enemies, protect me in the fourth part of the day.",
+        "May Lord Madhusūdana, who carries a bow very fearful for the demons, protect me during the fifth part of the day. In the evening, may Lord Mādhava, appearing as Brahmā, Viṣṇu and Maheśvara, protect me, and in the beginning of night may Lord Hṛṣīkeśa protect me. At the dead of night [in the second and third parts of night] may Lord Padmanābha alone protect me.",
+        "May the Supreme Personality of Godhead, who bears the Śrīvatsa on His chest, protect me after midnight until the sky becomes pinkish. May Lord Janārdana, who carries a sword in His hand, protect me at the end of night [during the last four ghaṭikās of night]. May Lord Dāmodara protect me in the early morning, and may Lord Viśveśvara protect me during the junctions of day and night.",
+        "Set into motion by the Supreme Personality of Godhead and wandering in all the four directions, the disc of the Supreme Lord has sharp edges as destructive as the fire of devastation at the end of the millennium. As a blazing fire burns dry grass to ashes with the assistance of the breeze, may that Sudarśana cakra burn our enemies to ashes.",
+        "O club in the hand of the Supreme Personality of Godhead, you produce sparks of fire as powerful as thunderbolts, and you are extremely dear to the Lord. I am also His servant. Therefore kindly help me pound to pieces the evil living beings known as Kuṣmāṇḍas, Vaināyakas, Yakṣas, Rākṣasas, Bhūtas and Grahas. Please pulverize them.",
+        "O best of conchshells, O Pāñcajanya in the hands of the Lord, you are always filled with the breath of Lord Kṛṣṇa. Therefore you create a fearful sound vibration that causes trembling in the hearts of enemies like the Rākṣasas, pramatha ghosts, Pretas, Mātās, Piśācas and brāhmaṇa ghosts with fearful eyes.",
+        "O king of sharp-edged swords, you are engaged by the Supreme Personality of Godhead. Please cut the soldiers of my enemies to pieces. Please cut them to pieces! O shield marked with a hundred brilliant moonlike circles, please cover the eyes of the sinful enemies. Pluck out their sinful eyes.",
+        "May the glorification of the transcendental name, form, qualities and paraphernalia of the Supreme Personality of Godhead protect us from the influence of bad planets, meteors, envious human beings, serpents, scorpions, and animals like tigers and wolves. May it protect us from ghosts and the material elements like earth, water, fire and air, and may it also protect us from lightning and our past sins...",
+        "...We are always afraid of these hindrances to our auspicious life. Therefore, may they all be completely destroyed by the chanting of the Hare Kṛṣṇa mahā-mantra.",
+        "Lord Garuḍa, the carrier of Lord Viṣṇu, is the most worshipable lord, for he is as powerful as the Supreme Lord Himself. He is the personified Vedas and is worshiped by selected verses. May he protect us from all dangerous conditions, and may Lord Viṣvaksena, the Personality of Godhead, also protect us from all dangers by His holy names.",
+        "May the Supreme Personality of Godhead’s holy names, His transcendental forms, His carriers and all the weapons decorating Him as personal associates protect our intelligence, senses, mind and life air from all dangers.",
+        "The subtle and gross cosmic manifestation is material, but nevertheless it is nondifferent from the Supreme Personality of Godhead because He is ultimately the cause of all causes. Cause and effect are factually one because the cause is present in the effect. Therefore the Absolute Truth, the Supreme Personality of Godhead, can destroy all our dangers by any of His potent parts.",
+        "The Supreme Personality of Godhead, the living entities, the material energy, the spiritual energy and the entire creation are all individual substances. In the ultimate analysis, however, together they constitute the supreme one, the Personality of Godhead. Therefore those who are advanced in spiritual knowledge see unity in diversity. For such advanced persons, the Lord’s bodily decorations, His name, His fame, His attributes and forms and the weapons in His hand are manifestations of the strength of His potency...",
+        "...According to their elevated spiritual understanding, the omniscient Lord, who manifests various forms, is present everywhere. May He always protect us everywhere from all calamities.",
+        "Prahlāda Mahārāja loudly chanted the holy name of Lord Nṛsiṁhadeva. May Lord Nṛsiṁhadeva, roaring for His devotee Prahlāda Mahārāja, protect us from all fear of dangers created by stalwart leaders in all directions through poison, weapons, water, fire, air and so on. May the Lord cover their influence by His own transcendental influence. May Nṛsiṁhadeva protect us in all directions and in all corners, above, below, within and without.",
+        "Viśvarūpa continued: O Indra, this mystic armor related to Lord Nārāyaṇa has been described by me to you. By putting on this protective covering, you will certainly be able to conquer the leaders of the demons.",
+        "If one employs this armor, whomever he sees with his eyes or touches with his feet is immediately freed from all the above-mentioned dangers.",
+        "This prayer, Nārāyaṇa-kavaca, constitutes subtle knowledge transcendentally connected with Nārāyaṇa. One who employs this prayer is never disturbed or put in danger by the government, by plunderers, by evil demons or by any type of disease."
+      ]
+    },
+
     "169": {
       title: "श्रीशचीसुताष्टकम् (नव गौरवरं)",
       transliterations: [
@@ -2652,6 +3511,24 @@
       ]
     }
 ,
+    "188": {
+      title: "परमानन्द हे माधव (Paramānanda He Mādhava)",
+      transliterations: [
+        "परमानन्द हे माधव\nपादुन्गलुची मकराण्ड",
+        "से-मकराण्ड पन-करि\nआनन्दे बोलो \u0027हरि हरि\u0027",
+        "हरिङ्क नामे वन्ध वेल\nपरि करिवे चक-दोल",
+        "से-चक-दोलाङ्क-पायारे\nमन-मो रहु निरन्तरे",
+        "मन मो निरन्तरे रहू\n\u0027हा-कृष्ण\u0027 बोलि जिवा जाउ\nमोते उधार राधा-धव"
+      ],
+      translations: [
+        "O supremely blissful Madhava! The nectar is coming from Your lotus feet.",
+        "Drinking that nectar, I blissfully sing “Hari! Hari!”",
+        "With the name of Hari, I am binding a raft on which Lord Jagannatha will ferry me across this ocean of material existence.",
+        "My mind always remains at the lotus feet of that Lord Jagannatha who has very large round eyes.",
+        "In this way, I call out \"Ha Krishna!\" and give up my life. O husband of Radharani, please deliver me."
+      ]
+    },
+
     "191": {
       title: "दशावतार स्तोत्र (प्रलयपयोधिजले धृतवानसि वेदम्)",
       transliterations: [
@@ -2712,6 +3589,32 @@
       ]
     }
 ,
+    "242": {
+      title: "श्री सुदर्शन अष्टकम् (Śrī Sudarśana Aṣṭakam)",
+      transliterations: [
+        "प्रतिभटश्रेणी भीषण वरगुणस्तोम भूषण\nजनिभयस्थान तारण जगदवस्थान कारण\nनिखिलदुष्कर्म कर्शन निगमसद्धर्म दर्शन\nजय जय श्री सुदर्शन जय जय श्री सुदर्शन",
+        "शुभजगद्रूप मण्डन सुरगणत्रास खण्डन\nशतमखब्रह्मवन्दित शतपथब्रह्मनन्दित\nप्रथितविद्वत् सपक्षित भजदहीर्बुध्न्यलक्षित\nजय जय श्री सुदर्शन जय जय श्री सुदर्शन",
+        "स्फुटतटिज्जाल पिञ्जर पृथुतरज्वाल पञ्जर\nपरिगतप्रत्नविग्रह पटुतरप्रज्ञदुर्ग्रह\nप्रहरणग्राम मण्डित परिजनत्राणपण्डित\nजय जय श्री सुदर्शन जय जय श्री सुदर्शन",
+        "निजपदप्रीतसद्गुण निरुपधिइस्फीत षड्गुण\nनिगमनिर्व्यूढवैभव निजपरव्यूहवैभव\nहरिहयद्वेषिदारण हरपुरप्लोषकारण\nजय जय श्री सुदर्शन जय जय श्री सुदर्शन",
+        "दनुजविस्तारकर्तन जनितमिस्राविकर्तन\nदनुजविद्यानिकर्तन भजदविद्यानिवर्तन\nअमरदृष्टस्वविक्रम समर जुष्टभ्रमिक्रम\nजय जय श्री सुदर्शन जय जय श्री सुदर्शन",
+        "प्रथिमुखालीढबन्धुर पृथुमहाहेतिदन्तुर\nविकटमाया बहिष्कृत विविधमाला परिष्कृत\nस्थिरमहायन्त्र तन्त्रित दृढदयातन्त्रयन्त्रित\nजय जय श्री सुदर्शन जय जय श्री सुदर्शन",
+        "महितसम्पत् सदक्षर विहितसम्पत् षडक्षर\nषडरचक्र प्रतिष्ठित सकलतत्त्व प्रतिष्ठित\nविविधसकल्प कल्पक विबुधसङ्कल्प कल्पक\nजय जय श्री सुदर्शन जय जय श्री सुदर्शन",
+        "भुवननेत्र त्रयीमय सवनतेजस्त्रयीमय\nनिरवधिस्वादु चिन्मय निखिलशक्ते जगन्मय\nअमितविश्वक्रियामय शमितविश्वग्भयामय\nजय जय श्री सुदर्शन जय जय श्री सुदर्शन",
+        "द्वीचतुष्कमिदं प्रभूतसारं पठतां वेङ्कटनायकप्रणीतम्\nविषमे’पि मनोरथः प्रधावन् न विहन्येत रथाङ्गधुर्यगुप्तः"
+      ],
+      translations: [
+        "Victory and Victory to you, oh Sudarshana, who is fearsome to hoards of enemies of devotees, who is ornament for all blessed actions, who helps one to cross the sea of samsara, who stabilizes the entire universe, who cuts off accumulated sins of bad actions, and who teaches righteous conduct.",
+        "Victory and Victory to you, oh Sudarshana, who is the ornament of the Lord of the universe, who removes the fear of all asuras towards devas, who is worshipped by Lord Brahma and hosts of others, who is worshipped by the Sat Patha Brahmana, who is on the part of devotees for overcoming contestants, and who is worshipped by Lord Shiva.",
+        "Victory and Victory to you, oh Sudarshana, who is surrounded by resplendent light like a halo, who is surrounded by forms of Vishnu, who is difficult for even great scholars to grasp, and who helps devotees to cross problems.",
+        "Victory and Victory to you, oh Sudarshana, who is firmly attached to righteous people, who is the natural home for six good assets, who took the form with a horse\u0027s neck (Hayagriva connection), and who was the reason for the destruction of the cities by Shiva.",
+        "Victory and Victory to you, oh Sudarshana, who destroys the spread of asuras, who removes the sorrows of birth, aging and death, who wins over the art of war of asuras, who removes the false knowledge from his devotees, whose valour is praised by devas, and who rotates in various ways in a war.",
+        "Victory and Victory to you, oh Sudarshana, who appeared with a fast forward gait which appeared very pretty, who is surrounded by several weapons, who expels the illusions sent by enemy in case of war, who decorates himself with several garlands, and who wears mercy while blessing devotees who worship him through tantra and yantras.",
+        "Victory and Victory to you, oh Sudarshana, who gives the wealth of salvation and incomparable wealth to those who chant your six-lettered mantra, who is available in the yantra of six corners, who is a form in which all knowledge exists, who is able to complete all deeds that you take up, and who is the Kalpaka tree fulfilling all wishes.",
+        "Victory and Victory to you, oh Sudarshana, who is the three Vedas which are the eye of the world, who is the form of the three fires of yagas, who is the eternal knowledge of true knowledge, who is a form of the power of the universe, who is the accomplisher of deeds that you take up, and who destroys all fears occurring in the world.",
+        "This octet which fulfills all desires and gives the inner meaning of Lord Sudarshana, composed by Venkata Natha, if read, would fulfill desires and remove obstacles because of the glorious boon-granting powers of the Lord."
+      ]
+    },
+
     "245": {
       title: "सुन्दर बाला शचीर-दुलाल",
       transliterations: [
@@ -2768,6 +3671,22 @@
       ]
     }
 ,
+    "122": {
+      title: "के याबि के याबि भाई भव-सिन्धु पार (Ke Jābi Ke Jābi Bhāi)",
+      transliterations: [
+        "के याबे के याबे भा-इ भब-सिन्धु पार\nधन्य कलि-युगेर चैतन्य अबतार",
+        "आमार गौराङ्गेर घाटे आदान खेलाय\nजड अन्ध बधिर अबधि पार हय",
+        "हरि-नामेर नौका-खानि श्री-गुरु खाण्डारी\nसङ्कीर्तन केरोयाल दु बाहु पसारि",
+        "सब जीब हैल पार प्रेमेर बातासे\nपडिया रहिल लोचन आपनार दोषे"
+      ],
+      translations: [
+        "Who will cross? O my brothers, who will cross this ocean of birth and death?",
+        "My Lord Gaurāṅga is accepting everyone at His boat-landing. Everyone, including even the fools, the blind, and the deaf have come there to make the crossing.",
+        "The ferry-boat is Lord Kṛṣṇa\u0027s holy names. The boat-captain is the spiritual master. The oars in the outstretched hands are saṅkīrtana.",
+        "The favorable breeze is ecstatic love for Lord Kṛṣṇa. Now every fallen soul has crossed to the farther shore of the ocean. Only Locana dāsa, by his own fault, is left behind."
+      ]
+    },
+
     "123": {
       title: "केशव! तुया जगत विचित्र (भक्तिविनोद ठाकुर)",
       transliterations: [
@@ -2808,6 +3727,62 @@
       ]
     }
 ,
+    "212": {
+      title: "श्री नित्यानन्दाष्टकम् (Śrī Nityānandāṣṭakam)",
+      transliterations: [
+        "शरच्-चन्द्र-भ्रान्ति-स्फुरद्-अमल-कान्तिं गज-गतिं\nहरि-प्रेमोन्मत्तं धृत-परम-सत्त्वं स्मित-मुखम् |\nसमाघूर्णन्-नेत्रं कर-कलित-वेत्रं कलि-भिदं\nभजे नित्यानन्दं भजन-तरु-कन्दं निरवधि || 1 ||",
+        "रसानाम् आसारं स्व-जन-गण-सर्वस्वम् अतुलं\nतदीयैक-प्राण-प्रतिम-वसुधा-जाह्नवि-पतिम् |\nसदा प्रेमोन्मादं परम् अविदितं मन्द-मनसां\nभजे नित्यानन्दं भजन-तरु-कन्दं निरवधि || 2 ||",
+        "शची-सूनु-प्रेष्ठं निखिल-जगद्-इष्टं सुख-मयं\nकलौ मज्जज्-जीवोद्धरण-करणोद्दाम-करुणम् |\nहरेर् आख्यानाद् वा भव-जलधि-गर्वोन्नति-हरं\nभजे नित्यानन्दं भजन-तरु-कन्दं निरवधि || 3 ||",
+        "अये भ्रातर् नॄणां कलि-कलुषिणां किं नु भविता\nतथा प्रायश्चित्तं रचय यद् अनायासत इमे |\nव्रजन्ति त्वाम् इत्थं सह भगवता मन्त्रयति यो\nभजे नित्यानन्दं भजन-तरु-कन्दं निरवधि || 4 ||",
+        "यथेष्टं रे भ्रातः कुरु हरि-हरि-ध्वानम् अनिशं\nततो वः संसाराम्बुधि-तरण-दायो मयि लगेत् |\nइदं बाहु-स्फोटैर् अटति विरटन् यः प्रतिगृहं\nभजे नित्यानन्दं भजन-तरु-कन्दं निरवधि || 5 ||",
+        "बलात् संसाराम्भोनिधि-हरण-कुम्भोद्भवम् अहो\nसतां श्रेयः-सिन्धून्नति-कुमुद-बन्धुं समुदितम् |\nखल-श्रेणी-स्फूर्जत्-तिमिर-हर-सूर्य-प्रभम् अहं\nभजे नित्यानन्दं भजन-तरु-कन्दं निरवधि || 7 ||",
+        "नटन्तं गायन्तं हरिम् अनुवदन्तं पथि पथि\nव्रजन्तं पश्यन्तं स्वम् अपि सुदुरन्तं जन-गणम् |\nप्रकुर्वन्तं सन्तं करुण-सुदृग्-अन्तं प्रवलनाद्\nभजे नित्यानन्दं भजन-तरु-कन्दं निरवधि || 6 ||",
+        "सुबिभ्राणं भ्रातुः कर-सरसिजं कोमलतरं\nमिथो वक्त्रालोकोच्चलित-परमानन्द-हृदयम् |\nभ्रमन्तं माधुर्यैर् अहह मदयन्तं पुर-जनान्\nभजे नित्यानन्दं भजन-तरु-कन्दं निरवधि || 8 ||",
+        "सुखानाम् आधानं रसिक-वर-सद्-वैष्णव-धनं\nरसागारं सारं पतित-तति-तारं स्मरणतः |\nपरं नित्यानन्दाष्टकम् इदम् अपूर्वं पठति यस्\nतद्-अङ्घ्रि-द्वन्द्वाब्जं स्फुरतु नितरां तस्य हृदये || 9 ||",
+        "इति श्री-प्रबोधानन्द-सरस्वती-विरचितं श्री-नित्यानन्दाष्टकं सम्पूर्णम्॥"
+      ],
+      translations: [
+        "His shining spotless beauty bewilders the autumn moon. With a smiling face and rolling eyes, intoxicated with love for Lord Hari, He walks like an elephant. He holds the supreme truth and carries a stick that breaks the effects of Kali-yuga. I always worship Lord Nityānanda, the root of the tree of devotional service.",
+        "He is the husband of Vasudhā and Jāhnavī, and their life and soul. Always mad with love for God, He is incomparable and a shower of transcendental rasas. He is the all in all for His devotees but is unknown to the fools. I always worship Lord Nityānanda, the root of the tree of devotional service.",
+        "He is worshipped by the whole universe and is the dearest associate of the son of mother Śacī. He is bliss personified and His unlimited mercy is the cause of salvation for the souls drowning in the ocean of Kali. By preaching the glories of Lord Hari, He removes the rising pride of the ocean of material existence. I always worship Lord Nityānanda, the root of the tree of devotional service.",
+        "\"O brother, what will happen to these people contaminated by the Age of Kali? Please arrange a process of atonement so that they may easily go to You.\" I always worship Lord Nityānanda, the root of the tree of devotional service, Who speaks to Lord Caitanya in this way.",
+        "According to His own will, He went from house to house shouting with raised arms, “O brother, incessantly chant \"Hari, Hari\" and in this way you will cross the ocean of birth and death. Please give me such a charity.” I always worship Lord Nityānanda, the root of the tree of devotional service.",
+        "Like Agastya Muni, He forcibly annihilates the ocean of material existence.26 He is like a risen moon increasing the ocean of happiness for the saintly persons. He is similar to the radiance of the sun dissipating darkness-like rogues. I always worship Lord Nityānanda, the root of the tree of devotional service.",
+        "Repeatedly saying “Hari, Hari,” He was dancing and chanting along every road. He would see endless saintly persons approaching Him, and by turning around He would cast His compassionate side-glances upon them from the corner of His beautiful eyes. I always worship Lord Nityānanda, the root of the tree of devotional service.",
+        "Oh! Holding the very soft lotus hand of His brother Nimāi, His heart full of increasing transcendental bliss by glancing at each other’s face, He roams about delighting the people with His sweetness. I always worship Lord Nityānanda, the root of the tree of devotional service.",
+        "May Lord Nityānanda’s lotus feet become always manifest in the heart of one who reads this transcendental and unprecedented Nityānandāṣṭakam, which is the reservoir of all happiness, the treasure of saintly Vaiṣṇavas and best of rasikas, the repository of rasa, and the essence. Multitudes of fallen souls can be saved by simply remembering it.",
+        "Thus ends Śrī Nityānandāṣṭakam composed by Śrīla Prabodhānanda Sarasvatī."
+      ]
+    },
+
+    "214": {
+      title: "श्री गुरोरष्टकम् (Śrī Guroraṣṭakam)",
+      transliterations: [
+        "शरीरम् सुरूपम् तथा वा कलत्रं\nयशश्चारु चित्रम् धनम् मेरुतुल्यम्\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किं ततः किं ततः किं ततः किं",
+        "कलत्रं धनं पुत्रपोउत्रादि सर्वं\nगृहं बान्धवाः सर्वमेतद्धि जातम्\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किं ततः किं ततः किं ततः किं",
+        "षडङ्गादिवेदो मुखे शस्त्रविद्या\nकवित्चादि गद्यं सुपद्यं करोति\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किं ततः किं ततः किं ततः किं",
+        "विदेशेषु मान्यः स्वदेशेषु धन्यः\nसदाचारवृत्तेषु मत्तो न चान्यः\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किं ततः किं ततः किं ततः किं",
+        "क्षमामण्डले भूपभूपालबृन्दैः\nसदा सेवितं यस्य पादारविन्दम्\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किम् ततः किं ततः किं ततः किं",
+        "यशो मे गतं दिक्षु दानप्त्रतापाज्\nजगद्वस्तु सर्वं करे यत्प्रसादात्\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किं ततः किं ततः किं ततः किं",
+        "न भोगे न योगे न वा वाजिराजौ\nन कान्तामुखे नैव वित्तेषु चित्तम्\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किं ततः किं ततः किं ततः किं",
+        "अरण्ये न वा स्वस्य गेहे न कार्ये\nन देहे मनो वर्तते मे त्वनर्घ्ये\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किं ततः किं ततः किं ततः किं",
+        "अनर्घ्याणि रत्नानि मुक्तानि संयक्\nसमालिङ्गता कामिनी यमिनीषु\nगुरोरङ्घ्रिपद्मे ंअनश्चेन्न लग्नं\nततः किं ततः किं ततः किं ततः किं",
+        "गुरोरष्टकं यः पठेत्पुण्यदेही\nयतिर्भूपतिर्ब्रह्मचारी च गेही\nलभेद्वाञ्छिआर्थं पदं ब्रह्मसम्ञ्ज्ञं\nगुरोरुक्तवाक्ये मनो यस्य लग्नं"
+      ],
+      translations: [
+        "The body is handsome, the wife is attractive, the fame is spread far and wide, the wealth is enormous and stable like mount Meru; but of what consequence are all these, if the mind is not fixed in devotion to the lotus feet of Guru? Really of what use is all this, what use, what use?",
+        "Wife, wealth, son, grandson, and the like, house, relations, even if all these are there fate is certain, of what consequence is one\u0027s life if his mind is not devoted to the feet of Guru? Ascertain, what use is any possession, person or object? Of what use, of what use, of what use indeed?",
+        "All the Vedas are mastered and ever present on the lips; likewise, knowledge of all the sciences is well gained. The ability to write prose or verse is also present. Even then, of what ultimate benefit is all this, if one\u0027s mind does not devoutly rest on the feet of Guru? By whose grace along can one\u0027s soul be liberated? Of what use, of what use, of what use indeed?",
+        "I am honored well even in far off places, held in high esteem in my own locality; in good conduct and noble deeds there is no one to excel me. If one has occasion to think like this, of what avail is it if the mind is not steeped in devotion and humility towards the feet of the Guru from whom alone can flow wisdom and immortality?",
+        "Your feet may be worshipped constantly even by the great kings and emperors of the world for reason of your greatness and scholarship; but of what real consequence is that if the mind is not graced by the blessing of unflinching devotion to the Guru, by whose loving \u0027touch\u0027 alone can redemption and peace be realized?",
+        "Of what avail if one has enough merits to think my fame has already spread in several places due to my unique generosity and a result, all things of the world stand within my easy reach? For, the virtue and quality that count ultimately is only one\u0027s unflinching loyalty and devotion towards the Guru whose blessings are the ultimate factor for realization of Truth by a devoted seeker.",
+        "The mind may have turned away from external delights through dispassion and from attainments like Yogic concentration, possessions like horses and the like, the enchanting face of the beloved, in short, the entire wealth of the earth; yet it will be of no real merit if the mind is not absorbed in piety and devotion to the feet of Guru. Bereft of this devotion, of what benefit is anything, of what benefit, of what benefit?",
+        "The mind may have lost its charm to live in forests, and likewise in the house; may have lost all desire to achieve whatever; even the concern for the body\u0027s welfare may have been outlived; the most invaluable treasure of the world may not hold any allurement. Even then, of what avail are all these if the supreme devotion to the Guru is not held by the aspirant? Determine, of what use? Of what use?",
+        "Even if I find in my possession precious stones or pearls and well decorated and dressed lovable bride, yet if my mind is not absorbed in devotion to the lotus feet of the Guru, of what use is any other possession?",
+        "Whoever reads, studies and recites this collection of eight verses on Guru and remains devoted and attentive to the sayings of the Guru, he, no matter if he is a holy person, ascetic, king, neophyte, or householder, attains his coveted object, namely the supreme abode of Brahman, the unassailable seat of immortality."
+      ]
+    },
+
     "215": {
       title: "सर्वस्व तोमार, चरणे सम्पिया",
       transliterations: [
@@ -2940,6 +3915,28 @@
       ]
     }
 ,
+    "155": {
+      title: "नाचे नाचे निताई गौर गुण मणिया (Nāce Nāce Nitāi Gaura)",
+      transliterations: [
+        "नचे नचे निताइ गौर् गुण मणिय\nनाचे नाचे निताइ गौर् गुण मणिया\n(नचे नचे निताइ गौर् द्वीज मणिय)\nबामे प्रिय गदाधर, श्रीवास अद्वैत बर,\nपारिशद तारागण जिन्या",
+        "बाजे खोल करताल, मधुर सण्गीत भाल,\nगगन भोरिलो हरिध्वनिया",
+        "चन्दन चर्चित गाय्, फागु बिन्दु बिन्दु ताय्,\nवनमाला दोले भालो बोलिया",
+        "गले शुभ्र उपवीत, रूप कोटि काम जित,\nचरणे नूपुर रणरणिया",
+        "दुइ भाइ नाचि जाय्, सहचर गण गाय्,\nगदाधर अन्गे पोरे ढूलिया",
+        "पूरुब रभस लीला, एबे पहु प्रकाशिला,\nसेइ ब्रिन्दाबन् एइ नदिया",
+        "बिहरे गन्गातीरे, सेइ धीर समीरे,\nवृन्दावन दास कोहे जानिया"
+      ],
+      translations: [
+        "Nitai and Gaura gunamani are dancing and dancing, with beloved Gadadhara on Their left, and Srivasa and Advaita [on the right] while Their associates defeat the stars [that surround the Gaura-moon].",
+        "The mridangas and karatalas are played and sweet songs are sung. The sky is filled with the chanting of harinama.",
+        "His body is anointed with sandal paste and drops of Holi juice, and a forest flower garland dangles nicely across His chest.",
+        "A white brahmin thread hangs across His neck, His form defeats millions of Cupids and anklebells jingle on His feet.",
+        "The two brothers are dancing and Their associates sing while Gadadhara\u0027s body is pelted with powder.",
+        "Now the Lord re-manifests His previous joyful Vrindaban pastimes in this Nadiya.",
+        "Now He enjoys on the bank of the Ganga just like in Vrindavan\u0027s Dhira samira kunja. Vrndavana dasa tells you, for he knows it."
+      ]
+    },
+
     "156": {
       title: "नदिया गोद्रुमे नित्यानन्द महाजन",
       transliterations: [
@@ -3100,6 +4097,259 @@
       ]
     }
 
+    ,"119": {
+      title: "Bala Mukundastakam (Kararavindena Padaravindam)",
+      transliterations: [
+        "करारविन्देन पदारविन्दं\nमुखारविन्दे विनिवेशयन्तम\nवटस्य पत्रस्य पुटेशयानं\nबालं मुकुन्दं मनसा स्मरामि",
+        "सम्ह्रुत्य लोकान वटपत्रमध्ये\nशयनमाद्यन्त विहीनरूपम\nसर्वेश्वरं सर्वहितावतारं\nबालं मुकुन्दं मनसा स्मरामि",
+        "इन्दीवरश्यामल कोमलाङ्गम\nइन्द्रादिदेवार्चित पादपद्मम\nसन्तानकल्पद्रुममाश्रितानां\nबालं मुकुन्दं मनसा स्मरामि",
+        "लम्बालकं लम्बितहारयष्टिं\nशृउङ्गारलीलाङ्कित दन्त पङ्क्तिम\nबिम्बाधरं चारुविशालनेत्रं\nबालं मुकुन्दं मनसा स्मरामि",
+        "शिक्ये निधायापि पयोदधीनि\nबहिर्गताय व्रजनायिकायाम\nभुक्त्वायथेष्टं कपटेनसुप्तं\nबालं मुकुन्दं मनसा स्मरामि",
+        "कालिजलस्थित कालियस्य\nफणाग्ररङ्गेनटनप्रियन्तम\nतत्प्रुच्छहस्तं शरदिन्दुवक्त्रं\nबालं मुकुन्दं मनसा स्मरामि",
+        "उलूखलेबद्धमुदारशौर्यम\nउत्तुङ्गयुग्मार्जुन भङ्गलीलाम\nउत्फुल्लपद्मायत चारुनेत्रं\nबालं मुकुन्दं मनसा स्मरामि",
+        "आलोक्य मातुमुख मादरेण\nस्तन्यं पिबन्तं सरसीरुहाक्षम\nसच्चिन्मयं देवमनन्तरूपं\nबालं मुकुन्दं मनसा स्मरामि"
+      ],
+      translations: [
+        "I meditate on that infant Mukunda (Krsna) who is sleeping on the leaf of a banyan tree with his the lotus like foot placed in his lotus like mouth with his lotus like hand.",
+        "I meditate on that infant Mukunda who is sleeping holding all the worlds together on the leaf of a banyan tree in such form, which has no beginning or no end. He is the incarnation of God for the welfare of all mankind and the Lord of all.",
+        "I meditate on Bala Mukunda in my heart, who has a delicate body like a blue lotus and whose foot is worshipped by all the gods and Indra etc. He is the wish-fulfilling tree for those who take refuge in him.",
+        "I meditate on that Bala Mukunda in my heart, who has hanging curls and hanging necklaces, a beautiful row of teeth which are shown playfully. His lower lip is as red as a Bimba fruit and has beautiful wide eyes.",
+        "I meditate on that Bala Mukunda in my heart, who pretended as if he was sleeping, having eaten the yogurt to his contentment from the hanging pots of the Gopis when they had gone out.",
+        "I meditate on Bala Mukunda whose beautiful face resembles the autumnal moon and is dancing happily on the hood of the serpent Kaliya holding its tail with his hand in the Kalinda pond.",
+        "I meditate on Bala Mukunda with beautiful eyes like the petals of a full- bloomed lotus and who with great valor broke the pair of tall yamala-arjuna trees even though he was tied to a mortar (a large heavy stone bowl for pounding grain).",
+        "I meditate on Bala Mukunda, God filled with sat and cit, i.e., infinite consciousness, of infinite divine form, the lotus eyed one who cast his looks at his mother’s face with affection, while drinking milk from her breast."
+      ]
+    }
+    ,"152": {
+      title: "Sri Radha Krpa Kataksa Stava Raja",
+      transliterations: [
+        "मुनीन्द्रवृन्दवन्दिते त्रिलोकशोकहारिणि\nप्रसन्नवक्त्रपङ्कजे निकुञ्जभूविलासिनि\nव्रजेन्द्रभानुनन्दिनि व्रजेन्द्रसूनुसङ्गते\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "अशोकवृक्षवल्लरीवितानमण्डपस्थिते\nप्रवालवालपल्लवप्रभारुनाङ्घ्रिकोमले\nवराभयस्पुरत्करे प्रभूतसम्पदालये\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "अनङ्गरङ्गमङ्गलप्रसङ्गभङ्गुरभ्रुवां\nसविभ्रमं ससंभ्रमं दृगन्तबाणपातनैः\nनिरन्तरं वशीकृतप्रतीतिनन्दनन्दने\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "तडित्सुवर्णचम्पकप्रदीप्तगौरविग्रहे\nमुखप्रभापरास्तकोटिशारदेन्दुमण्डले\nविचित्रचित्रसञ्चरच्चकोरशावलोचने\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "मदोन्मदातियौवने प्रमोदमानमण्डिते\nप्रियानुरागरञ्जिते कलाविलासपण्डिते\nअनन्यधन्यकुञ्जराज्यकामकेलिकोविदे\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "अशेषहावभावधीरहीरहारभूषिते\nप्रभूतशातकुम्भकुम्भकुम्भि कुम्भसुस्तनि\nप्रशस्तमन्दहास्यचूर्णपूर्णसौक्यसागरे\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "मृनालवालवल्लरीतरङ्गरङ्गदोर्लते\nलताग्रलास्यलोलनीललोचनावलोकने\nललल्लुलन्मिलन्मनोज्ञमुग्धमोहनाश्रिते\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "सुवर्णमालिकाञ्चितत्रिरेखकम्बुकण्ठगे\nत्रिसूत्रमङ्गलीगुणत्रिरत्नदीप्तिदीधिति\nसलोलनीलकुन्तलप्रसूनगुच्छगुम्फिते\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "नितम्बबिम्बलम्बमानपुष्पमेखलागुणे\nप्रशस्तरत्नकिङ्किणीकलापमध्यमञ्जुले\nकरीन्द्रशुण्डदण्डिकावरोहसौभगोरके\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "अनेकमन्त्रनादमञ्जुनूपुरारवस्खलत\nसमाजराजहंसवंशनिक्वणातिगौरवे\nविलोलहेमवल्लरीविडम्बिचारुचङ्क्रमे\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "अनन्तकोटिविष्णुलोकनम्रपद्मजार्चिते\nहिमाद्रिजापुलोमजाविरिञ्चिजावरप्रदे\nअपारसिद्धिऋद्धिदिग्धसत्पदाङ्गुलीनखे\nकदा करिष्यसीह मां कृपाकताक्षभाजनम",
+        "मखेश्वरि क्रियेश्वरि स्वधेश्वरि सुरेश्वरि\nत्रिवेदभारतीश्वरि प्रमाणशासनेश्वरि\nरमेश्वरि क्षमेश्वरि प्रमोदकाननेश्वरि\nव्रजेश्वरि व्रजाधिपे श्रीराधिके नमो ऽस्तु ते",
+        "इती ममाद्भुतं स्तवं निशम्य भानुनन्दिनी\nकरोतु सन्ततं जनं कृपाकटाक्षभाजनम\nभवेत तदैव सञ्चितत्रिरूपकर्मनाशनं\nभवेत तदा व्रजेन्द्रसूनुमण्डलप्रवेशनम"
+      ],
+      translations: [
+        "\"Oh You who are adorned by the leaders of multitude of sages! Oh You who takes away the miseries of the three worlds! Oh You whose face joyfully blooms like a lotus flower! Oh You who delights in playing love-sports throughout the secret forest bower-houses! Oh most charming daughter of Vrsabhanu, beloved of the King of Vraja, Sri Krsna! Oh You who are always associated with the King of Vraja Sri Krsna! When? Oh, When will You make me the object of Your side-long glance of causeless mercy?\"",
+        "\"O You who dwells in a pavilion with a canopy of creepers spread over the branches of asoka trees! Oh You whose soft delicate feet radiate the pink-coral color of freshly sprouted tree- buds! Oh You whose upraised hand bestow the benediction of fearlessness! Oh You who are the source of divine opulences! When? Oh, When will You make me the object of Your side-long glance of causeless mercy?\"",
+        "\"Oh You, with the bow of Cupid, Your delightful auspicious crooked bending eyebrows, You shoot Your arrow messages of love from the corners of Your eyes, which cause the charming son of Nanda to be struck with amorous delusions of noble submission to you for all eternity! Oh, When will you make me the object of Your side-long glance of causeless mercy.\"",
+        "\"Oh You, whose golden form is brilliantly effulgent like lightning and campaka flowers! Oh You whose effulgent face eclipses the beauty of millions of full autumn moons! Oh You whose restless eyes are like cakora partridges moving to and fro! Oh, When will You make me the object of Your side-long glance of causeless mercy?\"",
+        "\"Oh You Who are an extremely joyful love-happy youth! Oh You who are decorated with the great happiness of love- intoxicated jealousy, pouting and anger! Oh You who has extreme pure loving affection for Your beloved Sri Krsna! Oh You, the most expert in all the various acts of amorous love! Oh You, the most learned in arranging amorous pastimes of pure love in super opulent secret bower houses in the best of forests! When? Oh, When will make me the object of Your side-long glance of causeless mercy?\"",
+        "\"Oh You who are decorated with the diamond necklace of a limitless variety of feminine charms like artistic amorous gestures, ecstatic loving moods, and gentle mannerisms! Oh You, whose incomparable ecstatic love makes Your perfect breasts very plump like golden water jugs or like the temple mounds of a young elephant! Oh You whose enchanting mild sweet smile is like a line of flower pollen on the ocean of joy! When? Oh when, will you make me the object of Your side-long glance of causeless mercy?\"",
+        "\"Oh You whose arms are like fresh creepers of lotus stems playfully swaying in waves of the river of Your youthful pastimes! Oh you whose seductive very dark-blue (nila) eyes are like the tip of a creeper blown by a gentle breeze! Oh You whose playful sports and alluring movements so enchant Mohan Krsna that He appears hypnotized by You into wonderful meetings! Oh When will You make me the object of your sidelong glance of causeless mercy?\"",
+        "\"Oh You smooth conch shell like neck, marked with three lines is decorated with a pure gold necklace! Oh You whose three strand necklace of woven jasmine garlands decorated with diamonds, emeralds, and pearls radiates splendid effulgence! Oh You whose every dark blue (nila) braids of hair are interwoven the bunches of flowers! When oh when will you make me the object of Your side long glance of causeless mercy?\"",
+        "\"Oh You whose round hips are decorated with a belt of dangling flowers! Oh You whose charmingly thin waist is decorated by a belt of tiny tinkling jeweled bells! Oh you, whose beautifully shaped legs taper gracefully from Your thigh like the trunk of the king of elephants! When, oh When will You make me the object of Your side-long glance of causeless mercy?\"",
+        "\"Oh You whose captivating ankle bells make the sounds of various kinds of divine mantras resembling a group of royal swans singing! Oh You whose extreme superexcellent movements put to shame the swaying of a golden creeper! Oh, when will You make me the object of Your side-long glance of causeless mercy?\"",
+        "\"Oh You who is humbly worshipped by all the Lord Brahmas in unlimited millions of universes created by Lord Visnu! Oh You who is the bestower of benedictions to the daughter of the Himalayas, Parvati (Siva's wife), the daughter of Puloma, Saci (Indra's wife), and to Brahma's wife, Sarasvati! Oh You Whose toenails glow with the radiance of boundless mystic perfections and opulences! When oh, When will you make me the object of Your side-long glance of causeless mercy?\"",
+        "\"O Goddess, Leader of Vedic sacrifices! Oh Goddess leader of pious activities! Oh Goddess Leader of spontaneous devotional service! Oh Goddess Leader of all the demigods and Goddesses! O Goddess, leader of all knowledge in the three Vedas! Oh Goddess leader of enforcing scriptural principles! Oh Goddess Leader of all Goddesses of fortune! Oh Goddess Leader of forgiveness! Oh Goddess Leader of the pleasure forest of Vrindavana! Oh Goddess Leader of Vraja! Oh One and only authority who regulates entrance into Vraja! Oh Sri Radhika! I offer my most respectful obeisances unto You!\"",
+        "May Sri Vrsabhanu-nandini, upon hearing my astonishing prayer recited, bestow Her most merciful side-long glance upon the speaker. At that time one will feel all the effects of past, present and future karma completely destroyed and gain entrance into the assembly of Nanda-nandana's Krsna's eternal loving devotees. That aspiring devotee who chants this prayer on the full moon day, waxing eight lunar day, tenth lunar day, eleventh lunar day (ekadasi), and thirteenth lunar day will find that his mind and intelligence become pure, each and every desire will be fulfilled without fail, and by the most merciful sidelong glance of Sri Radha, one will obtain pure ecstatic love (prema). The aspiring devotee who recites this prayer one hundred times while in the waters of Sri Radha Kunda up to the thighs, navel, chest or neck attains complete perfection in religiosity, economic development, fulfillment of desires, and liberation - the power by which everything spoken will come true, and great opulence from attaining transcendental majesty. At that time one gets to meet Sri Radhika face to face, seeing Her even with one's own present eyes and Sri Radhika becomes so pleased that She instantly bestows the greatest benediction of being able to see her own beloved Shyamasundara Krsna with one's present eyes. Then Lord Krsna, the Lord of Vraja-dhama, grants one entrance into His eternal ecstatic pastimes, which is the only goal for which true Vaisnavas hanker."
+      ]
+    }
+    ,"162": {
+      title: "Sri Sivastakam",
+      transliterations: [
+        "नमो नमस ते त्रिदशेश्वराय\nभूतादिनाथाय मृडाय नित्यम\nगङ्गातरङ्गोत्थितबालचन्द्र\nचूडाय गौरीनयनोत्सवाय",
+        "सुतप्तचामीकरचन्द्रनील\nपद्मप्रवालाम्बुदकान्तिवस्त्रैः\nसुनृत्यरङ्गेष्टवरप्रदाय\nकैवल्यनाथाय वृषध्वजाय",
+        "सुधांशुसूर्याग्निविलोचनेन\nतमोभिदे ते जगतः शिवाय\nसहस्रशुभ्रांशुसहस्ररश्मि\nसहस्रसञ्जित्त्वरतेजसेऽस्तु",
+        "नागेशरत्नोज्ज्वलविग्रहाय\nशार्दूलचर्मांशुकदिव्यतेजसे\nसहस्रपत्रोपरि संस्थिताय\nवराङ्गदामुक्तभुजद्वयाय",
+        "सुनूपुरारञ्जितपादपद्म\nक्षरत्सुधाभृत्यसुखप्रदाय\nविचित्ररत्नौघविभूषिताय\nप्रेमानम एवाद्य हरौ विधेहि",
+        "श्रीराम गोविन्द मुकुन्द शौरे\nश्रीकृष्ण नारायण वासुदेव\nइत्य आदिनामामृतपानमत्त\nभृङ्गाधिपायाखिलदुःखहन्त्रे",
+        "श्रीनारदाद्यैः सततं सुगोप्य\nजिज्ञासितायाशु वरप्रदाय\nतेभ्यो हरेर भक्तिसुखप्रदाय\nशिवाय सर्वगुरवे नमः",
+        "श्रीगौरीनेत्रोत्सवमङ्गलाय\nतत्प्राणनाथाय रसप्रदाय\nसदा समुत्कण्ठगोविन्दलीला\nगानप्रवीणाय नमोऽस्तु तुभ्यम",
+        "एतत शिवस्याष्टकम अद्भुतं महत\nशृण्वन हरिप्रेम लभेत शीघ्रम\nज्ञानञ च विज्ञानम अपूर्ववैभवं\nयो भावपूर्णः परमं समादरम"
+      ],
+      translations: [
+        "I perpetually offer obeisances unto you, the lord of the thirty primal devas, who are the original father of created beings, whose character is gracious, upon whose head, which is crested by the sickle moon, the Ganga springs, and who are a festival for the eyes of Gauri, the fair goddess.",
+        "I offer my obeisances to you who resemble a moon of molten gold, who are dressed in garments colored like a group of budding blue lotuses or lustrous rain clouds, who bestow the most desirable boon to your devotees by your delightful dancing, who offer shelter to those who seek to become one with the transcendental effulgence of Godhead, and whose flag bears the image of the bull.",
+        "I offer my obeisances to you who dispel darkness with your three eyes - the moon, the sun, and fire - and thus cause auspiciousness for all the living entities of the universe, and whose potency easily defeats thousands of moons and suns.",
+        "I offer my obeisances to you, whose form is brilliantly illuminated by the jewels of Ananta-deva, the king of snakes, who possess divine potencies and are clothed in a tiger-skin, who stands in the midst of a thousand-petalled lotus, and whose two arms are adorned by lustrous bangles.",
+        "I offer my obeisances to you who bestow happiness to your servitors as you pour upon them the liquid nectar flowing from your reddish lotus feet, upon which charming anklebells ring. Obeisances unto you who are adorned by an abundance of gems! Please endow Me today with pure love for Sri Hari.",
+        "“O Sri Rama! O Govinda! O Mukunda! O Sauri! O Sri Krsna! O Narayana! O Vasudeva!” I bow to you, Sri Siva, who are the monarch ruling over all the bee-like devotees who are mad to drink the nectar of these and other innumerable names of Hari, and who thus destroys all grief.",
+        "I offer my respectful obeisances to you, Sri Siva, who are forever inquired of confidentially by Sri Narada and other great sages, who very easily bestow boons on them, who bestow the happiness of Hari-bhakti to those who seek boons of you, who thereby create auspiciousness and are thus the guru of everyone.",
+        "I offer my obeisances to you who are a festival of auspiciousness for the eyes of Gauri, who are the lord of her life-energy, who bestow rasa and are expert in forever singing songs with eagerness of the pastimes of Govinda.",
+        "The person who hears these great eight prayers glorifying Lord Siva with loving feelings and with great attention can quickly gain the love of Lord Sri Hari as well as transcendental knowledge, the application of the knowledge, and unparalleled endless opulences.\""
+      ]
+    }
+    ,"164": {
+      title: "श्री नाम सङ्कीर्तन अधिवास (Śrī Nāma Saṅkīrtana Adhivāsa - वृन्दावन दास ठाकुर कृत)",
+      transliterations: [
+        "नाना द्रव्य आयोजन, करि’ करे निमन्त्रण,\nकृपा करि’ कर आगमन।",
+        "तोमार वैष्णव-गण, मोर एइ निवेदन,\nदृष्टि करि’ कर समापन।",
+        "करि’ अतो निवेदन, आनिल महन्त-गण,\nकीर्तनेर करे अधिवास।",
+        "अनेक भाग्यर फले, वैष्णव आसिया मिले,\nकालि हबे महोत्सव-विलास।",
+        "श्री-कृष्णेर लीला-गान, करिबेन आस्वादन,\nपूरिबेन सबार अभिलाष।",
+        "श्री-कृष्ण-चैतन्य-चन्द्र, सकल भकत-वृन्द,\nगुण गाय वृन्दावन दास।"
+      ],
+      translations: [
+        "विविध प्रकार की पूजन सामग्रियों का आयोजन करके हम आप सभी को सादर आमंत्रित करते हैं; कृपा करके आप सभी इस पावन सभा में पधारें।",
+        "हे प्रभु के प्रिय वैष्णव-वृन्द! मेरा आप सभी से यही विनम्र निवेदन है कि अपनी कृपामयी दृष्टि डालकर इस अधिवास अनुष्ठान को पूर्ण व पवित्र करें।",
+        "इस प्रकार विनीत प्रार्थना करके समस्त महान वैष्णवों और आचार्यों का स्वागत कर संकीर्तन-यज्ञ का पावन अधिवास अनुष्ठान संपन्न किया जाता है।",
+        "अनेक-अनेक जन्मों के महान सौभाग्य से ही ऐसे परम वैष्णवों का पावन संग प्राप्त होता है। कल इस दिव्य संकीर्तन का भव्य महोत्सव संपन्न होगा।",
+        "वहाँ आप सभी भगवान् श्रीकृष्ण की मधुर लीलाओं के गान का आस्वादन करेंगे, और आप सभी की समस्त आध्यात्मिक अभिलाषाएं पूर्ण होंगी।",
+        "इस प्रकार श्री चैतन्य-चन्द्र और उनके समस्त प्रिय भक्तों के दिव्य गुणों का गान यह दीन वृन्दावन दास करता है।"
+      ]
+    }
+    ,"179": {
+      title: "Nityananda Candrasya Nama Dvadasakam",
+      transliterations: [
+        "नित्यानन्दो ऽवधूतेन्दुर वसुधाप्राणवल्लभः\nजाह्नवीजीवितपतिः कृष्णप्रेमप्रदः प्रभुः",
+        "पद्मावतीसुतः श्रीमान शचीनन्दनपूर्वजः\nभावोन्मत्तो जगत्त्राता रक्तगौरकलेवरः",
+        "स्रि नित्यानन्द चन्द्रस्य नामद्वादशकं शुभम य इदं प्रत्यहं प्रतः प्रत्य उत्थाय पठेन नरः",
+        "स क्लेशरहितो भूत्वा प्राप्नुयात स्वमनोरथम तूर्णं चैतन्यदेवस्य करुणाभाजनं भवेत"
+      ],
+      translations: [
+        "Sri Nityananda Prabhu is the embodiment of eternal bliss. He is the moon of all avadhutas and the beloved of the life-breath of Vasudha (His wife). Lord Nityananda is the husband, enthusing Jahnavi with life. Nityananda Rama bestows ecstatic love for Krishna and He is the Lord and Master of the devotees.",
+        "Sri Nityananda is the dear son of Padmavati and He is full of splendorous transcendental majesty. Nitai is the older brother of Sacimata's son Nimai. Nityananda Avadhuta is maddened in overwhelming ecstatic emotions. Sri Nityananda Prabhu is the savior of the universe. His complexion is golden tinged with red. 3-4) That person who recites these twelve auspicious holy names of the moonlike Nityananda-candra every day upon arising in the morning such a person becomes free from all difficulties and attains all their most cherished desires. Very soon they become the object of Lord Caitanya-deva's mercy.",
+        "English meaning not yet written for this verse.",
+        "English meaning not yet written for this verse."
+      ]
+    }
+    ,"190": {
+      title: "प्रभुपाद चरणाश्रय (Prabhupāda Caraṇāśraya - जयपताका स्वामी कृत)",
+      transliterations: [
+        "प्रभुपाद-चरणाश्रय, शुद्ध-भक्ति-भावोदय,\nप्रणमामि शरण लये\nभक्त-गोष्ठी याँहार देह, सर्व-जीव-आश्रय गेह,\nगौराङ्गेर पाश आमारे नि’ जये",
+        "कृष्ण-कथामृत-लेखक, गौर-तत्त्व-जगत्-शिक्षक,\nकरि तुँहार नित्य-सङ्गेर आशा।\nप्रभुपाद-पथ बाहिरे, कलि-कालेर माया, भाइ रे!,\nउद्धार पाइबार नहि कोनो आशा",
+        "प्रचार-अमृत दिलो ये, गुरु-गौराङ्ग-प्राण से,\nकीर्तने कराइबे राधा-दास...\nश्रील प्रभुपाद जय, पतित-पावन हय,\nतव पदे मोर नित्य वास",
+        "पश्चाद्-देश शून्यवादী दुराचारी मायावादी,\nउद्धार पाइलो केवल तुँहार दये।\nप्रभुपाद दया कर, कृष्ण-भक्त ए-बार कर,\nतुँहार दया – असम्भव सम्भव हय, रे!"
+      ],
+      translations: [
+        "श्रील प्रभुपाद के चरणकमलों का आश्रय ही हृदय में शुद्ध भक्ति-भाव को जागृत करने वाला है। उनके चरणों में साष्टांग प्रणाम कर मैं पूर्ण शरणागति ग्रहण करता हूँ। शुद्ध भक्तों का समाज (इस्कॉन) ही उनका दिव्य स्वरूप है, जो समस्त जीवों के लिए परम आश्रय-गृह है। हे प्रभुपाद! आप हमें भी अपने साथ श्रीगौरांग महाप्रभु के समीप ले चलिए।",
+        "आप श्रीकृष्ण-कथामृत के दिव्य रचयिता और सम्पूर्ण जगत को गौर-तत्त्व की शिक्षा देने वाले जगद्गुरु हैं। मैं आपके नित्य संग की अभिलाषा करता हूँ। हे भाई! श्रील प्रभुपाद द्वारा प्रदर्शित भक्ति-मार्ग के बाहर केवल कलि की माया ही व्याप्त है, उस मार्ग के बिना इस कलिकाल में उद्धार की कोई आशा नहीं है।",
+        "जिन्होंने विश्वभर में भगवन्नाम प्रचार का अमृत वितरित किया, जो गुरु और गौरांग के प्राण-स्वरूप हैं, वे संकीर्तन-यज्ञ के द्वारा सभी को श्रीमती राधारानी की नित्य सेवा में नियुक्त करते हैं। हे पतित-पावन श्रील प्रभुपाद! आपके चरणकमलों में मेरा नित्य वास हो।",
+        "पश्चिमी जगत के शून्यवाद, मायावाद और तमोगुण में डूबे हुए जीव केवल आपकी अहैतुकी करुणा से ही भवबंधन से मुक्त हुए। हे प्रभुपाद! मुझ पर भी दया कीजिए और मुझे एक बार श्रीकृष्ण का सच्चा भक्त बना दीजिए। आपकी कृपा से असंभव भी संभव हो जाता है!"
+      ]
+    }
+    ,"203": {
+      title: "Radhikastakam",
+      transliterations: [
+        "राधिका शरदैन्दूनिन्दि मूखमण्डली\nकुन्तले विचित्रवेणी चम्पपुष्पशोभनी\nनील पट्ट अङ्गे शोभे ताहे आध ओटनी\nवन्दिये श्रीपादपद्म वृसभानुनन्दिनी",
+        "तरुण अरुण जिनि सिन्दूरेर मण्डली\nयैछे अलि मत्त भरे मलयजगन्धिनी\nभुरूर भङ्गिम कोटी कोटी कामगञ्जिनी\nवन्दिये श्रीपादपद्म वृसभानुनन्दिनी",
+        "खञ्जनगञ्जनदिठि बङ्किमसुचाहनी\nअञ्जन रञ्जित ताहे कामशरसन्धिनी\nतिलपुष्प जिनि नासा वेसरसुदोलनी\nवन्दिये श्रीपादपद्म वृसभानुनन्दिनी",
+        "पक्क विस्वफल जिनि अधर सुरङ्गिनी\nदशन दाडिस्वबीज जिनि अति शोभनी\nवसन्त कोकिल जिनि सुमधुरबोलनी\nवन्दिये श्रीपादपद्म वृसभानुनन्दिनी",
+        "कनक मूकुर जिनि गण्डयुग शोभनी\nरतन मञ्जीर पाये बङ्कराजदोलनी\nकेशर मुकुताहार उरपर झोलनी\nवन्दिये श्रीपादपद्म वृसभानुनन्दिनी",
+        "कनक कलस जिनि कुचयुग शोभनी\nकरिबरकर जिनि बाहुयुग दोलनी\nसुललित अङ्गुलिते मुद्रिकार साजनी\nवन्दिये श्रीपादपद्म वृसभानुनन्दिनी",
+        "गजअरि जिनि माजा गुरुया नितस्विनी\nताऽपर शोभित भाल कनकेर किङ्किनी\nकनक उलट रम्भा जानुयुगशोभनी\nवन्दिये श्रीपादपद्म वृसभानुनन्दिनी",
+        "हंसराजगति जिनि सुमन्थरचलनी\nरातुल चरणे राजे कनया सुपञ्जिनी\nयुगल चरणे शोभे यावक सुरञ्जिनी\nवन्दिये श्रीपादपद्म वृसभानुनन्दिनी"
+      ],
+      translations: [
+        "Srimati Radhika’s face makes the full moon of the Sarat (Autumn) season feel bashful. Multitudes of flowers adorn her beautifully braided hair. She is dressed in a blue sari and the upper part of her body is covered with a veil. I worship the lotus feet of Srimati Radhika, the daughter of King Vrsabhanu",
+        "The dot of sindur on the forehead of Srimati Radhika defeats the redness of the early morning sun. The fragrance of lotus from Her body causes the bumble bees to go wild and fly around her. The gesture of her eyebrows defeats the pride of million of Cupids. I worship the lotus feet of that Srimati Radharani, the daughter of King Vrsabhanu.",
+        "Her eyes, which move like the khanjana bird, are anointed with mascara. From the corner of Her eyes, She shoots her beautiful glance, ust like the flower arrows from the bow of Cupid. Her beautiful nose defeats the beauty of sesame-flowers and from it a nose-ring swings very beautifully. I worship the lotus feet of that Srimati Radhika, the daughter of King Vrsabhanu.",
+        "Her lips are more reddish than a ripe bimba-fruit, and Her teeth are as beautifully set as the seeds of pomegrantes. Her voice is more melodious than that of a cuckoo. I worship the lotus feet of that Srimati Radhika, the daughter of King Vrsabhanu.",
+        "She has cheeks that are blossoming with gracefully with a golden complexion. Her jeweled ankle bells tied to Her feet sways freely. Her long hair and necklace of pears lie on Her breasts. I worship the lotus feet of that Srimati Radhika, the daughter of King Vrsabhanu.",
+        "The beauty of Her cheeks defeats the beauty of a golden mirror. She wears jeweled ankle bells and Her ear-rings swing beautifully. Her slender fingers are decorated with jewel-studded rings. I worship the lotus feet of that Srimati Radhika, the daughter of King Vrsabhanu.",
+        "She moves more majestically than the king of elephants. A golden girdle shines beautifully around her slender waist, and the small gold bells in them tinkle sweetly. Her thighs are smooth and slender like an upturned trunk of a golden banana tree. I worship the lotus feet of that Srimati Radhika, the daughter of King Vrsabhanu.",
+        "Her movement is more graceful than a swan’s. Jewelled ankle-bells adorn her feet. I worship the lotus-feet of that Srimati Radhika, the daughter of King Vrsabhanu."
+      ]
+    }
+    ,"217": {
+      title: "से शुभ दिनेर आराधना करे (Se Śubha Diner - भक्ति चारु स्वामी कृत)",
+      transliterations: [
+        "से शुभदिनेर आराधना करे जागरे जगत्वासी।\nचैत्र मधुर, स्वर्ग-मेदुर शुभ लगनेर राशि॥\nयेदिन आमार हृदयेर राज गुरुदेव महाराज।\nपूत पुरीधामे प्रकाशि आपनि हरे पृथिवीर त्रास॥",
+        "देवदूत-सम गुरुमहाराज आलोके प्लावित कर।\nजीवन-युद्धे पराजित मोर भय-संत्रास हर॥\nदुर्लभतम मानव जीवन, तथापि भरोसाहीन।\nतव कृपा बिना आमि असहाय अपारग उदासीन॥",
+        "मायार प्रभावे आपन स्वभावे सदाइ अधम मति।\nत्राण करा एइ अधम जेनेरे, कृपा बिना नेइ गति॥\nजीव कल्याणे तव अवदान जगते घोषित आज।\nतव श्रीचरण, आमार जीवन गुरुदेव महाराज॥",
+        "कृष्णके भुले मायार कबले क्लेश पाइ अविरत।\nमरुभूमि माझे मृगतृष्णा सम प्रलोभन भरे यत॥\nभीति-भीषिका भरा अन्ध तिमिर अमानिशा सम।\nमानि मम आशा आज गुरुमहाराज—तव श्रीमुखेर वाणी,\nभकतिर वाणी पृथिवीते आनि॥"
+      ],
+      translations: [
+        "उस परम पावन दिन की आराधना करते हुए हे जगत के वासियों, जाग उठो! वह दिन स्वर्ग से भी अधिक मधुर और अत्यंत शुभ लगन से परिपूर्ण था, जब श्री पुरुषोत्तम पुरी धाम में मेरे हृदय के राजा श्रील गुरुमहाराज (श्रील भक्तिसिद्धांत सरस्वती ठाकुर) प्रकट हुए और उन्होंने सम्पूर्ण पृथ्वी के संताप को हर लिया।",
+        "देवदूत के समान हे गुरुमहाराज! आप दिव्य ज्ञान के प्रकाश से सम्पूर्ण जगत को आप्लावित कर दीजिए। इस भौतिक जीवन-संग्राम में पराजित हुए मुझ अभागे के भय और संत्रास को दूर कीजिए। यह मानव जीवन अत्यंत दुर्लभ है, फिर भी मैं असहाय और आश्रयहीन हूँ; आपकी कृपा के बिना मेरी कोई अन्य गति नहीं है।",
+        "माया के प्रभाव से मेरी बुद्धि सदैव अधम और पतित रहती है। मुझ दीन-हीन पर करुणा कर मेरा उद्धार कीजिए, आपकी दया के बिना मुझे कोई त्राण नहीं मिल सकता। समस्त जीवों के कल्याण के लिए आपका पावन योगदान आज विश्वभर में घोषित है। हे गुरुदेव! आपके श्रीचरण ही मेरा सर्वस्व जीवन हैं।",
+        "श्रीकृष्ण को विस्मृत करके हम माया के चंगुल में निरंतर घोर क्लेश भोग रहे हैं। यह संसार मरुभूमि की मृगतृष्णा के समान झूठे प्रलोभनों से भरा है और अमावस्या के गहन अंधकार के समान भयानक है। ऐसे में हे गुरुमहाराज, आपकी वाणी ही मेरी एकमात्र आशा है, जो इस धराधाम पर शुद्ध भगवद्-भक्ति का संदेश लेकर आई है।"
+      ]
+    }
+    ,"231": {
+      title: "Srila Prabhupadevastakam",
+      transliterations: [
+        "श्रीश्रीनवद्वीपपरप्रदीपः\nसन्दीप्यमानह सततो भुवीह\nचेतस्तमो हन्ति हि यस्य यत्नान\nनमामि तं श्रीप्रभुपाददेवम",
+        "श्रीभक्तिसिद्धान्तप्रचोदितः श्री\nव्यासाद्यकोशं कुशलं कृपालुः\nसन म्लेच्छवाग्देशचये ऽदधद यस\nनमामि तं श्रीप्रभुपाददेवम",
+        "आच्छद्यते यत्परतर्कदृश्य\nगोविन्दम्ःर्त्युज्ज्वलभस्करेण\nअद्वैतिखद्योतकुलं जगत्यां\nनमामि तं श्रीप्रभुपाददेवम",
+        "यस्यैव यत्नेन पुराणराज\nगङ्गामला केशवकेलिहंसा\nसत्स्तोत्ररत्ना वहतीह लोके\nनमामि तं श्रीप्रभुपाददेवम",
+        "श्रीराधिकाकृष्णपदारविन्दे\nसहस्रहृत्सु शतमन्दिरेषु\nअरोपयद यो मधुरे पृथिव्यां\nनमामि तं श्रीप्रभुपाददेवम",
+        "कौशल्यदैर यस्य सहस्रशास्त्र\nशस्त्रातिवर्षैः प्रतिहन्यते हि\nचण्डा कलेर मोहचम्ःर हठेन\nनमामि तं श्रीप्रभुपाददेवम",
+        "नानालसद्गौरसुधाप्रकाश\nफलः क्षितौ स्थापित एव येन\nकृष्णानुचिन्ताजनसङ्घवृक्षस\nनमामि तं श्रीप्रभुपाददेवम",
+        "यो नित्यदा जीवति दैविकीषु\nनिजासु शिक्षासु सहानुगामि\nकृपाम्बुधिर नन्दसुताश्रितात्मा\nनमामि तं श्रीप्रभुपाददेवम"
+      ],
+      translations: [
+        "I bow to His Divine Grace A. C. Bhaktivedanta Swami Prabhupada. Because of his efforts, the eternal, brilliant lamp of Navadvipa (Sri Caitanya Mahaprabhu) is now destroying the darkness of ignorance within the hearts of the living entities in this world.",
+        "I bow to His Divine Grace A. C. Bhaktivedanta Swami Prabhupada. Being especially ordered by Sri Srimad Bhaktisiddhanta Sarasvati Thakura, and being very merciful, he placed in the Western countries, where English and other such degraded languages are spoken, the auspicious treasure house of devotional literature written by Srila Vyasadeva, Srila Krsnadasa Kaviraja, and others.",
+        "I bow to His Divine Grace A. C. Bhaktivedanta Swami Prabhupada. Because of his expert logic, the brilliant sun of Lord Govinda's transcendental form is now illuminating this world and completely eclipsing the insignificant glowworms of the impersonalists.",
+        "I bow to His Divine Grace A. C. Bhaktivedanta Swami Prabhupada. Because of his efforts, the pure and crystal-clear Ganges River of the Srimad-Bhagavatam, the king of puranas, is now flowing all over the world. The pebbles in that river are the jewels of the pure devotees' prayers, and playing within its waters are the swans of Lord Kesava's pastimes.",
+        "I bow to His Divine Grace A. C. Bhaktivedanta Swami Prabhupada, who planted the charming lotus feet of Sri Sri Radha and Krsna in hundreds of temples and thousands of hearts throughout this world.",
+        "I bow to His Divine Grace A. C. Bhaktivedanta Swami Prabhupada. Showering thousands of arrows, which are his books, he has violently destroyed the fierce army of illusions presented by the Age of Kali.",
+        "I bow to His Divine Grace A. C. Bhaktivedanta Swami Prabhupada. Upon this earth he has planted the desire tree of the International Society for Krishna Consciousness, whose many splendid fruits are the many different methods of distributing the nectarean message of Sri Caitanya Mahaprabhu.",
+        "I bow to His Divine Grace A. C. Bhaktivedanta Swami Prabhupada, who is like and ocean of mercy, and who has completely taken shelter of Lord Krsna, the transcendental son of Nanda Maharaja, with his body, mind, words, and self. Srila Prabhupada lives forever by his divine instructions, and his sincere followers live with him."
+      ]
+    }
+    ,"244": {
+      title: "Sri Narasimha Stuti (Sanaiscara-krta)",
+      transliterations: [
+        "सुलभो भक्ति युक्तानां दुर्दर्शो दुष्ट चेतसाम\nअनन्य गतिकानां च प्रभुर भक्तैक वत्सलः\nशनैश्चरस तत्र नृसिंहदेव चकाराऽमलचित्तव्रित्तिः\nप्रणम्य साष्टाङ्गम अशेषलोक किरीट नीराजित पाद पद्मम",
+        "(श्री शनिरुवाच)\nयत पादपङ्कजरजः परमादरेन\nसंसेवितं सकल कल्मष राशिनाशम\nकल्याण कारकम अशेषनिजानुगानां\nस त्वं नृसिंह मयि धेहि कृपावलोकम",
+        "सर्वत्र चञ्चलतया स्थितयाऽपि लक्ष्म्याः\nब्रह्मादि वन्द्य पदया स्थिरयान्य सेवि\nपादारविन्द युगलं परमादरेन\nस त्वं नृसिंह मयि धेहि कृपावलोकम",
+        "यद रूपम आगमशिरः प्रतिपाद्य माध्यं\nआध्यात्मिकादि परिताप हरं विचिन्त्यम\nयोगीश्वरैर अपगताऽखिल दोष सङ्घैः\nस त्वं नृसिंह मयि धेहि कृपावलोकम",
+        "प्रह्लाद भक्त वचसा हरिर आविरास\nस्थम्बे हिरण्यकशिपुं य उदारभावः\nऊर्वोर निधाय उदरं नखरैर ददार\nस त्वं नृसिंह मयि धेहि कृपावलोकम",
+        "यो नैज भक्तम अनलाम्बुधि भूधरोग्र\nशृङ्गप्रपात विषदन्ति सरीसृपेभ्यः\nसर्वात्मकः परमकारुनिको ररक्ष\nस त्वं नृसिंह मयि धेहि कृपावलोकम",
+        "यन्निर्विकार पररूप विचिन्तनेन\nयोगीश्वरा विषय सागर वीत रागाः\nविश्रान्तिम आपुर विनाश वतीम पराख्याम\nस त्वं नृसिंह मयि धेहि कृपावलोकम",
+        "यद रूपमुग्र परिमर्दन भाव शालि\nसञ्चिन्तनेन सकलाघ विनाश कारि\nभूत ज्वर ग्रह समुद्भव भीति नाशम\nस त्वं नृसिंह मयि धेहि कृपावलोकम",
+        "यस्योत्तमं यश उमापति पद्म जन्म\nशक्रादि दैवत सभासु समस्त गीतं\nशक्तैव सर्वशमल प्रशमैक दक्षं\nस त्वं नृसिंह मयि धेहि कृपावलोकम",
+        "एवं श्रुत्वा स्तुतिम देवः शनिनां कल्पितां हरिः\nउवाच ब्रह्म वृन्दस्थं शनिं तं भक्तवत्सलः",
+        "(श्री नृसिम्होवाच)\nप्रसन्नोऽहं शने तुभ्यं वरं वरय शोभनम\nयं वाञ्छसि तमेव त्वं सर्वलोक हितावहम",
+        "(श्री शनिरुवाच)\nनृसिम्ह त्वं मयि कृपां कुरु देव दयानिधे\nमद वासरस तव प्रीति करस्यात देवतापते",
+        "मत कृतं त्वत परं स्तोत्रं शृन्वन्ति च पठन्ति च\nसर्वान कामान पूरयेथास तेषां त्वं लोकभावन",
+        "(श्री नृसिंहोवाचः)\nतथैवास्तु शनेऽहं वै रक्षोभुवन संस्थितः\nभक्त कामान पूरयिष्ये त्वं ममैकं वचः शृनु\nत्वत कृतं मत परं स्तोत्रं यः पठेच्छृनुयाच्चयः\nद्वादशाष्टम जन्मस्थाद त्वद भयं मास्तु तस्य वै",
+        "शनिर नरहरिं देवं तथेति प्रत्युवाच ह\nततः परम संतुष्टो जयेति मुनयोऽवदन",
+        "(श्री कृष्ण उवाच)\nइत्थं शनैश्चरस्याथ नृसिम्ह देव\nसंवादम एतत स्तवनं च मानवः\nशृनोति यः श्रावयते च भक्त्या\nसर्वाण्य भीष्टानि च विन्दते ध्रुवम"
+      ],
+      translations: [
+        "Lord Nrsimhadeva is easily accessible to the devotees and punishes those who are evil-minded. He is the savior for those who are helpless who desire to seek refuge in Him. When the demigods of innumerable planets bow down to His lotus feet, the bright jewels from their crowns are reflected on His toenails which gives the impression that lamps are being waved in front of them. Unto these lotus feet, Sanideva (the personification of the planet, Saturn) prostrated and prayed (in the court of Brahma).",
+        "Sani-deva said: By the mercy of the dust of Your lotus feet which destroy a multitude of sins, grant infinite auspiciousness to Your devotee who always worships Your lotus feet with devotion. O Lord Nrsimha, please bestow upon me Your merciful side-long glance.",
+        "Your lotus feet are worshipped by Laksmi Devi, even though She never remains at one place. Your lotus feet are worshipped with great respect by Her, just as Lord Brahma and others who serve You worship Your lotus feet with great devotion. O Lord Nrsimha, please bestow Your merciful side-long glance upon me.",
+        "By contemplating or meditating upon Your appearance, which is expounded in the Vedas extensively, the best of the saints are liberated from the three-fold miseries and from all misfortunes. O Lord Nrsimha, please bestow upon me Your merciful side-long glance.",
+        "By the word of His devotee named Prahlada, Lord Hari, who is generous and kind, appeared from a pillar and by placing Hiranyakasipu on His thighs split open the his stomach with His nails. O Lord Nrsimha, please bestow upon me Your merciful side-long glance.",
+        "You protected your own devotee Prahlada from a raging fire, the deep ocean, from falling from a tall mountain peak, poison, a mad elephant and the fangs of poisonous serpents. You are omnipresent and supremely generous. O Lord Nrsimha, please bestow upon me Your merciful side-long glance.",
+        "By meditating upon He whose great form is devoid of imperfections, the best of the saints attained liberation from the ocean of materialistic attachments and obtained unmitigated salvation. O Lord Nrsimha, please bestow upon me Your merciful side-long glance.",
+        "By meditating upon He whose form is fearsome, all peace, happiness and prosperity can be obtained, all sins can be obliterated, the fear arising from evil spirits, fevers and unfavorable planetary positions can be removed, O Lord Nrsimha, please bestow upon me Your merciful side-long glance.",
+        "Your transcendental fame is sung gloriously in all the divine assemblies of Shiva, Brahma and Indra, and other demigods. Your power is steadfast in wiping out all impurities, O Lord Nrsimha, please bestow upon me Your merciful side-long glance.",
+        "On listening to the heartfelt prayer composed by Sanideva in the assembly of Lord Brahma, Lord Hari who is ever compassionate to His devotees, spoke to Sanideva as follows.",
+        "Lord Nrsimhadeva said, “O Sani, I am pleased with your devotion. Whatever you desire that will benefit the world, ask for that kind of boon and I will grant it.” 12-13) Shri Sanideva replied, “O Lord Nrsimhadeva, O reservoir of compassion, please be kind to me. O Lord of all gods, let my week-day (Saturday) be Your favorite day. O Purifier of all the worlds, may You fulfill the desires of all those who listen to or read this great prayer to You composed by me.\"",
+        "English meaning not yet written for this verse.",
+        "English meaning not yet written for this verse.",
+        "Then, Lord Nrsimhadeva said, “O Sani! Let it be so! By virtue of My being the universal protector, I fulfill the desires of all My devotees. Please listen to My words! Let there be no fear of the twelfth and eighth birth positions (and implicitly any unfavorable birth positions) and consequent troubles from you for anyone who reads or listens to this prayer to Me composed by you.",
+        "Then Sanideva replied to Lord Narahari that he would follow the Lord's instructions. Then the joyful saints and sages present there (in Brahma's assembly) responded with cries of “jaya! jaya!”",
+        "Sri Krsna told Dharma-raja (Yamaraja), \"Whoever listens to or recites this conversation between Sanideva and Lord Nrsimhadeva in the form of this prayer of devotion will definitely have all desires fulfilled and will always rejoice.\""
+      ]
+    }
+    ,"249": {
+      title: "Gadadharastakam",
+      transliterations: [
+        "(1) स्वभक्तियोगलसिनम सद व्रजे विहरिनम\nहरिप्रियगनग्रगम चचिसुतप्रियेच्वरम\nसरधक्र्स्नसेवनप्रकचकम महचयम\nभजम्य अहम गदधरम सुपन्दितम गुरुम प्रभुम\n(2) नवोज्ज्वलदि भवनविधनकर्मपरगम\nविचित्रगौरभक्तिसिन्धुरग्गभग्गलसिनम\nसुरगमर्गदर्सकम व्रजदिवसदयकम\nभजम्य अहम गदधरम सुपन्दितम गुरुम प्रभुम",
+        "सचिसुतग्घ्रिसरभक्तव्र्न्दवन्द्यगौरवम\nगौरभवचित्तपद्ममध्यक्र्स्नवल्लभम\nमुकुन्दगौररुपिनम स्वभवधर्मदयकम\nभजम्य अहम गदधरम सुपन्दितम गुरुम प्रभुम",
+        "निकुन्जसेवनदिकप्रकसनैककरनम\nसद सखिरतिप्रदम महरसस्वरुपकम\nसदच्रितग्घ्रिपन्कजम सरिरिसद्गुरुम वरम\nभजम्य अहम गदधरम सुपन्दितम गुरुम प्रभुम",
+        "महप्रभोर महरसप्रकसनग्कुरम प्रियम\nसद महरसग्कुरप्रकचनदिवसनम\nमहप्रभोर व्रजग्गनदिभवमोदकरकम\nभजम्य अहम गदधरम सुपन्दितम गुरुम प्रभुम",
+        "द्विजेन्द्रव्र्न्दवन्द्यपदयुग्मभक्तिवर्धकम\nनिजेसु रधिकत्मतवपुह्प्रकचनग्रहम\nअसेसभक्तिसस्त्रसिक्सयोज्ज्वलम्र्तप्रबम\nभजम्य अहम गदधरम सुपन्दितम गुरुम प्रभुम",
+        "मुद निजप्रियदिकस्वपदपद्मसिन्धुभिर\nमहरसर्नवम्र्तप्रदेस्तगौरभक्तिदम\nसदस्त्सत्त्विकन्वितम निजेस्तभक्तिदयकम\nभजम्य अहम गदधरम सुपन्दितम गुरुम प्रभुम",
+        "यदियरितिरगरग्गभग्गदिग्धमनसो\nनरो `अपि यति तुर्नम एव नर्यभवभजनम\nतम उज्ज्वलक्तचित्तम एतु चित्तमत्तचत्पदो\nभजम्य अहम गदधरम सुपन्दितम गुरम प्रभुम",
+        "महरसम्र्तप्रदम सद गदधरअस्तकम\nपथेत तु यह सुभक्तितो व्रजग्गनगनोत्सवम\nसचितनुजपदपद्मभक्तिरत्नयोग्यतम\nलभेत रधिकगदधरग्घ्रिपद्मसेवय"
+      ],
+      translations: [
+        "I worship the greatly learned and exalted spiritual master, Srila Gadadhara Prabhu, who appears very splendid, engaged in the Lord's devotional service. He always performs pastimes in Vraja, where he is very prominent among the gopis, who are very dear to Lord Hari. Lord Caitanya, the Son of Saci is the dear Lord of Gadadhara Prabhu, who is preaching the service of Radha and Krsna.",
+        "I worship the greatly learned spiritual master, Srila Gadadhara Prabhu. The best of those who are devoted to the lotus feet of Lord Caitanya, the Son of Saci-devi, offer respectful obeisances to him and treat him with great importance, and he is very dear to Lord Krsna, Who is seated in the middle of the lotus flower which is his heart, assuming His golden form of Caitanya Mahaprabhu. He preaches that Lord Mukunda has assumed the golden form of Lord Caitanya, and he returns the living entities to their constitutional position as servants of the Lord.",
+        "I worship the greatly learned and exalted spiritual master, Srila Gadadhara Prabhu. It is only because of him that the truth of the exalted devotional service performed by the intimate associates of Krsna in the forests and groves of Vrndavana has been revealed. He is preaching the ecstatic love attained by the gopis, and he is indeed a personification of the mellows of devotional service. The saintly devotees take shelter of his lotus feet, and he teaches the truth of spiritual life to the living entities.",
+        "I worship the greatly learned spiritual master, Srila Gadadhara Prabhu. He is very dear to Lord Caitanya Mahaprabhu, and it is as if he had sprouted from the manifestation of the Lord’s ecstatic love. He is always adorned with the garments of ecstatic love of Godhead, and He delights Lord Caitanya Mahaprabhu by arousing in the Lord the ecstatic emotional love experienced by the gopis of Vraja.",
+        "I worship the greatly learned spiritual master, Srila Gadadhara Prabhu, who expands the mellows of devotional service and whose lotus feet are worshipped by the kings of the brahmanas. Among his confidential associates, he reveals his actual form as Srimati Radharani. He distributes the nectar of the ecstatic mellow of the gopis conjugal love, strictly following the instructions of all the devotional scriptures.",
+        "I worship the greatly learned spiritual master, Srila Gadadhara Prabhu. With delight he is giving the devotional service of Lord Caitanya which reveals the nectarean ocean of the most exalted mellows of devotional service, along with the nectar flowing from the lotus feet of the gopis, headed by Srimati Radharani, who is most dear to Krsna. Gadadhara Prabhu is decorated with the eight transcendental ecstatic symptoms of sattvika-bhava, and he is distributing devotional service to his worshipable Lord Krsna.",
+        "I worship the greatly learned spiritual master, Srila Gadadhara Prabhu. Even a conditioned soul, whose mind becomes anointed by the colorful waves of spontaneous devotional service as delineated by Srila Gadadhara Prabhu, quickly attains the highest level of devotional service. He becomes like a maddened bumble bee whose mind is anointed with the mellow of ujjvala-rasa (conjugal love).",
+        "These eight verses glorifying Srila Gadadhara Prabhu distribute the nectar of the most exalted mellow of devotional service, and they are like a festival for the gopis of Vraja. If one regularly reads these verses and serves the lotus feet of Srila Gadadhara Prabhu, who is an incarnation of Srimati Radharani, then he will become qualified to attain the jewel of pure devotional service for the lotus feet of Lord Caitanya, the son of Sacidevi."
+      ]
+    }
   };
 
   const ORIGINAL_CUSTOM_HINDI_SONGS = JSON.parse(JSON.stringify(CUSTOM_HINDI_SONGS));
